@@ -1,0 +1,16 @@
+{
+  "name": "tribute",
+  "version": "1.0.0",
+  "description": "Native ES6 @mentions",
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.0.0",
+    "babel-preset-es2015": "^6.3.13"
+  },
+  "scripts": {
+    "build": "babel src -w -d dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
