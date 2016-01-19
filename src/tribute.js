@@ -277,41 +277,41 @@ class TributeRange {
 
   getNodePositionInParent(element) {
     if (element.parentNode === null) {
-      return 0;
+      return 0
     }
     for (var i = 0; i < element.parentNode.childNodes.length; i++) {
-      var node = element.parentNode.childNodes[i];
+      var node = element.parentNode.childNodes[i]
       if (node === element) {
-        return i;
+        return i
       }
     }
   }
 
   getContentEditableSelectedPath() {
     // content editable
-    var sel = this.getWindowSelection();
-    var selected = sel.anchorNode;
-    var path = [];
-    var offset;
+    var sel = this.getWindowSelection()
+    var selected = sel.anchorNode
+    var path = []
+    var offset
     if (selected != null) {
-      var i;
-      var ce = selected.contentEditable;
+      var i
+      var ce = selected.contentEditable
       while (selected !== null && ce !== 'true') {
-        i = this.getNodePositionInParent(selected);
-        path.push(i);
-        selected = selected.parentNode;
+        i = this.getNodePositionInParent(selected)
+        path.push(i)
+        selected = selected.parentNode
         if (selected !== null) {
-          ce = selected.contentEditable;
+          ce = selected.contentEditable
         }
       }
-      path.reverse();
+      path.reverse()
       // getRangeAt may not exist, need alternative
-      offset = sel.getRangeAt(0).startOffset;
+      offset = sel.getRangeAt(0).startOffset
       return {
         selected: selected,
         path: path,
         offset: offset
-      };
+      }
     }
   }
 
@@ -356,12 +356,12 @@ class TributeRange {
 
     if (effectiveRange !== undefined && effectiveRange !== null) {
       var mostRecentTriggerCharPos = -1
-      var triggerChar;
+      var triggerChar
       this.tribute.triggers().forEach((c) => {
         var idx = effectiveRange.lastIndexOf(c)
         if (idx > mostRecentTriggerCharPos) {
-          mostRecentTriggerCharPos = idx;
-          triggerChar = c;
+          mostRecentTriggerCharPos = idx
+          triggerChar = c
         }
       });
 
@@ -377,17 +377,17 @@ class TributeRange {
         )
       ) {
         var currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + 1,
-          effectiveRange.length);
+          effectiveRange.length)
 
-        triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + 1);
-        var firstSnippetChar = currentTriggerSnippet.substring(0, 1);
+        triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + 1)
+        var firstSnippetChar = currentTriggerSnippet.substring(0, 1)
         var leadingSpace = currentTriggerSnippet.length > 0 &&
           (
             firstSnippetChar === ' ' ||
             firstSnippetChar === '\xA0'
           );
         if (hasTrailingSpace) {
-          currentTriggerSnippet = currentTriggerSnippet.trim();
+          currentTriggerSnippet = currentTriggerSnippet.trim()
         }
         if (!leadingSpace && (menuAlreadyActive || !(/[\xA0\s]/g.test(currentTriggerSnippet)))) {
           return {
@@ -397,7 +397,7 @@ class TributeRange {
             mentionSelectedPath: path,
             mentionSelectedOffset: offset,
             mentionTriggerChar: triggerChar
-          };
+          }
         }
       }
     }
@@ -425,21 +425,21 @@ class TributeRange {
   }
 
   localToGlobalCoordinates(element, coordinates) {
-    var obj = element;
+    var obj = element
     while (obj) {
-      coordinates.left += obj.offsetLeft + obj.clientLeft;
-      coordinates.top += obj.offsetTop + obj.clientTop;
-      obj = obj.offsetParent;
+      coordinates.left += obj.offsetLeft + obj.clientLeft
+      coordinates.top += obj.offsetTop + obj.clientTop
+      obj = obj.offsetParent
     }
-    obj = element;
+    obj = element
     while (obj !== document.body) {
       if (obj.scrollTop && obj.scrollTop > 0) {
-        coordinates.top -= obj.scrollTop;
+        coordinates.top -= obj.scrollTop
       }
       if (obj.scrollLeft && obj.scrollLeft > 0) {
-        coordinates.left -= obj.scrollLeft;
+        coordinates.left -= obj.scrollLeft
       }
-      obj = obj.parentNode;
+      obj = obj.parentNode
     }
   }
 
@@ -473,87 +473,87 @@ class TributeRange {
       'textDecoration',
       'letterSpacing',
       'wordSpacing'
-    ];
+    ]
 
-    var isFirefox = (window.mozInnerScreenX !== null);
+    var isFirefox = (window.mozInnerScreenX !== null)
 
-    var div = document.createElement('div');
-    div.id = 'input-textarea-caret-position-mirror-div';
-    document.body.appendChild(div);
+    var div = document.createElement('div')
+    div.id = 'input-textarea-caret-position-mirror-div'
+    document.body.appendChild(div)
 
-    var style = div.style;
-    var computed = window.getComputedStyle ? getComputedStyle(element) : element.currentStyle;
+    var style = div.style
+    var computed = window.getComputedStyle ? getComputedStyle(element) : element.currentStyle
 
-    style.whiteSpace = 'pre-wrap';
+    style.whiteSpace = 'pre-wrap'
     if (element.nodeName !== 'INPUT') {
-      style.wordWrap = 'break-word';
+      style.wordWrap = 'break-word'
     }
 
     // position off-screen
-    style.position = 'absolute';
-    style.visibility = 'hidden';
+    style.position = 'absolute'
+    style.visibility = 'hidden'
 
     // transfer the element's properties to the div
     properties.forEach((prop) => {
-      style[prop] = computed[prop];
-    });
+      style[prop] = computed[prop]
+    })
 
     if (isFirefox) {
-      style.width = (parseInt(computed.width) - 2) + 'px';
+      style.width = `${(parseInt(computed.width) - 2)}px`
       if (element.scrollHeight > parseInt(computed.height))
-        style.overflowY = 'scroll';
+        style.overflowY = 'scroll'
     } else {
-      style.overflow = 'hidden';
+      style.overflow = 'hidden'
     }
 
     div.textContent = element.value.substring(0, position);
 
     if (element.nodeName === 'INPUT') {
-      div.textContent = div.textContent.replace(/\s/g, '\u00a0');
+      div.textContent = div.textContent.replace(/\s/g, '\u00a0')
     }
 
     var span = document.createElement('span');
-    span.textContent = element.value.substring(position) || '.';
-    div.appendChild(span);
+    span.textContent = element.value.substring(position) || '.'
+    div.appendChild(span)
 
     var coordinates = {
       top: span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
       left: span.offsetLeft + parseInt(computed.borderLeftWidth)
-    };
+    }
 
-    localToGlobalCoordinates(element, coordinates);
+    this.localToGlobalCoordinates(element, coordinates)
 
-    document.body.removeChild(div);
+    document.body.removeChild(div)
 
-    return coordinates;
+    return coordinates
   }
 
   getContentEditableCaretPosition(selectedNodePosition) {
-    var markerTextChar = '\ufeff';
-    var markerEl, markerId = 'sel_' + new Date().getTime() + '_' + Math.random().toString().substr(2);
+    var markerTextChar = '\ufeff'
+    var markerEl, markerId = `sel_${new Date().getTime()}_${Math.random().toString().substr(2)}`
 
-    var range;
-    var sel = this.getWindowSelection();
-    var prevRange = sel.getRangeAt(0);
-    range = document.createRange();
+    var range
+    var sel = this.getWindowSelection()
+    var prevRange = sel.getRangeAt(0)
+    range = document.createRange()
 
-    range.setStart(sel.anchorNode, selectedNodePosition);
-    range.setEnd(sel.anchorNode, selectedNodePosition);
+    range.setStart(sel.anchorNode, selectedNodePosition)
+    range.setEnd(sel.anchorNode, selectedNodePosition)
 
-    range.collapse(false);
+    range.collapse(false)
 
     // Create the marker element containing a single invisible character using DOM methods and insert it
-    markerEl = document.createElement('span');
-    markerEl.id = markerId;
-    markerEl.appendChild(document.createTextNode(markerTextChar));
-    range.insertNode(markerEl);
-    sel.removeAllRanges();
-    sel.addRange(prevRange);
+    markerEl = document.createElement('span')
+    markerEl.id = markerId
+    markerEl.appendChild(document.createTextNode(markerTextChar))
+    range.insertNode(markerEl)
+    sel.removeAllRanges()
+    sel.addRange(prevRange)
 
     var coordinates = {
       left: 0,
       top: markerEl.offsetHeight
-    };
+    }
 
     this.localToGlobalCoordinates(markerEl, coordinates);
 
@@ -563,33 +563,41 @@ class TributeRange {
 
   scrollIntoView(elem) {
     // cheap hack in px - need to check styles relative to the element
-    var reasonableBuffer = 20;
-    var maxScrollDisplacement = 100;
-    var clientRect;
-    var e = elem[0];
+    var reasonableBuffer = 20
+    var maxScrollDisplacement = 100
+    var clientRect
+    var e = elem[0]
+
     while (clientRect === undefined || clientRect.height === 0) {
-      clientRect = e.getBoundingClientRect();
+      clientRect = e.getBoundingClientRect()
+
       if (clientRect.height === 0) {
-        e = e.childNodes[0];
+        e = e.childNodes[0]
         if (e === undefined || !e.getBoundingClientRect) {
-          return;
+          return
         }
       }
     }
-    var elemTop = clientRect.top;
-    var elemBottom = elemTop + clientRect.height;
+
+    var elemTop = clientRect.top
+    var elemBottom = elemTop + clientRect.height
+
     if (elemTop < 0) {
-      window.scrollTo(0, window.pageYOffset + clientRect.top - reasonableBuffer);
+      window.scrollTo(0, window.pageYOffset + clientRect.top - reasonableBuffer)
     } else if (elemBottom > $window.innerHeight) {
-      var maxY = window.pageYOffset + clientRect.top - reasonableBuffer;
+      var maxY = window.pageYOffset + clientRect.top - reasonableBuffer
+
       if (maxY - window.pageYOffset > maxScrollDisplacement) {
-        maxY = window.pageYOffset + maxScrollDisplacement;
+        maxY = window.pageYOffset + maxScrollDisplacement
       }
-      var targetY = $window.pageYOffset - (window.innerHeight - elemBottom);
+
+      var targetY = $window.pageYOffset - (window.innerHeight - elemBottom)
+
       if (targetY > maxY) {
-        targetY = maxY;
+        targetY = maxY
       }
-      window.scrollTo(0, targetY);
+
+      window.scrollTo(0, targetY)
     }
   }
 

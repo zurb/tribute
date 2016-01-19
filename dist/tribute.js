@@ -519,7 +519,7 @@ var TributeRange = function () {
         left: span.offsetLeft + parseInt(computed.borderLeftWidth)
       };
 
-      localToGlobalCoordinates(element, coordinates);
+      this.localToGlobalCoordinates(element, coordinates);
 
       document.body.removeChild(div);
 
@@ -568,8 +568,10 @@ var TributeRange = function () {
       var maxScrollDisplacement = 100;
       var clientRect;
       var e = elem[0];
+
       while (clientRect === undefined || clientRect.height === 0) {
         clientRect = e.getBoundingClientRect();
+
         if (clientRect.height === 0) {
           e = e.childNodes[0];
           if (e === undefined || !e.getBoundingClientRect) {
@@ -577,19 +579,25 @@ var TributeRange = function () {
           }
         }
       }
+
       var elemTop = clientRect.top;
       var elemBottom = elemTop + clientRect.height;
+
       if (elemTop < 0) {
         window.scrollTo(0, window.pageYOffset + clientRect.top - reasonableBuffer);
       } else if (elemBottom > $window.innerHeight) {
         var maxY = window.pageYOffset + clientRect.top - reasonableBuffer;
+
         if (maxY - window.pageYOffset > maxScrollDisplacement) {
           maxY = window.pageYOffset + maxScrollDisplacement;
         }
+
         var targetY = $window.pageYOffset - (window.innerHeight - elemBottom);
+
         if (targetY > maxY) {
           targetY = maxY;
         }
+
         window.scrollTo(0, targetY);
       }
     }
