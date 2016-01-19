@@ -132,7 +132,7 @@ class TributeEvents {
     return Object.assign({}, this.tribute.globalCallbacks, {
       triggerChar: (e, el, trigger) => {
         let pos = this.tribute.range.position(el)
-        let prevCode = el.innerText.charCodeAt(pos - 1)
+        let prevCode = el.textContent.charCodeAt(pos - 1)
 
         let collectionItem = this.tribute.collection.find(item => {
           return item.trigger = trigger

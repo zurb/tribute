@@ -145,7 +145,7 @@ var TributeEvents = function () {
       return Object.assign({}, this.tribute.globalCallbacks, {
         triggerChar: function triggerChar(e, el, trigger) {
           var pos = _this.tribute.range.position(el);
-          var prevCode = el.innerText.charCodeAt(pos - 1);
+          var prevCode = el.textContent.charCodeAt(pos - 1);
 
           var collectionItem = _this.tribute.collection.find(function (item) {
             return item.trigger = trigger;
