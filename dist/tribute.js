@@ -110,6 +110,13 @@ var Tribute = function () {
         this.current = {};
       }
     }
+  }, {
+    key: 'selectItemAtIndex',
+    value: function selectItemAtIndex(index) {
+      var item = this.current.collection.values[index];
+      console.log(item);
+      // call cb function that updates textContent
+    }
   }], [{
     key: 'inputTypes',
     value: function inputTypes() {
@@ -169,11 +176,13 @@ var TributeEvents = function () {
     key: 'click',
     value: function click(instance, event) {
       var tribute = instance.tribute;
+
       if (tribute.menu && tribute.menu.contains(event.target)) {
-        console.log('select item.');
-      } else if (instance.tribute.current.element) {
-        instance.tribute.hideMenu();
-        console.log('hide menu');
+        var li = event.target;
+        tribute.selectItemAtIndex(li.getAttribute('data-index'));
+        tribute.hideMenu();
+      } else if (tribute.current.element) {
+        tribute.hideMenu();
       }
     }
 
@@ -200,15 +209,14 @@ var TributeEvents = function () {
 
       return Object.assign({}, this.tribute.globalCallbacks, {
         triggerChar: function triggerChar(e, el, trigger) {
-          var pos = _this.tribute.range.position(el);
-          var prevCode = el.textContent.charCodeAt(pos - 2);
+          _this.tribute.current.element = el;
+          var info = _this.tribute.range.getTriggerInfo(false, false, true);
 
-          var collectionItem = _this.tribute.collection.find(function (item) {
-            return item.trigger = trigger;
-          });
+          if (info !== undefined) {
+            var collectionItem = _this.tribute.collection.find(function (item) {
+              return item.trigger = trigger;
+            });
 
-          // If space or the beginning of the line
-          if (prevCode === 32 || isNaN(prevCode)) {
             _this.tribute.showMenuFor(el, collectionItem);
           }
         },
@@ -306,7 +314,7 @@ var TributeRange = function () {
       // getTriggerInfo(menuAlreadyActive, hasTrailingSpace)
       var context = this.tribute.current,
           coordinates = undefined;
-      var info = this.getTriggerInfo(false, false);
+      var info = this.getTriggerInfo(false, false, true);
 
       if (info !== undefined) {
         if (!this.isContentEditable(context.element)) {
@@ -445,25 +453,6 @@ var TributeRange = function () {
           }
         }
       }
-    }
-  }, {
-    key: 'position',
-    value: function position(node) {
-      var caretPos = 0,
-          sel = undefined,
-          range = undefined;
-
-      sel = this.getWindowSelection();
-
-      if (sel.rangeCount) {
-        range = sel.getRangeAt(0);
-
-        if (range.commonAncestorContainer.parentNode == node) {
-          caretPos = range.endOffset;
-        }
-      }
-
-      return caretPos;
     }
   }, {
     key: 'isContentEditable',

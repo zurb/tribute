@@ -103,6 +103,12 @@ class Tribute {
     }
   }
 
+  selectItemAtIndex(index) {
+    let item = this.current.collection.values[index];
+    console.log(item)
+    // call cb function that updates textContent
+  }
+
 }
 
 class TributeMenuEvents {
@@ -176,11 +182,13 @@ class TributeEvents {
 
   click(instance, event) {
     let tribute = instance.tribute
+
     if (tribute.menu && tribute.menu.contains(event.target)) {
-      console.log('select item.')
-    } else if (instance.tribute.current.element) {
-      instance.tribute.hideMenu()
-      console.log('hide menu')
+      let li = event.target
+      tribute.selectItemAtIndex(li.getAttribute('data-index'))
+      tribute.hideMenu()
+    } else if (tribute.current.element) {
+      tribute.hideMenu()
     }
   }
 
@@ -211,15 +219,14 @@ class TributeEvents {
   callbacks() {
     return Object.assign({}, this.tribute.globalCallbacks, {
       triggerChar: (e, el, trigger) => {
-        let pos = this.tribute.range.position(el)
-        let prevCode = el.textContent.charCodeAt(pos - 2)
+        this.tribute.current.element = el
+        let info = this.tribute.range.getTriggerInfo(false, false, true)
 
-        let collectionItem = this.tribute.collection.find(item => {
-          return item.trigger = trigger
-        })
+        if (info !== undefined) {
+          let collectionItem = this.tribute.collection.find(item => {
+            return item.trigger = trigger
+          })
 
-        // If space or the beginning of the line
-        if (prevCode === 32 || isNaN(prevCode)) {
           this.tribute.showMenuFor(el, collectionItem)
         }
       },
@@ -265,7 +272,7 @@ class TributeRange {
   positionMenuAtCaret() {
     // getTriggerInfo(menuAlreadyActive, hasTrailingSpace)
     let context = this.tribute.current, coordinates
-    let info = this.getTriggerInfo(false, false)
+    let info = this.getTriggerInfo(false, false, true)
 
     if (info !== undefined) {
       if (!this.isContentEditable(context.element)) {
@@ -420,23 +427,6 @@ class TributeRange {
         }
       }
     }
-  }
-
-  position(node) {
-    let caretPos = 0,
-      sel, range;
-
-    sel = this.getWindowSelection()
-
-    if (sel.rangeCount) {
-      range = sel.getRangeAt(0)
-
-      if (range.commonAncestorContainer.parentNode == node) {
-        caretPos = range.endOffset
-      }
-    }
-
-    return caretPos
   }
 
   isContentEditable(element) {
