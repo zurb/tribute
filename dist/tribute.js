@@ -11,6 +11,7 @@ var Tribute = function () {
     this.expando = 0;
     this.instance = this.uuid();
     this.globalCallbacks = options.callbacks || {};
+    this.currentNode = null;
 
     // array of {key: '', value: ''}
     if (options.values) {
@@ -42,18 +43,13 @@ var Tribute = function () {
       });
     }
   }, {
-    key: 'attach',
-    value: function attach(element) {
-      this.init(element);
-    }
-  }, {
     key: 'uuid',
     value: function uuid() {
       return 'trbt' + (+new Date() + ++this.expando);
     }
   }, {
-    key: 'init',
-    value: function init(element) {
+    key: 'attach',
+    value: function attach(element) {
       element.setAttribute('data-tribute', this.uuid());
       this.ensureEditable(element);
       this.events.bind(element);
@@ -88,9 +84,9 @@ var Tribute = function () {
 
       ul.innerHTML = '';
 
-      collectionItem.values.forEach(function (item) {
+      collectionItem.values.forEach(function (item, index) {
         var li = document.createElement('li');
-        li.setAttribute('data-key', item.key);
+        li.setAttribute('data-index', index);
         li.innerHTML = item.value;
         ul.appendChild(li);
       });
@@ -149,10 +145,10 @@ var TributeEvents = function () {
       return Object.assign({}, this.tribute.globalCallbacks, {
         triggerChar: function triggerChar(e, el, trigger) {
           var pos = _this.tribute.range.position(el);
-          var prevCode = parseInt(el.innerText.charCodeAt(pos - 1));
+          var prevCode = el.innerText.charCodeAt(pos - 1);
 
-          var collectionItem = _this.tribute.collection.find(function (i) {
-            return i.trigger = trigger;
+          var collectionItem = _this.tribute.collection.find(function (item) {
+            return item.trigger = trigger;
           });
 
           // If space or the beginning of the line
@@ -204,16 +200,20 @@ var TributeRange = function () {
       var caretPos = 0,
           sel = undefined,
           range = undefined;
+
       if (window.getSelection) {
         sel = window.getSelection();
+
         if (sel.rangeCount) {
           range = sel.getRangeAt(0);
+
           if (range.commonAncestorContainer.parentNode == node) {
             caretPos = range.endOffset;
           }
         }
       } else if (document.selection && document.selection.createRange) {
         range = document.selection.createRange();
+
         if (range.parentElement() == node) {
           var tempEl = document.createElement("span");
           node.insertBefore(tempEl, node.firstChild);

@@ -3,6 +3,7 @@ class Tribute {
     this.expando = 0
     this.instance = this.uuid()
     this.globalCallbacks = options.callbacks || {}
+    this.currentNode = null
 
     // array of {key: '', value: ''}
     if (options.values) {
@@ -39,15 +40,11 @@ class Tribute {
     })
   }
 
-  attach(element) {
-    this.init(element)
-  }
-
   uuid() {
     return `trbt${(+ new Date()) + (++this.expando)}`
   }
 
-  init(element) {
+  attach(element) {
     element.setAttribute('data-tribute', this.uuid())
     this.ensureEditable(element)
     this.events.bind(element)
@@ -80,9 +77,9 @@ class Tribute {
 
     ul.innerHTML = '';
 
-    collectionItem.values.forEach(item => {
+    collectionItem.values.forEach((item, index) => {
       let li = document.createElement('li')
-      li.setAttribute('data-key', item.key)
+      li.setAttribute('data-index', index)
       li.innerHTML = item.value
       ul.appendChild(li)
     })
@@ -135,10 +132,10 @@ class TributeEvents {
     return Object.assign({}, this.tribute.globalCallbacks, {
       triggerChar: (e, el, trigger) => {
         let pos = this.tribute.range.position(el)
-        let prevCode = parseInt(el.innerText.charCodeAt(pos - 1))
+        let prevCode = el.innerText.charCodeAt(pos - 1)
 
-        let collectionItem = this.tribute.collection.find(i => {
-          return i.trigger = trigger
+        let collectionItem = this.tribute.collection.find(item => {
+          return item.trigger = trigger
         })
 
         // If space or the beginning of the line
@@ -177,26 +174,30 @@ class TributeRange {
 
   position(node) {
     let caretPos = 0, sel, range;
+
     if (window.getSelection) {
-      sel = window.getSelection();
+      sel = window.getSelection()
+
       if (sel.rangeCount) {
-        range = sel.getRangeAt(0);
+        range = sel.getRangeAt(0)
+
         if (range.commonAncestorContainer.parentNode == node) {
-          caretPos = range.endOffset;
+          caretPos = range.endOffset
         }
       }
     } else if (document.selection && document.selection.createRange) {
-      range = document.selection.createRange();
+      range = document.selection.createRange()
+
       if (range.parentElement() == node) {
-        var tempEl = document.createElement("span");
-        node.insertBefore(tempEl, node.firstChild);
-        var tempRange = range.duplicate();
-        tempRange.moveToElementText(tempEl);
-        tempRange.setEndPoint("EndToEnd", range);
-        caretPos = tempRange.text.length;
+        let tempEl = document.createElement("span")
+        node.insertBefore(tempEl, node.firstChild)
+        let tempRange = range.duplicate()
+        tempRange.moveToElementText(tempEl)
+        tempRange.setEndPoint("EndToEnd", range)
+        caretPos = tempRange.text.length
       }
     }
-    return caretPos;
+    return caretPos
   }
 }
 
