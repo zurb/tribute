@@ -95,6 +95,14 @@ class Tribute {
     this.range.positionMenuAtCaret()
   }
 
+  hideMenu() {
+    if (this.menu) {
+      this.menu.style.cssText = 'display: none;'
+
+      this.current = {}
+    }
+  }
+
 }
 
 class TributeMenuEvents {
@@ -107,6 +115,7 @@ class TributeMenuEvents {
   bind(menu) {
     menu.addEventListener('keydown',
       this.tribute.events.keydown.bind(this.menu, this), false)
+    document.addEventListener('click', this.tribute.events.click.bind(null, this), false)
   }
 }
 
@@ -163,6 +172,16 @@ class TributeEvents {
         instance.callbacks()[o.value.toLowerCase()](event, element)
       }
     })
+  }
+
+  click(instance, event) {
+    let tribute = instance.tribute
+    if (tribute.menu && tribute.menu.contains(event.target)) {
+      console.log('select item.')
+    } else if (instance.tribute.current.element) {
+      instance.tribute.hideMenu()
+      console.log('hide menu')
+    }
   }
 
   // Google chrome retardedness
@@ -231,7 +250,7 @@ class TributeEvents {
       down: (e, el) => {
         // navigate down ul
         console.log('down:', this.tribute, e, el)
-      },
+      }
     })
   }
 
