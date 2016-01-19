@@ -217,9 +217,3 @@ var TributeRange = function () {
 
   return TributeRange;
 }();
-
-var tribute = new Tribute({
-  values: [{ key: 'jordan@zurb.com', value: 'Jordan Humphreys' }, { key: 'sirwalterriley@zurb.com', value: 'Sir Walter Riley' }]
-});
-
-tribute.attach(document.getElementById('test'));
