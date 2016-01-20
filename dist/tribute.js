@@ -87,6 +87,7 @@ var Tribute = function () {
   }, {
     key: 'showMenuFor',
     value: function showMenuFor(element, collectionItem) {
+      var items = undefined;
       // create the menu if it doesn't exist.
       if (!this.menu) {
         this.menu = this.createMenu();
@@ -97,10 +98,16 @@ var Tribute = function () {
 
       ul.innerHTML = '';
 
-      this.current.collection.values.forEach(function (item, index) {
+      items = this.search.filter(this.current.mentionText, this.current.collection.values, {
+        pre: '<span>', post: '</span>', extract: function (el) {
+          return el[this.current.collection.lookup];
+        }.bind(this)
+      });
+
+      items.forEach(function (item, index) {
         var li = document.createElement('li');
         li.setAttribute('data-index', index);
-        li.innerHTML = item.value;
+        li.innerHTML = item.string;
         ul.appendChild(li);
       });
 
@@ -230,6 +237,7 @@ var TributeEvents = function () {
 
       if (info) {
         this.tribute.current.selectedPath = info.mentionSelectedPath;
+        this.tribute.current.mentionText = info.mentionText;
         this.tribute.current.selectedOffset = info.mentionSelectedOffset;
       }
     }
@@ -801,66 +809,107 @@ var TributeSearch = function () {
           currScore = 0,
           pre = opts.pre || '',
           post = opts.post || '',
-
-      // String to compare against. This might be a lowercase version of the
-      // raw string
-      compareString = opts.caseSensitive && string || string.toLowerCase(),
-          ch = undefined,
-          compareChar = undefined;
+          compareString = opts.caseSensitive && string || string.toLowerCase(),
+          ch,
+          compareChar;
 
       pattern = opts.caseSensitive && pattern || pattern.toLowerCase();
 
-      // For each character in the string, either add it to the result
-      // or wrap in template if it's the next string in the pattern
-      for (var idx = 0; idx < len; idx++) {
-        ch = string[idx];
-        if (compareString[idx] === pattern[patternIdx]) {
-          ch = pre + ch + post;
-          patternIdx += 1;
-
-          // consecutive characters should increase the score more than linearly
-          currScore += 1 + currScore;
-        } else {
-          currScore = 0;
-        }
-        totalScore += currScore;
-        result[result.length] = ch;
+      var patternCache = this.traverse(compareString, pattern, 0, 0, []);
+      if (!patternCache) {
+        return null;
       }
 
-      // return rendered string if we have a match for every char
-      if (patternIdx === pattern.length) {
+      return {
+        rendered: this.render(string, patternCache.cache, pre, post),
+        score: patternCache.score
+      };
+    }
+  }, {
+    key: 'traverse',
+    value: function traverse(string, pattern, stringIndex, patternIndex, patternCache) {
+      // if the pattern search at end
+      if (pattern.length === patternIndex) {
+
+        // calculate socre and copy the cache containing the indices where it's found
         return {
-          rendered: result.join(''),
-          score: totalScore
+          score: this.calculateScore(patternCache),
+          cache: patternCache.slice()
         };
       }
 
-      return null;
+      // if string at end or remaining pattern > remaining string
+      if (string.length === stringIndex || pattern.length - patternIndex > string.length - stringIndex) {
+        return undefined;
+      }
+
+      var c = pattern[patternIndex];
+      var index = string.indexOf(c, stringIndex);
+      var best, temp;
+
+      while (index > -1) {
+        patternCache.push(index);
+        temp = this.traverse(string, pattern, index + 1, patternIndex + 1, patternCache);
+        patternCache.pop();
+
+        // if downstream traversal failed, return best answer so far
+        if (!temp) {
+          return best;
+        }
+
+        if (!best || best.score < temp.score) {
+          best = temp;
+        }
+
+        index = string.indexOf(c, index + 1);
+      }
+
+      return best;
+    }
+  }, {
+    key: 'calculateScore',
+    value: function calculateScore(patternCache) {
+      var score = 0;
+      var temp = 1;
+      patternCache.forEach(function (index, i) {
+        if (i > 0) {
+          if (patternCache[i - 1] + 1 === index) {
+            temp += temp + 1;
+          } else {
+            temp = 1;
+          }
+        }
+
+        score += temp;
+      });
+      return score;
+    }
+  }, {
+    key: 'render',
+    value: function render(string, indices, pre, post) {
+      var rendered = string.substring(0, indices[0]);
+      indices.forEach(function (index, i) {
+        rendered += pre + string[index] + post + string.substring(index + 1, indices[i + 1] ? indices[i + 1] : string.length);
+      });
+      return rendered;
     }
   }, {
     key: 'filter',
     value: function filter(pattern, arr, opts) {
       var _this4 = this;
 
-      if (!arr || arr.length === 0) {
-        return [];
-      }
-
-      if (typeof pattern !== 'string') {
-        return arr;
-      }
-
       opts = opts || {};
-
       return arr.reduce(function (prev, element, idx, arr) {
         var str = element;
-
         if (opts.extract) {
           str = opts.extract(element);
+
+          if (!str) {
+            // take care of undefineds / nulls / etc.
+            str = '';
+          }
         }
-
         var rendered = _this4.match(pattern, str, opts);
-
         if (rendered != null) {
           prev[prev.length] = {
             string: rendered.rendered,
@@ -869,7 +918,6 @@ var TributeSearch = function () {
             original: element
           };
         }
-
         return prev;
       }, [])
 

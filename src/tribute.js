@@ -81,6 +81,7 @@ class Tribute {
   }
 
   showMenuFor(element, collectionItem) {
+    let items
     // create the menu if it doesn't exist.
     if (!this.menu) {
       this.menu = this.createMenu()
@@ -91,10 +92,14 @@ class Tribute {
 
     ul.innerHTML = ''
 
-    this.current.collection.values.forEach((item, index) => {
+    items = this.search.filter(this.current.mentionText, this.current.collection.values, {
+      pre: '<span>', post: '</span>', extract: function(el) { return el[this.current.collection.lookup]; }.bind(this)
+    })
+
+    items.forEach((item, index) => {
       let li = document.createElement('li')
       li.setAttribute('data-index', index)
-      li.innerHTML = item.value
+      li.innerHTML = item.string
       ul.appendChild(li)
     })
 
@@ -239,6 +244,7 @@ class TributeEvents {
 
     if (info) {
       this.tribute.current.selectedPath = info.mentionSelectedPath
+      this.tribute.current.mentionText = info.mentionText
       this.tribute.current.selectedOffset = info.mentionSelectedOffset
     }
   }
@@ -764,88 +770,127 @@ class TributeSearch {
   }
 
   match(pattern, string, opts) {
-    opts = opts || {}
-    let patternIdx = 0,
+    opts = opts || {};
+    var patternIdx = 0,
       result = [],
       len = string.length,
       totalScore = 0,
       currScore = 0,
       pre = opts.pre || '',
       post = opts.post || '',
-      // String to compare against. This might be a lowercase version of the
-      // raw string
       compareString = opts.caseSensitive && string || string.toLowerCase(),
       ch, compareChar
 
     pattern = opts.caseSensitive && pattern || pattern.toLowerCase()
 
-    // For each character in the string, either add it to the result
-    // or wrap in template if it's the next string in the pattern
-    for (var idx = 0; idx < len; idx++) {
-      ch = string[idx]
-      if (compareString[idx] === pattern[patternIdx]) {
-        ch = pre + ch + post
-        patternIdx += 1
-
-        // consecutive characters should increase the score more than linearly
-        currScore += 1 + currScore
-      } else {
-        currScore = 0
-      }
-      totalScore += currScore
-      result[result.length] = ch
+    var patternCache = this.traverse(compareString, pattern, 0, 0, [])
+    if (!patternCache) {
+      return null
     }
 
-    // return rendered string if we have a match for every char
-    if (patternIdx === pattern.length) {
-      return {
-        rendered: result.join(''),
-        score: totalScore
-      }
+    return {
+      rendered: this.render(string, patternCache.cache, pre, post),
+      score: patternCache.score
     }
-
-    return null
   }
 
-  filter(pattern, arr, opts) {
-    if (!arr || arr.length === 0) {
-      return []
+  traverse(string, pattern, stringIndex, patternIndex, patternCache) {
+    // if the pattern search at end
+    if (pattern.length === patternIndex) {
+
+      // calculate socre and copy the cache containing the indices where it's found
+      return {
+        score: this.calculateScore(patternCache),
+        cache: patternCache.slice()
+      };
     }
 
-    if (typeof pattern !== 'string') {
-      return arr
+    // if string at end or remaining pattern > remaining string
+    if (string.length === stringIndex || pattern.length - patternIndex > string.length - stringIndex) {
+      return undefined
     }
 
-    opts = opts || {}
+    var c = pattern[patternIndex]
+    var index = string.indexOf(c, stringIndex)
+    var best, temp
 
-    return arr.reduce((prev, element, idx, arr) => {
-      let str = element
+    while (index > -1) {
+      patternCache.push(index)
+      temp = this.traverse(string, pattern, index + 1, patternIndex + 1, patternCache)
+      patternCache.pop()
 
-      if (opts.extract) {
-        str = opts.extract(element)
+      // if downstream traversal failed, return best answer so far
+      if (!temp) {
+        return best
       }
 
-      let rendered = this.match(pattern, str, opts)
+      if (!best || best.score < temp.score) {
+        best = temp
+      }
 
-      if (rendered != null) {
-        prev[prev.length] = {
-          string: rendered.rendered,
-          score: rendered.score,
-          index: idx,
-          original: element
+      index = string.indexOf(c, index + 1)
+    }
+
+    return best;
+  }
+
+  calculateScore(patternCache) {
+    var score = 0
+    var temp = 1
+    patternCache.forEach((index, i) => {
+      if (i > 0) {
+        if (patternCache[i - 1] + 1 === index) {
+          temp += temp + 1
+        } else {
+          temp = 1
         }
       }
 
-      return prev
-    }, [])
+      score += temp
+    });
+    return score
+  }
+
+  render(string, indices, pre, post) {
+    var rendered = string.substring(0, indices[0]);
+    indices.forEach((index, i) => {
+      rendered += pre + string[index] + post +
+        string.substring(index + 1, (indices[i + 1]) ? indices[i + 1] : string.length)
+    });
+    return rendered;
+  }
+
+  filter(pattern, arr, opts) {
+    opts = opts || {}
+    return arr
+      .reduce((prev, element, idx, arr) => {
+        var str = element
+        if (opts.extract) {
+          str = opts.extract(element)
+
+          if (!str) { // take care of undefineds / nulls / etc.
+            str = ''
+          }
+        }
+        var rendered = this.match(pattern, str, opts)
+        if (rendered != null) {
+          prev[prev.length] = {
+            string: rendered.rendered,
+            score: rendered.score,
+            index: idx,
+            original: element
+          }
+        }
+        return prev
+      }, [])
 
     // Sort by score. Browsers are inconsistent wrt stable/unstable
     // sorting, so force stable by using the index in the case of tie.
     // See http://ofb.net/~sethml/is-sort-stable.html
     .sort((a, b) => {
-      let compare = b.score - a.score
+      var compare = b.score - a.score
       if (compare) return compare
       return a.index - b.index
-    })
+    });
   }
 }

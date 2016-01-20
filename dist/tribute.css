@@ -10,6 +10,10 @@
   background: #efefef;
 }
 
+.tribute-container span {
+  font-weight: bold;
+}
+
 .tribute-container .menu-highlighted {
   font-weight: bold;
 }
