@@ -71,18 +71,19 @@ class Tribute {
     }
   }
 
+  createMenu() {
+    let wrapper = document.createElement('div'),
+      ul = document.createElement('ul')
+
+    wrapper.className = 'tribute-container'
+    wrapper.appendChild(ul)
+    return document.body.appendChild(wrapper)
+  }
+
   showMenuFor(element, collectionItem) {
     // create the menu if it doesn't exist.
     if (!this.menu) {
-      this.menu = (() => {
-        let wrapper = document.createElement('div'),
-          ul = document.createElement('ul')
-
-        wrapper.className = 'tribute-container'
-        wrapper.appendChild(ul)
-        return document.body.appendChild(wrapper)
-      })()
-
+      this.menu = this.createMenu()
       this.menuEvents.bind(this.menu)
     }
 
@@ -90,14 +91,12 @@ class Tribute {
 
     ul.innerHTML = ''
 
-    collectionItem.values.forEach((item, index) => {
+    this.current.collection.values.forEach((item, index) => {
       let li = document.createElement('li')
       li.setAttribute('data-index', index)
       li.innerHTML = item.value
       ul.appendChild(li)
     })
-
-    this.current.collection = collectionItem
 
     this.range.positionMenuAtCaret()
 
@@ -228,6 +227,10 @@ class TributeEvents {
     if (typeof trigger !== 'undefined') {
       instance.callbacks().triggerChar(event, this, trigger)
     }
+
+    if (instance.tribute.current.trigger) {
+      instance.tribute.showMenuFor(this)
+    }
   }
 
   updateSelection(el) {
@@ -243,14 +246,16 @@ class TributeEvents {
   callbacks() {
     return {
       triggerChar: (e, el, trigger) => {
-        // if (!this.tribute.current.selectedPath) return
-        this.tribute.current.trigger = trigger
+        let tribute = this.tribute
+        tribute.current.trigger = trigger
 
-        let collectionItem = this.tribute.collection.find(item => {
+        let collectionItem = tribute.collection.find(item => {
           return item.trigger = trigger
         })
 
-        this.tribute.showMenuFor(el, collectionItem)
+        tribute.current.collection = collectionItem
+
+        tribute.showMenuFor(el)
       },
       space: (e, el) => {
         //cancel selection if active.

@@ -75,19 +75,21 @@ var Tribute = function () {
       }
     }
   }, {
+    key: 'createMenu',
+    value: function createMenu() {
+      var wrapper = document.createElement('div'),
+          ul = document.createElement('ul');
+
+      wrapper.className = 'tribute-container';
+      wrapper.appendChild(ul);
+      return document.body.appendChild(wrapper);
+    }
+  }, {
     key: 'showMenuFor',
     value: function showMenuFor(element, collectionItem) {
       // create the menu if it doesn't exist.
       if (!this.menu) {
-        this.menu = function () {
-          var wrapper = document.createElement('div'),
-              ul = document.createElement('ul');
-
-          wrapper.className = 'tribute-container';
-          wrapper.appendChild(ul);
-          return document.body.appendChild(wrapper);
-        }();
-
+        this.menu = this.createMenu();
         this.menuEvents.bind(this.menu);
       }
 
@@ -95,14 +97,12 @@ var Tribute = function () {
 
       ul.innerHTML = '';
 
-      collectionItem.values.forEach(function (item, index) {
+      this.current.collection.values.forEach(function (item, index) {
         var li = document.createElement('li');
         li.setAttribute('data-index', index);
         li.innerHTML = item.value;
         ul.appendChild(li);
       });
-
-      this.current.collection = collectionItem;
 
       this.range.positionMenuAtCaret();
     }
@@ -217,6 +217,10 @@ var TributeEvents = function () {
       if (typeof trigger !== 'undefined') {
         instance.callbacks().triggerChar(event, this, trigger);
       }
+
+      if (instance.tribute.current.trigger) {
+        instance.tribute.showMenuFor(this);
+      }
     }
   }, {
     key: 'updateSelection',
@@ -236,14 +240,16 @@ var TributeEvents = function () {
 
       return {
         triggerChar: function triggerChar(e, el, trigger) {
-          // if (!this.tribute.current.selectedPath) return
-          _this.tribute.current.trigger = trigger;
+          var tribute = _this.tribute;
+          tribute.current.trigger = trigger;
 
-          var collectionItem = _this.tribute.collection.find(function (item) {
+          var collectionItem = tribute.collection.find(function (item) {
             return item.trigger = trigger;
           });
 
-          _this.tribute.showMenuFor(el, collectionItem);
+          tribute.current.collection = collectionItem;
+
+          tribute.showMenuFor(el);
         },
         space: function space(e, el) {
           //cancel selection if active.
