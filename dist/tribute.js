@@ -1,5 +1,7 @@
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -40,6 +42,7 @@ var Tribute = function () {
     new TributeRange(this);
     new TributeEvents(this);
     new TributeMenuEvents(this);
+    new TributeSearch(this);
   }
 
   _createClass(Tribute, [{
@@ -292,6 +295,7 @@ var TributeEvents = function () {
     key: 'unescape',
     value: function unescape(str) {
       var r = /\\u([\d\w]{4})/gi;
+
       return str.replace(r, function (match, grp) {
         return String.fromCharCode(parseInt(grp, 16));
       });
@@ -346,6 +350,77 @@ var TributeRange = function () {
         }
     }
   }, {
+    key: 'selectElement',
+    value: function selectElement(targetElement, path, offset) {
+      var range = undefined;
+      var elem = targetElement;
+
+      if (path) {
+        for (var i = 0; i < path.length; i++) {
+          elem = elem.childNodes[path[i]];
+          if (elem === undefined) {
+            return;
+          }
+          while (elem.length < offset) {
+            offset -= elem.length;
+            elem = elem.nextSibling;
+          }
+          if (elem.childNodes.length === 0 && !elem.length) {
+            elem = elem.previousSibling;
+          }
+        }
+      }
+      var sel = this.getWindowSelection();
+
+      range = document.createRange();
+      range.setStart(elem, offset);
+      range.setEnd(elem, offset);
+      range.collapse(true);
+
+      try {
+        sel.removeAllRanges();
+      } catch (error) {}
+
+      sel.addRange(range);
+      targetElement.focus();
+    }
+  }, {
+    key: 'resetSelection',
+    value: function resetSelection(targetElement, path, offset) {
+      var nodeName = targetElement.nodeName;
+
+      if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {
+        if (targetElement !== document.activeElement) {
+          targetElement.focus();
+        }
+      } else {
+        this.selectElement(targetElement, path, offset);
+      }
+    }
+  }, {
+    key: 'replaceTriggerText',
+    value: function replaceTriggerText(targetElement, path, offset, triggerCharSet, text, requireLeadingSpace, hasTrailingSpace) {
+      this.resetSelection(targetElement, path, offset);
+
+      var mentionInfo = this.getTriggerInfo(triggerCharSet, requireLeadingSpace, true, hasTrailingSpace);
+
+      if (mentionInfo !== undefined) {
+        if (!this.isContentEditable()) {
+          var myField = document.activeElement;
+          text += ' ';
+          var startPos = mentionInfo.mentionPosition;
+          var endPos = mentionInfo.mentionPosition + mentionInfo.mentionText.length + 1;
+          myField.value = myField.value.substring(0, startPos) + text + myField.value.substring(endPos, myField.value.length);
+          myField.selectionStart = startPos + text.length;
+          myField.selectionEnd = startPos + text.length;
+        } else {
+          // add a space to the end of the pasted text
+          text += '\xA0';
+          pasteHtml(ctx, text, mentionInfo.mentionPosition, mentionInfo.mentionPosition + mentionInfo.mentionText.length + 1);
+        }
+      }
+    }
+  }, {
     key: 'getWindowSelection',
     value: function getWindowSelection() {
       return window.getSelection();
@@ -356,8 +431,10 @@ var TributeRange = function () {
       if (element.parentNode === null) {
         return 0;
       }
+
       for (var i = 0; i < element.parentNode.childNodes.length; i++) {
         var node = element.parentNode.childNodes[i];
+
         if (node === element) {
           return i;
         }
@@ -370,9 +447,10 @@ var TributeRange = function () {
       var sel = this.getWindowSelection();
       var selected = sel.anchorNode;
       var path = [];
-      var offset;
+      var offset = undefined;
+
       if (selected != null) {
-        var i;
+        var i = undefined;
         var ce = selected.contentEditable;
         while (selected !== null && ce !== 'true') {
           i = this.getNodePositionInParent(selected);
@@ -385,6 +463,7 @@ var TributeRange = function () {
         path.reverse();
         // getRangeAt may not exist, need alternative
         offset = sel.getRangeAt(0).startOffset;
+
         return {
           selected: selected,
           path: path,
@@ -396,13 +475,15 @@ var TributeRange = function () {
     key: 'getTextPrecedingCurrentSelection',
     value: function getTextPrecedingCurrentSelection() {
       var context = this.tribute.current;
-      var text;
+      var text = undefined;
+
       if (!this.isContentEditable(context.element)) {
         var textComponent = document.activeElement;
         var startPos = textComponent.selectionStart;
         text = textComponent.value.substring(0, startPos);
       } else {
         var selectedElem = this.getWindowSelection().anchorNode;
+
         if (selectedElem != null) {
           var workingNodeContent = selectedElem.textContent;
           var selectStartOffset = this.getWindowSelection().getRangeAt(0).startOffset;
@@ -417,13 +498,19 @@ var TributeRange = function () {
   }, {
     key: 'getTriggerInfo',
     value: function getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace) {
+      var _this2 = this;
+
       var ctx = this.tribute.current;
-      var selected, path, offset;
+      var selected = undefined,
+          path = undefined,
+          offset = undefined;
+
       if (!this.isContentEditable(ctx.element)) {
         selected = document.activeElement;
       } else {
         // content editable
         var selectionInfo = this.getContentEditableSelectedPath();
+
         if (selectionInfo) {
           selected = selectionInfo.selected;
           path = selectionInfo.path;
@@ -434,36 +521,44 @@ var TributeRange = function () {
       var effectiveRange = this.getTextPrecedingCurrentSelection();
 
       if (effectiveRange !== undefined && effectiveRange !== null) {
-        var mostRecentTriggerCharPos = -1;
-        var triggerChar;
-        this.tribute.triggers().forEach(function (c) {
-          var idx = effectiveRange.lastIndexOf(c);
-          if (idx > mostRecentTriggerCharPos) {
-            mostRecentTriggerCharPos = idx;
-            triggerChar = c;
-          }
-        });
+        var _ret = function () {
+          var mostRecentTriggerCharPos = -1;
+          var triggerChar = undefined;
 
-        if (mostRecentTriggerCharPos >= 0 && (mostRecentTriggerCharPos === 0 || !requireLeadingSpace || /[\xA0\s]/g.test(effectiveRange.substring(mostRecentTriggerCharPos - 1, mostRecentTriggerCharPos)))) {
-          var currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + 1, effectiveRange.length);
+          _this2.tribute.triggers().forEach(function (c) {
+            var idx = effectiveRange.lastIndexOf(c);
 
-          triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + 1);
-          var firstSnippetChar = currentTriggerSnippet.substring(0, 1);
-          var leadingSpace = currentTriggerSnippet.length > 0 && (firstSnippetChar === ' ' || firstSnippetChar === '\xA0');
-          if (hasTrailingSpace) {
-            currentTriggerSnippet = currentTriggerSnippet.trim();
+            if (idx > mostRecentTriggerCharPos) {
+              mostRecentTriggerCharPos = idx;
+              triggerChar = c;
+            }
+          });
+
+          if (mostRecentTriggerCharPos >= 0 && (mostRecentTriggerCharPos === 0 || !requireLeadingSpace || /[\xA0\s]/g.test(effectiveRange.substring(mostRecentTriggerCharPos - 1, mostRecentTriggerCharPos)))) {
+            var currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + 1, effectiveRange.length);
+
+            triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + 1);
+            var firstSnippetChar = currentTriggerSnippet.substring(0, 1);
+            var leadingSpace = currentTriggerSnippet.length > 0 && (firstSnippetChar === ' ' || firstSnippetChar === '\xA0');
+            if (hasTrailingSpace) {
+              currentTriggerSnippet = currentTriggerSnippet.trim();
+            }
+            if (!leadingSpace && (menuAlreadyActive || !/[\xA0\s]/g.test(currentTriggerSnippet))) {
+              return {
+                v: {
+                  mentionPosition: mostRecentTriggerCharPos,
+                  mentionText: currentTriggerSnippet,
+                  mentionSelectedElement: selected,
+                  mentionSelectedPath: path,
+                  mentionSelectedOffset: offset,
+                  mentionTriggerChar: triggerChar
+                }
+              };
+            }
           }
-          if (!leadingSpace && (menuAlreadyActive || !/[\xA0\s]/g.test(currentTriggerSnippet))) {
-            return {
-              mentionPosition: mostRecentTriggerCharPos,
-              mentionText: currentTriggerSnippet,
-              mentionSelectedElement: selected,
-              mentionSelectedPath: path,
-              mentionSelectedOffset: offset,
-              mentionTriggerChar: triggerChar
-            };
-          }
-        }
+        }();
+
+        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
       }
     }
   }, {
@@ -551,14 +646,13 @@ var TributeRange = function () {
     key: 'getContentEditableCaretPosition',
     value: function getContentEditableCaretPosition(selectedNodePosition) {
       var markerTextChar = '﻿';
-      var markerEl,
+      var markerEl = undefined,
           markerId = 'sel_' + new Date().getTime() + '_' + Math.random().toString().substr(2);
-
-      var range;
+      var range = undefined;
       var sel = this.getWindowSelection();
       var prevRange = sel.getRangeAt(0);
-      range = document.createRange();
 
+      range = document.createRange();
       range.setStart(sel.anchorNode, selectedNodePosition);
       range.setEnd(sel.anchorNode, selectedNodePosition);
 
@@ -588,7 +682,7 @@ var TributeRange = function () {
       // cheap hack in px - need to check styles relative to the element
       var reasonableBuffer = 20;
       var maxScrollDisplacement = 100;
-      var clientRect;
+      var clientRect = undefined;
       var e = elem[0];
 
       while (clientRect === undefined || clientRect.height === 0) {
@@ -626,4 +720,123 @@ var TributeRange = function () {
   }]);
 
   return TributeRange;
+}();
+
+var TributeSearch = function () {
+  function TributeSearch(tribute) {
+    _classCallCheck(this, TributeSearch);
+
+    this.tribute = tribute;
+    this.tribute.search = this;
+  }
+
+  _createClass(TributeSearch, [{
+    key: 'simpleFilter',
+    value: function simpleFilter(pattern, array) {
+      var _this3 = this;
+
+      return array.filter(function (string) {
+        return _this3.test(pattern, string);
+      });
+    }
+  }, {
+    key: 'test',
+    value: function test(pattern, string) {
+      return this.match(pattern, string) !== null;
+    }
+  }, {
+    key: 'match',
+    value: function match(pattern, string, opts) {
+      opts = opts || {};
+      var patternIdx = 0,
+          result = [],
+          len = string.length,
+          totalScore = 0,
+          currScore = 0,
+          pre = opts.pre || '',
+          post = opts.post || '',
+
+      // String to compare against. This might be a lowercase version of the
+      // raw string
+      compareString = opts.caseSensitive && string || string.toLowerCase(),
+          ch = undefined,
+          compareChar = undefined;
+
+      pattern = opts.caseSensitive && pattern || pattern.toLowerCase();
+
+      // For each character in the string, either add it to the result
+      // or wrap in template if it's the next string in the pattern
+      for (var idx = 0; idx < len; idx++) {
+        ch = string[idx];
+        if (compareString[idx] === pattern[patternIdx]) {
+          ch = pre + ch + post;
+          patternIdx += 1;
+
+          // consecutive characters should increase the score more than linearly
+          currScore += 1 + currScore;
+        } else {
+          currScore = 0;
+        }
+        totalScore += currScore;
+        result[result.length] = ch;
+      }
+
+      // return rendered string if we have a match for every char
+      if (patternIdx === pattern.length) {
+        return {
+          rendered: result.join(''),
+          score: totalScore
+        };
+      }
+
+      return null;
+    }
+  }, {
+    key: 'filter',
+    value: function filter(pattern, arr, opts) {
+      var _this4 = this;
+
+      if (!arr || arr.length === 0) {
+        return [];
+      }
+
+      if (typeof pattern !== 'string') {
+        return arr;
+      }
+
+      opts = opts || {};
+
+      return arr.reduce(function (prev, element, idx, arr) {
+        var str = element;
+
+        if (opts.extract) {
+          str = opts.extract(element);
+        }
+
+        var rendered = _this4.match(pattern, str, opts);
+
+        if (rendered != null) {
+          prev[prev.length] = {
+            string: rendered.rendered,
+            score: rendered.score,
+            index: idx,
+            original: element
+          };
+        }
+
+        return prev;
+      }, [])
+
+      // Sort by score. Browsers are inconsistent wrt stable/unstable
+      // sorting, so force stable by using the index in the case of tie.
+      // See http://ofb.net/~sethml/is-sort-stable.html
+      .sort(function (a, b) {
+        var compare = b.score - a.score;
+        if (compare) return compare;
+        return a.index - b.index;
+      });
+    }
+  }]);
+
+  return TributeSearch;
 }();

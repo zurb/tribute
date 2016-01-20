@@ -32,6 +32,7 @@ class Tribute {
     new TributeRange(this)
     new TributeEvents(this)
     new TributeMenuEvents(this)
+    new TributeSearch(this)
   }
 
   static defaultSelectCallback(item) {
@@ -117,7 +118,7 @@ class Tribute {
     let item = this.current.collection.values[index];
     let content = this.current.collection.selectCallback(item)
     console.log(content)
-    // call cb function that updates textContent
+      // call cb function that updates textContent
   }
 
 }
@@ -176,8 +177,9 @@ class TributeEvents {
 
   static unescape(str) {
     let r = /\\u([\d\w]{4})/gi
+
     return str.replace(r, (match, grp) => {
-        return String.fromCharCode(parseInt(grp, 16))
+      return String.fromCharCode(parseInt(grp, 16))
     })
   }
 
@@ -282,7 +284,8 @@ class TributeRange {
 
   positionMenuAtCaret() {
     // getTriggerInfo(menuAlreadyActive, hasTrailingSpace)
-    let context = this.tribute.current, coordinates
+    let context = this.tribute.current,
+      coordinates
     let info = this.getTriggerInfo(false, false, true)
 
     if (info !== undefined) {
@@ -308,6 +311,76 @@ class TributeRange {
     }
   }
 
+  selectElement(targetElement, path, offset) {
+    let range
+    let elem = targetElement
+
+    if (path) {
+      for (var i = 0; i < path.length; i++) {
+        elem = elem.childNodes[path[i]]
+        if (elem === undefined) {
+          return
+        }
+        while (elem.length < offset) {
+          offset -= elem.length
+          elem = elem.nextSibling
+        }
+        if (elem.childNodes.length === 0 && !elem.length) {
+          elem = elem.previousSibling
+        }
+      }
+    }
+    let sel = this.getWindowSelection()
+
+    range = document.createRange()
+    range.setStart(elem, offset)
+    range.setEnd(elem, offset)
+    range.collapse(true)
+
+    try {
+      sel.removeAllRanges()
+    } catch (error) {}
+
+    sel.addRange(range)
+    targetElement.focus()
+  }
+
+  resetSelection(targetElement, path, offset) {
+    let nodeName = targetElement.nodeName
+
+    if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {
+      if (targetElement !== document.activeElement) {
+        targetElement.focus()
+      }
+    } else {
+      this.selectElement(targetElement, path, offset)
+    }
+  }
+
+  replaceTriggerText(targetElement, path, offset, triggerCharSet, text, requireLeadingSpace, hasTrailingSpace) {
+    this.resetSelection(targetElement, path, offset)
+
+    let mentionInfo = this.getTriggerInfo(triggerCharSet, requireLeadingSpace, true, hasTrailingSpace);
+
+    if (mentionInfo !== undefined) {
+      if (!this.isContentEditable()) {
+        let myField = document.activeElement
+        text += ' '
+        let startPos = mentionInfo.mentionPosition
+        let endPos = mentionInfo.mentionPosition + mentionInfo.mentionText.length + 1
+        myField.value = myField.value.substring(0, startPos) + text +
+          myField.value.substring(endPos, myField.value.length)
+        myField.selectionStart = startPos + text.length
+        myField.selectionEnd = startPos + text.length
+      } else {
+        // add a space to the end of the pasted text
+        text += '\xA0'
+        pasteHtml(ctx, text, mentionInfo.mentionPosition,
+          mentionInfo.mentionPosition + mentionInfo.mentionText.length + 1)
+      }
+    }
+  }
+
   getWindowSelection() {
     return window.getSelection()
   }
@@ -316,8 +389,10 @@ class TributeRange {
     if (element.parentNode === null) {
       return 0
     }
+
     for (var i = 0; i < element.parentNode.childNodes.length; i++) {
-      var node = element.parentNode.childNodes[i]
+      let node = element.parentNode.childNodes[i]
+
       if (node === element) {
         return i
       }
@@ -326,13 +401,14 @@ class TributeRange {
 
   getContentEditableSelectedPath() {
     // content editable
-    var sel = this.getWindowSelection()
-    var selected = sel.anchorNode
-    var path = []
-    var offset
+    let sel = this.getWindowSelection()
+    let selected = sel.anchorNode
+    let path = []
+    let offset
+
     if (selected != null) {
-      var i
-      var ce = selected.contentEditable
+      let i
+      let ce = selected.contentEditable
       while (selected !== null && ce !== 'true') {
         i = this.getNodePositionInParent(selected)
         path.push(i)
@@ -342,8 +418,9 @@ class TributeRange {
         }
       }
       path.reverse()
-      // getRangeAt may not exist, need alternative
+        // getRangeAt may not exist, need alternative
       offset = sel.getRangeAt(0).startOffset
+
       return {
         selected: selected,
         path: path,
@@ -354,17 +431,19 @@ class TributeRange {
 
   getTextPrecedingCurrentSelection() {
     let context = this.tribute.current
-    var text
+    let text
+
     if (!this.isContentEditable(context.element)) {
-      var textComponent = document.activeElement
-      var startPos = textComponent.selectionStart
+      let textComponent = document.activeElement
+      let startPos = textComponent.selectionStart
       text = textComponent.value.substring(0, startPos)
 
     } else {
-      var selectedElem = this.getWindowSelection().anchorNode
+      let selectedElem = this.getWindowSelection().anchorNode
+
       if (selectedElem != null) {
-        var workingNodeContent = selectedElem.textContent
-        var selectStartOffset = this.getWindowSelection().getRangeAt(0).startOffset
+        let workingNodeContent = selectedElem.textContent
+        let selectStartOffset = this.getWindowSelection().getRangeAt(0).startOffset
 
         if (selectStartOffset >= 0) {
           text = workingNodeContent.substring(0, selectStartOffset)
@@ -376,12 +455,14 @@ class TributeRange {
 
   getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace) {
     let ctx = this.tribute.current
-    var selected, path, offset
+    let selected, path, offset
+
     if (!this.isContentEditable(ctx.element)) {
       selected = document.activeElement
     } else {
       // content editable
-      var selectionInfo = this.getContentEditableSelectedPath()
+      let selectionInfo = this.getContentEditableSelectedPath()
+
       if (selectionInfo) {
         selected = selectionInfo.selected
         path = selectionInfo.path
@@ -389,13 +470,15 @@ class TributeRange {
       }
     }
 
-    var effectiveRange = this.getTextPrecedingCurrentSelection()
+    let effectiveRange = this.getTextPrecedingCurrentSelection()
 
     if (effectiveRange !== undefined && effectiveRange !== null) {
-      var mostRecentTriggerCharPos = -1
-      var triggerChar
+      let mostRecentTriggerCharPos = -1
+      let triggerChar
+
       this.tribute.triggers().forEach(c => {
-        var idx = effectiveRange.lastIndexOf(c)
+        let idx = effectiveRange.lastIndexOf(c)
+
         if (idx > mostRecentTriggerCharPos) {
           mostRecentTriggerCharPos = idx
           triggerChar = c
@@ -413,16 +496,16 @@ class TributeRange {
           )
         )
       ) {
-        var currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + 1,
+        let currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + 1,
           effectiveRange.length)
 
         triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + 1)
-        var firstSnippetChar = currentTriggerSnippet.substring(0, 1)
-        var leadingSpace = currentTriggerSnippet.length > 0 &&
+        let firstSnippetChar = currentTriggerSnippet.substring(0, 1)
+        let leadingSpace = currentTriggerSnippet.length > 0 &&
           (
             firstSnippetChar === ' ' ||
             firstSnippetChar === '\xA0'
-          );
+          )
         if (hasTrailingSpace) {
           currentTriggerSnippet = currentTriggerSnippet.trim()
         }
@@ -445,7 +528,7 @@ class TributeRange {
   }
 
   localToGlobalCoordinates(element, coordinates) {
-    var obj = element
+    let obj = element
     while (obj) {
       coordinates.left += obj.offsetLeft + obj.clientLeft
       coordinates.top += obj.offsetTop + obj.clientTop
@@ -464,7 +547,7 @@ class TributeRange {
   }
 
   getTextAreaOrInputUnderlinePosition(element, position) {
-    var properties = [
+    let properties = [
       'direction',
       'boxSizing',
       'width',
@@ -495,14 +578,14 @@ class TributeRange {
       'wordSpacing'
     ]
 
-    var isFirefox = (window.mozInnerScreenX !== null)
+    let isFirefox = (window.mozInnerScreenX !== null)
 
-    var div = document.createElement('div')
+    let div = document.createElement('div')
     div.id = 'input-textarea-caret-position-mirror-div'
     document.body.appendChild(div)
 
-    var style = div.style
-    var computed = window.getComputedStyle ? getComputedStyle(element) : element.currentStyle
+    let style = div.style
+    let computed = window.getComputedStyle ? getComputedStyle(element) : element.currentStyle
 
     style.whiteSpace = 'pre-wrap'
     if (element.nodeName !== 'INPUT') {
@@ -532,11 +615,11 @@ class TributeRange {
       div.textContent = div.textContent.replace(/\s/g, '\u00a0')
     }
 
-    var span = document.createElement('span');
+    let span = document.createElement('span');
     span.textContent = element.value.substring(position) || '.'
     div.appendChild(span)
 
-    var coordinates = {
+    let coordinates = {
       top: span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
       left: span.offsetLeft + parseInt(computed.borderLeftWidth)
     }
@@ -549,14 +632,13 @@ class TributeRange {
   }
 
   getContentEditableCaretPosition(selectedNodePosition) {
-    var markerTextChar = '\ufeff'
-    var markerEl, markerId = `sel_${new Date().getTime()}_${Math.random().toString().substr(2)}`
+    let markerTextChar = '\ufeff'
+    let markerEl, markerId = `sel_${new Date().getTime()}_${Math.random().toString().substr(2)}`
+    let range
+    let sel = this.getWindowSelection()
+    let prevRange = sel.getRangeAt(0)
 
-    var range
-    var sel = this.getWindowSelection()
-    var prevRange = sel.getRangeAt(0)
     range = document.createRange()
-
     range.setStart(sel.anchorNode, selectedNodePosition)
     range.setEnd(sel.anchorNode, selectedNodePosition)
 
@@ -570,7 +652,7 @@ class TributeRange {
     sel.removeAllRanges()
     sel.addRange(prevRange)
 
-    var coordinates = {
+    let coordinates = {
       left: 0,
       top: markerEl.offsetHeight
     }
@@ -583,10 +665,10 @@ class TributeRange {
 
   scrollIntoView(elem) {
     // cheap hack in px - need to check styles relative to the element
-    var reasonableBuffer = 20
-    var maxScrollDisplacement = 100
-    var clientRect
-    var e = elem[0]
+    let reasonableBuffer = 20
+    let maxScrollDisplacement = 100
+    let clientRect
+    let e = elem[0]
 
     while (clientRect === undefined || clientRect.height === 0) {
       clientRect = e.getBoundingClientRect()
@@ -599,19 +681,19 @@ class TributeRange {
       }
     }
 
-    var elemTop = clientRect.top
-    var elemBottom = elemTop + clientRect.height
+    let elemTop = clientRect.top
+    let elemBottom = elemTop + clientRect.height
 
     if (elemTop < 0) {
       window.scrollTo(0, window.pageYOffset + clientRect.top - reasonableBuffer)
     } else if (elemBottom > $window.innerHeight) {
-      var maxY = window.pageYOffset + clientRect.top - reasonableBuffer
+      let maxY = window.pageYOffset + clientRect.top - reasonableBuffer
 
       if (maxY - window.pageYOffset > maxScrollDisplacement) {
         maxY = window.pageYOffset + maxScrollDisplacement
       }
 
-      var targetY = $window.pageYOffset - (window.innerHeight - elemBottom)
+      let targetY = $window.pageYOffset - (window.innerHeight - elemBottom)
 
       if (targetY > maxY) {
         targetY = maxY
@@ -621,4 +703,107 @@ class TributeRange {
     }
   }
 
+}
+
+class TributeSearch {
+  constructor(tribute) {
+    this.tribute = tribute
+    this.tribute.search = this
+  }
+
+  simpleFilter(pattern, array) {
+    return array.filter(string => {
+      return this.test(pattern, string)
+    })
+  }
+
+  test(pattern, string) {
+    return this.match(pattern, string) !== null
+  }
+
+  match(pattern, string, opts) {
+    opts = opts || {}
+    let patternIdx = 0,
+      result = [],
+      len = string.length,
+      totalScore = 0,
+      currScore = 0,
+      pre = opts.pre || '',
+      post = opts.post || '',
+      // String to compare against. This might be a lowercase version of the
+      // raw string
+      compareString = opts.caseSensitive && string || string.toLowerCase(),
+      ch, compareChar
+
+    pattern = opts.caseSensitive && pattern || pattern.toLowerCase()
+
+    // For each character in the string, either add it to the result
+    // or wrap in template if it's the next string in the pattern
+    for (var idx = 0; idx < len; idx++) {
+      ch = string[idx]
+      if (compareString[idx] === pattern[patternIdx]) {
+        ch = pre + ch + post
+        patternIdx += 1
+
+        // consecutive characters should increase the score more than linearly
+        currScore += 1 + currScore
+      } else {
+        currScore = 0
+      }
+      totalScore += currScore
+      result[result.length] = ch
+    }
+
+    // return rendered string if we have a match for every char
+    if (patternIdx === pattern.length) {
+      return {
+        rendered: result.join(''),
+        score: totalScore
+      }
+    }
+
+    return null
+  }
+
+  filter(pattern, arr, opts) {
+    if (!arr || arr.length === 0) {
+      return []
+    }
+
+    if (typeof pattern !== 'string') {
+      return arr
+    }
+
+    opts = opts || {}
+
+    return arr.reduce((prev, element, idx, arr) => {
+      let str = element
+
+      if (opts.extract) {
+        str = opts.extract(element)
+      }
+
+      let rendered = this.match(pattern, str, opts)
+
+      if (rendered != null) {
+        prev[prev.length] = {
+          string: rendered.rendered,
+          score: rendered.score,
+          index: idx,
+          original: element
+        }
+      }
+
+      return prev
+    }, [])
+
+    // Sort by score. Browsers are inconsistent wrt stable/unstable
+    // sorting, so force stable by using the index in the case of tie.
+    // See http://ofb.net/~sethml/is-sort-stable.html
+    .sort((a, b) => {
+      let compare = b.score - a.score
+      if (compare) return compare
+      return a.index - b.index
+    })
+  }
 }
