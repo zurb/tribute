@@ -321,11 +321,7 @@ var TributeEvents = function () {
         },
         tab: function tab(e, el) {
           // choose first match
-          if (_this3.tribute.isActive) {
-            e.preventDefault();
-            _this3.tribute.selectItemAtIndex(0);
-            _this3.tribute.hideMenu();
-          }
+          _this3.callbacks().enter(e, el);
         },
         up: function up(e, el) {
           // navigate up ul

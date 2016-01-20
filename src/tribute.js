@@ -322,11 +322,7 @@ class TributeEvents {
       },
       tab: (e, el) => {
         // choose first match
-        if (this.tribute.isActive) {
-          e.preventDefault();
-          this.tribute.selectItemAtIndex(0)
-          this.tribute.hideMenu()
-        }
+        this.callbacks().enter(e, el)
       },
       up: (e, el) => {
         // navigate up ul
