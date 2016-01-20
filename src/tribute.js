@@ -87,7 +87,7 @@ class Tribute {
 
   showMenuFor(element, collectionItem) {
     let items
-      // create the menu if it doesn't exist.
+    // create the menu if it doesn't exist.
     if (!this.menu) {
       this.menu = this.createMenu()
       this.menuEvents.bind(this.menu)
@@ -169,7 +169,7 @@ class TributeMenuEvents {
   }
 
   debounce(func, wait, immediate) {
-    var timeout;
+    var timeout
     return function() {
       var context = this, args = arguments
       var later = () => {
@@ -309,7 +309,7 @@ class TributeEvents {
       enter: (e, el) => {
         // choose selection
         if (this.tribute.isActive) {
-          e.preventDefault();
+          e.preventDefault()
           this.tribute.selectItemAtIndex(this.tribute.menuSelected)
           this.tribute.hideMenu()
         }
@@ -384,9 +384,9 @@ class TributeRange {
     if (info !== undefined) {
       if (!this.isContentEditable(context.element)) {
         coordinates = this.getTextAreaOrInputUnderlinePosition(document.activeElement,
-          info.mentionPosition);
+          info.mentionPosition)
       } else {
-        coordinates = this.getContentEditableCaretPosition(info.mentionPosition);
+        coordinates = this.getContentEditableCaretPosition(info.mentionPosition)
       }
 
       // Move the button into place.
@@ -397,7 +397,7 @@ class TributeRange {
                                          display: block;`
 
       setTimeout(function() {
-        this.scrollIntoView(document.activeElement);
+        this.scrollIntoView(document.activeElement)
       }.bind(this), 0)
     } else {
       this.tribute.menu.style.cssText = 'display: none'
@@ -476,16 +476,16 @@ class TributeRange {
   }
 
   pasteHtml(html, startPos, endPos) {
-    var range, sel
+    let range, sel
     sel = this.getWindowSelection()
     range = document.createRange()
     range.setStart(sel.anchorNode, startPos)
     range.setEnd(sel.anchorNode, endPos)
     range.deleteContents()
 
-    var el = document.createElement('div')
+    let el = document.createElement('div')
     el.innerHTML = html
-    var frag = document.createDocumentFragment(),
+    let frag = document.createDocumentFragment(),
       node, lastNode
     while ((node = el.firstChild)) {
       lastNode = frag.appendChild(node)
@@ -651,12 +651,15 @@ class TributeRange {
 
   localToGlobalCoordinates(element, coordinates) {
     let obj = element
+
     while (obj) {
       coordinates.left += obj.offsetLeft + obj.clientLeft
       coordinates.top += obj.offsetTop + obj.clientTop
       obj = obj.offsetParent
     }
+
     obj = element
+
     while (obj !== document.body) {
       if (obj.scrollTop && obj.scrollTop > 0) {
         coordinates.top -= obj.scrollTop
@@ -731,13 +734,13 @@ class TributeRange {
       style.overflow = 'hidden'
     }
 
-    div.textContent = element.value.substring(0, position);
+    div.textContent = element.value.substring(0, position)
 
     if (element.nodeName === 'INPUT') {
       div.textContent = div.textContent.replace(/\s/g, '\u00a0')
     }
 
-    let span = document.createElement('span');
+    let span = document.createElement('span')
     span.textContent = element.value.substring(position) || '.'
     div.appendChild(span)
 
@@ -779,10 +782,10 @@ class TributeRange {
       top: markerEl.offsetHeight
     }
 
-    this.localToGlobalCoordinates(markerEl, coordinates);
+    this.localToGlobalCoordinates(markerEl, coordinates)
 
-    markerEl.parentNode.removeChild(markerEl);
-    return coordinates;
+    markerEl.parentNode.removeChild(markerEl)
+    return coordinates
   }
 
   scrollIntoView(elem) {
@@ -844,20 +847,20 @@ class TributeSearch {
   }
 
   match(pattern, string, opts) {
-    opts = opts || {};
-    var patternIdx = 0,
-      result = [],
-      len = string.length,
-      totalScore = 0,
-      currScore = 0,
-      pre = opts.pre || '',
-      post = opts.post || '',
-      compareString = opts.caseSensitive && string || string.toLowerCase(),
-      ch, compareChar
+    opts = opts || {}
+    let patternIdx = 0,
+        result = [],
+        len = string.length,
+        totalScore = 0,
+        currScore = 0,
+        pre = opts.pre || '',
+        post = opts.post || '',
+        compareString = opts.caseSensitive && string || string.toLowerCase(),
+        ch, compareChar
 
     pattern = opts.caseSensitive && pattern || pattern.toLowerCase()
 
-    var patternCache = this.traverse(compareString, pattern, 0, 0, [])
+    let patternCache = this.traverse(compareString, pattern, 0, 0, [])
     if (!patternCache) {
       return null
     }
@@ -876,7 +879,7 @@ class TributeSearch {
       return {
         score: this.calculateScore(patternCache),
         cache: patternCache.slice()
-      };
+      }
     }
 
     // if string at end or remaining pattern > remaining string
@@ -884,9 +887,9 @@ class TributeSearch {
       return undefined
     }
 
-    var c = pattern[patternIndex]
-    var index = string.indexOf(c, stringIndex)
-    var best, temp
+    let c = pattern[patternIndex]
+    let index = string.indexOf(c, stringIndex)
+    let best, temp
 
     while (index > -1) {
       patternCache.push(index)
@@ -905,12 +908,13 @@ class TributeSearch {
       index = string.indexOf(c, index + 1)
     }
 
-    return best;
+    return best
   }
 
   calculateScore(patternCache) {
-    var score = 0
-    var temp = 1
+    let score = 0
+    let temp = 1
+
     patternCache.forEach((index, i) => {
       if (i > 0) {
         if (patternCache[i - 1] + 1 === index) {
@@ -921,24 +925,28 @@ class TributeSearch {
       }
 
       score += temp
-    });
+    })
+
     return score
   }
 
   render(string, indices, pre, post) {
-    var rendered = string.substring(0, indices[0]);
+    var rendered = string.substring(0, indices[0])
+
     indices.forEach((index, i) => {
       rendered += pre + string[index] + post +
         string.substring(index + 1, (indices[i + 1]) ? indices[i + 1] : string.length)
-    });
-    return rendered;
+    })
+
+    return rendered
   }
 
   filter(pattern, arr, opts) {
     opts = opts || {}
     return arr
       .reduce((prev, element, idx, arr) => {
-        var str = element
+        let str = element
+
         if (opts.extract) {
           str = opts.extract(element)
 
@@ -946,7 +954,9 @@ class TributeSearch {
             str = ''
           }
         }
-        var rendered = this.match(pattern, str, opts)
+
+        let rendered = this.match(pattern, str, opts)
+
         if (rendered != null) {
           prev[prev.length] = {
             string: rendered.rendered,
@@ -955,6 +965,7 @@ class TributeSearch {
             original: element
           }
         }
+
         return prev
       }, [])
 
@@ -962,9 +973,9 @@ class TributeSearch {
     // sorting, so force stable by using the index in the case of tie.
     // See http://ofb.net/~sethml/is-sort-stable.html
     .sort((a, b) => {
-      var compare = b.score - a.score
+      let compare = b.score - a.score
       if (compare) return compare
       return a.index - b.index
-    });
+    })
   }
 }

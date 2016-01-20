@@ -526,7 +526,8 @@ var TributeRange = function () {
   }, {
     key: 'pasteHtml',
     value: function pasteHtml(html, startPos, endPos) {
-      var range, sel;
+      var range = undefined,
+          sel = undefined;
       sel = this.getWindowSelection();
       range = document.createRange();
       range.setStart(sel.anchorNode, startPos);
@@ -536,8 +537,8 @@ var TributeRange = function () {
       var el = document.createElement('div');
       el.innerHTML = html;
       var frag = document.createDocumentFragment(),
-          node,
-          lastNode;
+          node = undefined,
+          lastNode = undefined;
       while (node = el.firstChild) {
         lastNode = frag.appendChild(node);
       }
@@ -703,12 +704,15 @@ var TributeRange = function () {
     key: 'localToGlobalCoordinates',
     value: function localToGlobalCoordinates(element, coordinates) {
       var obj = element;
+
       while (obj) {
         coordinates.left += obj.offsetLeft + obj.clientLeft;
         coordinates.top += obj.offsetTop + obj.clientTop;
         obj = obj.offsetParent;
       }
+
       obj = element;
+
       while (obj !== document.body) {
         if (obj.scrollTop && obj.scrollTop > 0) {
           coordinates.top -= obj.scrollTop;
@@ -889,8 +893,8 @@ var TributeSearch = function () {
           pre = opts.pre || '',
           post = opts.post || '',
           compareString = opts.caseSensitive && string || string.toLowerCase(),
-          ch,
-          compareChar;
+          ch = undefined,
+          compareChar = undefined;
 
       pattern = opts.caseSensitive && pattern || pattern.toLowerCase();
 
@@ -924,7 +928,8 @@ var TributeSearch = function () {
 
       var c = pattern[patternIndex];
       var index = string.indexOf(c, stringIndex);
-      var best, temp;
+      var best = undefined,
+          temp = undefined;
 
       while (index > -1) {
         patternCache.push(index);
@@ -950,6 +955,7 @@ var TributeSearch = function () {
     value: function calculateScore(patternCache) {
       var score = 0;
       var temp = 1;
+
       patternCache.forEach(function (index, i) {
         if (i > 0) {
           if (patternCache[i - 1] + 1 === index) {
@@ -961,15 +967,18 @@ var TributeSearch = function () {
 
         score += temp;
       });
+
       return score;
     }
   }, {
     key: 'render',
     value: function render(string, indices, pre, post) {
       var rendered = string.substring(0, indices[0]);
+
       indices.forEach(function (index, i) {
         rendered += pre + string[index] + post + string.substring(index + 1, indices[i + 1] ? indices[i + 1] : string.length);
       });
+
       return rendered;
     }
   }, {
@@ -980,6 +989,7 @@ var TributeSearch = function () {
       opts = opts || {};
       return arr.reduce(function (prev, element, idx, arr) {
         var str = element;
+
         if (opts.extract) {
           str = opts.extract(element);
 
@@ -988,7 +998,9 @@ var TributeSearch = function () {
             str = '';
           }
         }
+
         var rendered = _this6.match(pattern, str, opts);
+
         if (rendered != null) {
           prev[prev.length] = {
             string: rendered.rendered,
@@ -997,6 +1009,7 @@ var TributeSearch = function () {
             original: element
           };
         }
+
         return prev;
       }, [])
 
