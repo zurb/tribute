@@ -19,6 +19,10 @@
   padding: 5px 5px;
 }
 
+.tribute-container li.highlight {
+  background: #ddd;
+}
+
 .tribute-container span {
   font-weight: bold;
 }

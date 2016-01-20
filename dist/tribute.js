@@ -10,11 +10,11 @@ var Tribute = function () {
   function Tribute(options) {
     _classCallCheck(this, Tribute);
 
-    this.expando = 0;
+    this.expando = this.menuSelected = 0;
     this.instance = this.uuid();
     this.current = {};
+    this.isActive = false;
 
-    // array of {key: '', value: ''}
     if (options.values) {
       this.collection = [{
         // The symbol that starts the lookup
@@ -59,6 +59,11 @@ var Tribute = function () {
   }, {
     key: 'attach',
     value: function attach(element) {
+      if (element.hasAttribute('data-tribute')) {
+        console.warn(Error('tribute', 'already bound to ' + element.nodeName));
+        return;
+      }
+
       element.setAttribute('data-tribute', this.uuid());
       this.ensureEditable(element);
       this.events.bind(element);
@@ -87,6 +92,8 @@ var Tribute = function () {
   }, {
     key: 'showMenuFor',
     value: function showMenuFor(element, collectionItem) {
+      var _this = this;
+
       var items = undefined;
       // create the menu if it doesn't exist.
       if (!this.menu) {
@@ -94,19 +101,31 @@ var Tribute = function () {
         this.menuEvents.bind(this.menu);
       }
 
+      this.isActive = true;
+      this.menuSelected = 0;
+
       var ul = this.menu.querySelector('ul');
 
       ul.innerHTML = '';
-      if (!this.current.mentionText) this.current.mentionText = '';
+
+      if (!this.current.mentionText) {
+        this.current.mentionText = '';
+      }
+
       items = this.search.filter(this.current.mentionText, this.current.collection.values, {
         pre: '<span>', post: '</span>', extract: function (el) {
           return el[this.current.collection.lookup];
         }.bind(this)
       });
 
+      this.current.filteredItems = items;
+
       items.forEach(function (item, index) {
         var li = document.createElement('li');
         li.setAttribute('data-index', index);
+        if (_this.menuSelected === index) {
+          li.className = 'highlight';
+        }
         li.innerHTML = item.string;
         ul.appendChild(li);
       });
@@ -118,7 +137,8 @@ var Tribute = function () {
     value: function hideMenu() {
       if (this.menu) {
         this.menu.style.cssText = 'display: none;';
-
+        this.isActive = false;
+        this.menuSelected = 0;
         this.current = {};
       }
     }
@@ -244,11 +264,11 @@ var TributeEvents = function () {
   }, {
     key: 'callbacks',
     value: function callbacks() {
-      var _this = this;
+      var _this2 = this;
 
       return {
         triggerChar: function triggerChar(e, el, trigger) {
-          var tribute = _this.tribute;
+          var tribute = _this2.tribute;
           tribute.current.trigger = trigger;
 
           var collectionItem = tribute.collection.find(function (item) {
@@ -260,26 +280,64 @@ var TributeEvents = function () {
           tribute.showMenuFor(el);
         },
         enter: function enter(e, el) {
-          //choose selection
-          console.log('enter:', _this.tribute, e, el);
+          // choose selection
+          if (_this2.tribute.isActive) {
+            e.preventDefault();
+            _this2.tribute.selectItemAtIndex(_this2.tribute.menuSelected);
+            _this2.tribute.hideMenu();
+          }
         },
         escape: function escape(e, el) {
-          // cancel selection
-          console.log('escape:', _this.tribute, e, el);
+          _this2.tribute.hideMenu();
         },
         tab: function tab(e, el) {
           // choose first match
-          console.log('tab:', _this.tribute, e, el);
+          if (_this2.tribute.isActive) {
+            e.preventDefault();
+            _this2.tribute.selectItemAtIndex(0);
+            _this2.tribute.hideMenu();
+          }
         },
         up: function up(e, el) {
           // navigate up ul
-          console.log('up:', _this.tribute, e, el);
+          if (_this2.tribute.isActive) {
+            var count = _this2.tribute.current.filteredItems.length,
+                selected = _this2.tribute.menuSelected;
+
+            if (count > selected && selected > 0) {
+              _this2.tribute.menuSelected--;
+              _this2.setActiveLi();
+            }
+          }
         },
         down: function down(e, el) {
           // navigate down ul
-          console.log('down:', _this.tribute, e, el);
+          if (_this2.tribute.isActive) {
+            var count = _this2.tribute.current.filteredItems.length - 1,
+                selected = _this2.tribute.menuSelected;
+
+            if (count > _this2.tribute.menuSelected) {
+              _this2.tribute.menuSelected++;
+              _this2.setActiveLi();
+            }
+          }
         }
       };
+    }
+  }, {
+    key: 'setActiveLi',
+    value: function setActiveLi(index) {
+      var lis = this.tribute.menu.querySelectorAll('li'),
+          length = lis.length;
+
+      for (var i = 0; i < length; i++) {
+        var li = lis[i];
+        if (i === this.tribute.menuSelected) {
+          li.className = 'highlight';
+        } else {
+          li.className = '';
+        }
+      }
     }
   }], [{
     key: 'keys',
@@ -352,12 +410,12 @@ var TributeRange = function () {
         // Move the button into place.
         this.tribute.menu.style.cssText = 'top: ' + coordinates.top + 'px;\n                                         left: ' + coordinates.left + 'px;\n                                         position: absolute;\n                                         zIndex: 10000;\n                                         display: block;';
 
-        // setTimeout(() => {
-        //   this.scrollIntoView(context.menu);
-        // }.bind(this), 0)
+        setTimeout(function () {
+          this.scrollIntoView(document.activeElement);
+        }.bind(this), 0);
       } else {
-          this.tribute.menu.style.cssText = 'display: none';
-        }
+        this.tribute.menu.style.cssText = 'display: none';
+      }
     }
   }, {
     key: 'selectElement',
@@ -501,6 +559,7 @@ var TributeRange = function () {
           }
         }
         path.reverse();
+
         // getRangeAt may not exist, need alternative
         offset = sel.getRangeAt(0).startOffset;
 
@@ -538,7 +597,7 @@ var TributeRange = function () {
   }, {
     key: 'getTriggerInfo',
     value: function getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace) {
-      var _this2 = this;
+      var _this3 = this;
 
       var ctx = this.tribute.current;
       var selected = undefined,
@@ -565,7 +624,7 @@ var TributeRange = function () {
           var mostRecentTriggerCharPos = -1;
           var triggerChar = undefined;
 
-          _this2.tribute.triggers().forEach(function (c) {
+          _this3.tribute.triggers().forEach(function (c) {
             var idx = effectiveRange.lastIndexOf(c);
 
             if (idx > mostRecentTriggerCharPos) {
@@ -723,7 +782,7 @@ var TributeRange = function () {
       var reasonableBuffer = 20;
       var maxScrollDisplacement = 100;
       var clientRect = undefined;
-      var e = elem[0];
+      var e = elem;
 
       while (clientRect === undefined || clientRect.height === 0) {
         clientRect = e.getBoundingClientRect();
@@ -741,14 +800,14 @@ var TributeRange = function () {
 
       if (elemTop < 0) {
         window.scrollTo(0, window.pageYOffset + clientRect.top - reasonableBuffer);
-      } else if (elemBottom > $window.innerHeight) {
+      } else if (elemBottom > window.innerHeight) {
         var maxY = window.pageYOffset + clientRect.top - reasonableBuffer;
 
         if (maxY - window.pageYOffset > maxScrollDisplacement) {
           maxY = window.pageYOffset + maxScrollDisplacement;
         }
 
-        var targetY = $window.pageYOffset - (window.innerHeight - elemBottom);
+        var targetY = window.pageYOffset - (window.innerHeight - elemBottom);
 
         if (targetY > maxY) {
           targetY = maxY;
@@ -773,10 +832,10 @@ var TributeSearch = function () {
   _createClass(TributeSearch, [{
     key: 'simpleFilter',
     value: function simpleFilter(pattern, array) {
-      var _this3 = this;
+      var _this4 = this;
 
       return array.filter(function (string) {
-        return _this3.test(pattern, string);
+        return _this4.test(pattern, string);
       });
     }
   }, {
@@ -882,7 +941,7 @@ var TributeSearch = function () {
   }, {
     key: 'filter',
     value: function filter(pattern, arr, opts) {
-      var _this4 = this;
+      var _this5 = this;
 
       opts = opts || {};
       return arr.reduce(function (prev, element, idx, arr) {
@@ -895,7 +954,7 @@ var TributeSearch = function () {
             str = '';
           }
         }
-        var rendered = _this4.match(pattern, str, opts);
+        var rendered = _this5.match(pattern, str, opts);
         if (rendered != null) {
           prev[prev.length] = {
             string: rendered.rendered,

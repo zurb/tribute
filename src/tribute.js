@@ -1,10 +1,10 @@
 class Tribute {
   constructor(options) {
-    this.expando = 0
+    this.expando = this.menuSelected = 0
     this.instance = this.uuid()
     this.current = {}
+    this.isActive = false
 
-    // array of {key: '', value: ''}
     if (options.values) {
       this.collection = [{
         // The symbol that starts the lookup
@@ -56,6 +56,11 @@ class Tribute {
   }
 
   attach(element) {
+    if (element.hasAttribute('data-tribute')) {
+      console.warn(Error('tribute', 'already bound to ' + element.nodeName))
+      return
+    }
+
     element.setAttribute('data-tribute', this.uuid())
     this.ensureEditable(element)
     this.events.bind(element)
@@ -88,17 +93,31 @@ class Tribute {
       this.menuEvents.bind(this.menu)
     }
 
+    this.isActive = true
+    this.menuSelected = 0
+
     let ul = this.menu.querySelector('ul')
 
     ul.innerHTML = ''
-    if (!this.current.mentionText) this.current.mentionText = ''
+
+    if (!this.current.mentionText) {
+      this.current.mentionText = ''
+    }
+
     items = this.search.filter(this.current.mentionText, this.current.collection.values, {
-      pre: '<span>', post: '</span>', extract: function(el) { return el[this.current.collection.lookup]; }.bind(this)
+      pre: '<span>', post: '</span>', extract: function(el) {
+        return el[this.current.collection.lookup]
+      }.bind(this)
     })
+
+    this.current.filteredItems = items
 
     items.forEach((item, index) => {
       let li = document.createElement('li')
       li.setAttribute('data-index', index)
+      if (this.menuSelected === index) {
+        li.className = 'highlight'
+      }
       li.innerHTML = item.string
       ul.appendChild(li)
     })
@@ -110,13 +129,14 @@ class Tribute {
   hideMenu() {
     if (this.menu) {
       this.menu.style.cssText = 'display: none;'
-
+      this.isActive = false
+      this.menuSelected = 0
       this.current = {}
     }
   }
 
   selectItemAtIndex(index) {
-    let item = this.current.collection.values[index];
+    let item = this.current.collection.values[index]
     let content = this.current.collection.selectCallback(item)
 
     this.replaceText(content)
@@ -258,24 +278,61 @@ class TributeEvents {
         tribute.showMenuFor(el)
       },
       enter: (e, el) => {
-        //choose selection
-        console.log('enter:', this.tribute, e, el)
+        // choose selection
+        if (this.tribute.isActive) {
+          e.preventDefault();
+          this.tribute.selectItemAtIndex(this.tribute.menuSelected)
+          this.tribute.hideMenu()
+        }
       },
       escape: (e, el) => {
-        // cancel selection
-        console.log('escape:', this.tribute, e, el)
+        this.tribute.hideMenu()
       },
       tab: (e, el) => {
         // choose first match
-        console.log('tab:', this.tribute, e, el)
+        if (this.tribute.isActive) {
+          e.preventDefault();
+          this.tribute.selectItemAtIndex(0)
+          this.tribute.hideMenu()
+        }
       },
       up: (e, el) => {
         // navigate up ul
-        console.log('up:', this.tribute, e, el)
+        if (this.tribute.isActive) {
+          let count = this.tribute.current.filteredItems.length,
+              selected = this.tribute.menuSelected
+
+          if (count > selected && selected > 0) {
+            this.tribute.menuSelected--
+            this.setActiveLi()
+          }
+        }
       },
       down: (e, el) => {
         // navigate down ul
-        console.log('down:', this.tribute, e, el)
+        if (this.tribute.isActive) {
+          let count = this.tribute.current.filteredItems.length - 1,
+              selected = this.tribute.menuSelected
+
+          if (count > this.tribute.menuSelected) {
+            this.tribute.menuSelected++
+            this.setActiveLi()
+          }
+        }
+      }
+    }
+  }
+
+  setActiveLi(index) {
+    let lis = this.tribute.menu.querySelectorAll('li'),
+        length = lis.length
+
+    for (let i = 0; i < length; i++) {
+      let li = lis[i]
+      if (i === this.tribute.menuSelected) {
+        li.className = 'highlight'
+      } else {
+        li.className = ''
       }
     }
   }
@@ -309,9 +366,9 @@ class TributeRange {
                                          zIndex: 10000;
                                          display: block;`
 
-      // setTimeout(() => {
-      //   this.scrollIntoView(context.menu);
-      // }.bind(this), 0)
+      setTimeout(function () {
+        this.scrollIntoView(document.activeElement);
+      }.bind(this), 0)
     } else {
       this.tribute.menu.style.cssText = 'display: none'
     }
@@ -452,7 +509,8 @@ class TributeRange {
         }
       }
       path.reverse()
-        // getRangeAt may not exist, need alternative
+
+      // getRangeAt may not exist, need alternative
       offset = sel.getRangeAt(0).startOffset
 
       return {
@@ -702,7 +760,7 @@ class TributeRange {
     let reasonableBuffer = 20
     let maxScrollDisplacement = 100
     let clientRect
-    let e = elem[0]
+    let e = elem
 
     while (clientRect === undefined || clientRect.height === 0) {
       clientRect = e.getBoundingClientRect()
@@ -720,14 +778,14 @@ class TributeRange {
 
     if (elemTop < 0) {
       window.scrollTo(0, window.pageYOffset + clientRect.top - reasonableBuffer)
-    } else if (elemBottom > $window.innerHeight) {
+    } else if (elemBottom > window.innerHeight) {
       let maxY = window.pageYOffset + clientRect.top - reasonableBuffer
 
       if (maxY - window.pageYOffset > maxScrollDisplacement) {
         maxY = window.pageYOffset + maxScrollDisplacement
       }
 
-      let targetY = $window.pageYOffset - (window.innerHeight - elemBottom)
+      let targetY = window.pageYOffset - (window.innerHeight - elemBottom)
 
       if (targetY > maxY) {
         targetY = maxY
