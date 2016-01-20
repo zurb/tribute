@@ -228,14 +228,12 @@ var TributeEvents = function () {
         tribute.hideMenu();
       }
     }
-
-    // Google chrome retardedness
-
   }, {
     key: 'keyup',
     value: function keyup(instance, event) {
       var keyCode = TributeEvents.getKeyCode(event);
       if (isNaN(keyCode)) return;
+
       instance.updateSelection(this);
       var trigger = instance.tribute.triggers().find(function (trigger) {
         return trigger.charCodeAt(0) === keyCode;
@@ -373,10 +371,17 @@ var TributeEvents = function () {
         return String.fromCharCode(parseInt(grp, 16));
       });
     }
+
+    // Google chrome retardedness
+
   }, {
     key: 'getKeyCode',
     value: function getKeyCode(event) {
       var keyCode = undefined;
+
+      if (event.key) {
+        return event.key.charCodeAt(0);
+      }
 
       if (event.keyIdentifier) {
         return parseInt(event.keyIdentifier.substr(2), 16);

@@ -202,6 +202,21 @@ class TributeEvents {
     })
   }
 
+  // Google chrome retardedness
+  static getKeyCode(event) {
+    let keyCode
+
+    if (event.key) {
+      return event.key.charCodeAt(0)
+    }
+
+    if (event.keyIdentifier) {
+      return parseInt(event.keyIdentifier.substr(2), 16)
+    }
+
+    return event.keyCode
+  }
+
   keydown(instance, event) {
     let element = this
 
@@ -224,20 +239,10 @@ class TributeEvents {
     }
   }
 
-  // Google chrome retardedness
-  static getKeyCode(event) {
-    let keyCode
-
-    if (event.keyIdentifier) {
-      return parseInt(event.keyIdentifier.substr(2), 16)
-    }
-
-    return event.keyCode
-  }
-
   keyup(instance, event) {
     let keyCode = TributeEvents.getKeyCode(event)
     if (isNaN(keyCode)) return
+
     instance.updateSelection(this)
     let trigger = instance.tribute.triggers().find(trigger => {
       return trigger.charCodeAt(0) === keyCode
