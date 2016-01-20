@@ -72,7 +72,7 @@ class Tribute {
     }
   }
 
-  showMenuFor(element, collectionItem, info) {
+  showMenuFor(element, collectionItem) {
     // create the menu if it doesn't exist.
     if (!this.menu) {
       this.menu = (() => {
@@ -98,12 +98,7 @@ class Tribute {
       ul.appendChild(li)
     })
 
-    this.current = {
-      element: element,
-      collection: collectionItem,
-      selectedPath: info.mentionSelectedPath,
-      selectedOffset: info.mentionSelectedOffset
-    }
+    this.current.collection = collectionItem
 
     this.range.positionMenuAtCaret()
 
@@ -227,7 +222,7 @@ class TributeEvents {
   keyup(instance, event) {
     let keyCode = TributeEvents.getKeyCode(event)
     if (isNaN(keyCode)) return
-
+    instance.updateSelection(this)
     let trigger = instance.tribute.triggers().find(trigger => {
       return trigger.charCodeAt(0) === keyCode
     })
@@ -237,22 +232,24 @@ class TributeEvents {
     }
   }
 
+  updateSelection(el) {
+    this.tribute.current.element = el
+    let info = this.tribute.range.getTriggerInfo(false, false, true)
+    this.tribute.current.selectedPath = info.mentionSelectedPath
+    this.tribute.current.selectedOffset = info.mentionSelectedOffset
+  }
+
   callbacks() {
     return Object.assign({}, this.tribute.globalCallbacks, {
       triggerChar: (e, el, trigger) => {
-        this.tribute.current.element = el
-        let info = this.tribute.range.getTriggerInfo(false, false, true)
-        this.tribute.current.selectedPath = info.mentionSelectedPath
-        this.tribute.current.selectedOffset = info.mentionSelectedOffset
+        if (!this.tribute.current.selectedPath) return
         this.tribute.current.trigger = trigger
 
-        if (info !== undefined) {
-          let collectionItem = this.tribute.collection.find(item => {
-            return item.trigger = trigger
-          })
+        let collectionItem = this.tribute.collection.find(item => {
+          return item.trigger = trigger
+        })
 
-          this.tribute.showMenuFor(el, collectionItem, info)
-        }
+        this.tribute.showMenuFor(el, collectionItem)
       },
       space: (e, el) => {
         //cancel selection if active.
@@ -370,7 +367,6 @@ class TributeRange {
 
   replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace) {
     let context = this.tribute.current
-    console.log(context)
     this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
 
     let info = this.getTriggerInfo(requireLeadingSpace, true, hasTrailingSpace)
@@ -460,7 +456,7 @@ class TributeRange {
       path.reverse()
         // getRangeAt may not exist, need alternative
       offset = sel.getRangeAt(0).startOffset
-
+      console.log('offset', offset)
       return {
         selected: selected,
         path: path,

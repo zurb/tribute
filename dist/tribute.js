@@ -77,7 +77,7 @@ var Tribute = function () {
     }
   }, {
     key: 'showMenuFor',
-    value: function showMenuFor(element, collectionItem, info) {
+    value: function showMenuFor(element, collectionItem) {
       // create the menu if it doesn't exist.
       if (!this.menu) {
         this.menu = function () {
@@ -103,12 +103,7 @@ var Tribute = function () {
         ul.appendChild(li);
       });
 
-      this.current = {
-        element: element,
-        collection: collectionItem,
-        selectedPath: info.mentionSelectedPath,
-        selectedOffset: info.mentionSelectedOffset
-      };
+      this.current.collection = collectionItem;
 
       this.range.positionMenuAtCaret();
     }
@@ -216,7 +211,7 @@ var TributeEvents = function () {
     value: function keyup(instance, event) {
       var keyCode = TributeEvents.getKeyCode(event);
       if (isNaN(keyCode)) return;
-
+      instance.updateSelection(this);
       var trigger = instance.tribute.triggers().find(function (trigger) {
         return trigger.charCodeAt(0) === keyCode;
       });
@@ -226,25 +221,28 @@ var TributeEvents = function () {
       }
     }
   }, {
+    key: 'updateSelection',
+    value: function updateSelection(el) {
+      this.tribute.current.element = el;
+      var info = this.tribute.range.getTriggerInfo(false, false, true);
+      this.tribute.current.selectedPath = info.mentionSelectedPath;
+      this.tribute.current.selectedOffset = info.mentionSelectedOffset;
+    }
+  }, {
     key: 'callbacks',
     value: function callbacks() {
       var _this = this;
 
       return Object.assign({}, this.tribute.globalCallbacks, {
         triggerChar: function triggerChar(e, el, trigger) {
-          _this.tribute.current.element = el;
-          var info = _this.tribute.range.getTriggerInfo(false, false, true);
-          _this.tribute.current.selectedPath = info.mentionSelectedPath;
-          _this.tribute.current.selectedOffset = info.mentionSelectedOffset;
+          if (!_this.tribute.current.selectedPath) return;
           _this.tribute.current.trigger = trigger;
 
-          if (info !== undefined) {
-            var collectionItem = _this.tribute.collection.find(function (item) {
-              return item.trigger = trigger;
-            });
+          var collectionItem = _this.tribute.collection.find(function (item) {
+            return item.trigger = trigger;
+          });
 
-            _this.tribute.showMenuFor(el, collectionItem, info);
-          }
+          _this.tribute.showMenuFor(el, collectionItem);
         },
         space: function space(e, el) {
           //cancel selection if active.
@@ -412,7 +410,6 @@ var TributeRange = function () {
     key: 'replaceTriggerText',
     value: function replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace) {
       var context = this.tribute.current;
-      console.log(context);
       this.resetSelection(context.element, context.selectedPath, context.selectedOffset);
 
       var info = this.getTriggerInfo(requireLeadingSpace, true, hasTrailingSpace);
@@ -505,7 +502,7 @@ var TributeRange = function () {
         path.reverse();
         // getRangeAt may not exist, need alternative
         offset = sel.getRangeAt(0).startOffset;
-
+        console.log('offset', offset);
         return {
           selected: selected,
           path: path,
