@@ -309,8 +309,10 @@ var TributeEvents = function () {
           // choose selection
           if (_this3.tribute.isActive) {
             e.preventDefault();
-            _this3.tribute.selectItemAtIndex(_this3.tribute.menuSelected);
-            _this3.tribute.hideMenu();
+            setTimeout(function () {
+              _this3.tribute.selectItemAtIndex(_this3.tribute.menuSelected);
+              _this3.tribute.hideMenu();
+            }, 0);
           }
         },
         escape: function escape(e, el) {
