@@ -286,7 +286,10 @@ class TributeEvents {
         }
       },
       escape: (e, el) => {
-        this.tribute.hideMenu()
+        if (this.tribute.isActive) {
+          e.preventDefault()
+          this.tribute.hideMenu()
+        }
       },
       tab: (e, el) => {
         // choose first match
@@ -299,6 +302,7 @@ class TributeEvents {
       up: (e, el) => {
         // navigate up ul
         if (this.tribute.isActive) {
+          e.preventDefault()
           let count = this.tribute.current.filteredItems.length,
               selected = this.tribute.menuSelected
 
@@ -311,6 +315,7 @@ class TributeEvents {
       down: (e, el) => {
         // navigate down ul
         if (this.tribute.isActive) {
+          e.preventDefault()
           let count = this.tribute.current.filteredItems.length - 1,
               selected = this.tribute.menuSelected
 

@@ -288,7 +288,10 @@ var TributeEvents = function () {
           }
         },
         escape: function escape(e, el) {
-          _this2.tribute.hideMenu();
+          if (_this2.tribute.isActive) {
+            e.preventDefault();
+            _this2.tribute.hideMenu();
+          }
         },
         tab: function tab(e, el) {
           // choose first match
@@ -301,6 +304,7 @@ var TributeEvents = function () {
         up: function up(e, el) {
           // navigate up ul
           if (_this2.tribute.isActive) {
+            e.preventDefault();
             var count = _this2.tribute.current.filteredItems.length,
                 selected = _this2.tribute.menuSelected;
 
@@ -313,6 +317,7 @@ var TributeEvents = function () {
         down: function down(e, el) {
           // navigate down ul
           if (_this2.tribute.isActive) {
+            e.preventDefault();
             var count = _this2.tribute.current.filteredItems.length - 1,
                 selected = _this2.tribute.menuSelected;
 
