@@ -104,10 +104,6 @@ var Tribute = function () {
       this.isActive = true;
       this.menuSelected = 0;
 
-      var ul = this.menu.querySelector('ul');
-
-      ul.innerHTML = '';
-
       if (!this.current.mentionText) {
         this.current.mentionText = '';
       }
@@ -119,6 +115,10 @@ var Tribute = function () {
       });
 
       this.current.filteredItems = items;
+
+      var ul = this.menu.querySelector('ul');
+
+      ul.innerHTML = '';
 
       items.forEach(function (item, index) {
         var li = document.createElement('li');
@@ -208,9 +208,11 @@ var TributeEvents = function () {
     key: 'keydown',
     value: function keydown(instance, event) {
       var element = this;
+      instance.commandEvent = false;
 
       TributeEvents.keys().forEach(function (o) {
         if (o.key === event.keyCode) {
+          instance.commandEvent = true;
           instance.callbacks()[o.value.toLowerCase()](event, element);
         }
       });
@@ -243,7 +245,7 @@ var TributeEvents = function () {
         instance.callbacks().triggerChar(event, this, trigger);
       }
 
-      if (instance.tribute.current.trigger) {
+      if (instance.tribute.current.trigger && instance.commandEvent === false) {
         instance.tribute.showMenuFor(this);
       }
     }

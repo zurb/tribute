@@ -96,10 +96,6 @@ class Tribute {
     this.isActive = true
     this.menuSelected = 0
 
-    let ul = this.menu.querySelector('ul')
-
-    ul.innerHTML = ''
-
     if (!this.current.mentionText) {
       this.current.mentionText = ''
     }
@@ -111,6 +107,10 @@ class Tribute {
     })
 
     this.current.filteredItems = items
+
+    let ul = this.menu.querySelector('ul')
+
+    ul.innerHTML = ''
 
     items.forEach((item, index) => {
       let li = document.createElement('li')
@@ -219,9 +219,11 @@ class TributeEvents {
 
   keydown(instance, event) {
     let element = this
+    instance.commandEvent = false
 
     TributeEvents.keys().forEach(o => {
       if (o.key === event.keyCode) {
+        instance.commandEvent = true
         instance.callbacks()[o.value.toLowerCase()](event, element)
       }
     })
@@ -252,7 +254,7 @@ class TributeEvents {
       instance.callbacks().triggerChar(event, this, trigger)
     }
 
-    if (instance.tribute.current.trigger) {
+    if (instance.tribute.current.trigger && instance.commandEvent === false) {
       instance.tribute.showMenuFor(this)
     }
   }
