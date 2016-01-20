@@ -97,7 +97,7 @@ var Tribute = function () {
       var ul = this.menu.querySelector('ul');
 
       ul.innerHTML = '';
-
+      if (!this.current.mentionText) this.current.mentionText = '';
       items = this.search.filter(this.current.mentionText, this.current.collection.values, {
         pre: '<span>', post: '</span>', extract: function (el) {
           return el[this.current.collection.lookup];
@@ -259,10 +259,6 @@ var TributeEvents = function () {
 
           tribute.showMenuFor(el);
         },
-        space: function space(e, el) {
-          //cancel selection if active.
-          console.log('space:', _this.tribute, e, el);
-        },
         enter: function enter(e, el) {
           //choose selection
           console.log('enter:', _this.tribute, e, el);
@@ -270,10 +266,6 @@ var TributeEvents = function () {
         escape: function escape(e, el) {
           // cancel selection
           console.log('escape:', _this.tribute, e, el);
-        },
-        backspace: function backspace(e, el) {
-          // no idea
-          console.log('backspace:', _this.tribute, e, el);
         },
         tab: function tab(e, el) {
           // choose first match
@@ -293,9 +285,6 @@ var TributeEvents = function () {
     key: 'keys',
     value: function keys() {
       return [{
-        key: 8,
-        value: 'BACKSPACE'
-      }, {
         key: 9,
         value: 'TAB'
       }, {
@@ -304,9 +293,6 @@ var TributeEvents = function () {
       }, {
         key: 27,
         value: 'ESCAPE'
-      }, {
-        key: 32,
-        value: 'SPACE'
       }, {
         key: 38,
         value: 'UP'

@@ -7,7 +7,16 @@
   max-width: 500px;
   overflow: auto;
   display: block;
+}
+
+.tribute-container ul {
+  margin: 0;
+  margin-top: 2px;
   background: #efefef;
+}
+
+.tribute-container li {
+  padding: 5px 5px;
 }
 
 .tribute-container span {

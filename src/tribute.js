@@ -91,7 +91,7 @@ class Tribute {
     let ul = this.menu.querySelector('ul')
 
     ul.innerHTML = ''
-
+    if (!this.current.mentionText) this.current.mentionText = ''
     items = this.search.filter(this.current.mentionText, this.current.collection.values, {
       pre: '<span>', post: '</span>', extract: function(el) { return el[this.current.collection.lookup]; }.bind(this)
     })
@@ -150,9 +150,6 @@ class TributeEvents {
 
   static keys() {
     return [{
-      key: 8,
-      value: 'BACKSPACE'
-    }, {
       key: 9,
       value: 'TAB'
     }, {
@@ -161,10 +158,7 @@ class TributeEvents {
     }, {
       key: 27,
       value: 'ESCAPE'
-    }, {
-      key: 32,
-      value: 'SPACE'
-    }, {
+    },{
       key: 38,
       value: 'UP'
     }, {
@@ -263,10 +257,6 @@ class TributeEvents {
 
         tribute.showMenuFor(el)
       },
-      space: (e, el) => {
-        //cancel selection if active.
-        console.log('space:', this.tribute, e, el)
-      },
       enter: (e, el) => {
         //choose selection
         console.log('enter:', this.tribute, e, el)
@@ -274,10 +264,6 @@ class TributeEvents {
       escape: (e, el) => {
         // cancel selection
         console.log('escape:', this.tribute, e, el)
-      },
-      backspace: (e, el) => {
-        // no idea
-        console.log('backspace:', this.tribute, e, el)
       },
       tab: (e, el) => {
         // choose first match
