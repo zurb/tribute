@@ -72,7 +72,7 @@ class Tribute {
     }
   }
 
-  showMenuFor(element, collectionItem) {
+  showMenuFor(element, collectionItem, info) {
     // create the menu if it doesn't exist.
     if (!this.menu) {
       this.menu = (() => {
@@ -100,10 +100,13 @@ class Tribute {
 
     this.current = {
       element: element,
-      collection: collectionItem
+      collection: collectionItem,
+      selectedPath: info.mentionSelectedPath,
+      selectedOffset: info.mentionSelectedOffset
     }
 
     this.range.positionMenuAtCaret()
+
   }
 
   hideMenu() {
@@ -111,14 +114,19 @@ class Tribute {
       this.menu.style.cssText = 'display: none;'
 
       this.current = {}
+      console.log('unsetCurrent')
     }
   }
 
   selectItemAtIndex(index) {
     let item = this.current.collection.values[index];
     let content = this.current.collection.selectCallback(item)
-    console.log(content)
-      // call cb function that updates textContent
+
+    this.replaceText(content)
+  }
+
+  replaceText(content) {
+    this.range.replaceTriggerText(content, true, true)
   }
 
 }
@@ -234,13 +242,16 @@ class TributeEvents {
       triggerChar: (e, el, trigger) => {
         this.tribute.current.element = el
         let info = this.tribute.range.getTriggerInfo(false, false, true)
+        this.tribute.current.selectedPath = info.mentionSelectedPath
+        this.tribute.current.selectedOffset = info.mentionSelectedOffset
+        this.tribute.current.trigger = trigger
 
         if (info !== undefined) {
           let collectionItem = this.tribute.collection.find(item => {
             return item.trigger = trigger
           })
 
-          this.tribute.showMenuFor(el, collectionItem)
+          this.tribute.showMenuFor(el, collectionItem, info)
         }
       },
       space: (e, el) => {
@@ -357,17 +368,19 @@ class TributeRange {
     }
   }
 
-  replaceTriggerText(targetElement, path, offset, triggerCharSet, text, requireLeadingSpace, hasTrailingSpace) {
-    this.resetSelection(targetElement, path, offset)
+  replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace) {
+    let context = this.tribute.current
+    console.log(context)
+    this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
 
-    let mentionInfo = this.getTriggerInfo(triggerCharSet, requireLeadingSpace, true, hasTrailingSpace);
+    let info = this.getTriggerInfo(requireLeadingSpace, true, hasTrailingSpace)
 
-    if (mentionInfo !== undefined) {
-      if (!this.isContentEditable()) {
+    if (info !== undefined) {
+      if (!this.isContentEditable(context.element)) {
         let myField = document.activeElement
         text += ' '
-        let startPos = mentionInfo.mentionPosition
-        let endPos = mentionInfo.mentionPosition + mentionInfo.mentionText.length + 1
+        let startPos = info.mentionPosition
+        let endPos = info.mentionPosition + info.mentionText.length + 1
         myField.value = myField.value.substring(0, startPos) + text +
           myField.value.substring(endPos, myField.value.length)
         myField.selectionStart = startPos + text.length
@@ -375,9 +388,36 @@ class TributeRange {
       } else {
         // add a space to the end of the pasted text
         text += '\xA0'
-        pasteHtml(ctx, text, mentionInfo.mentionPosition,
-          mentionInfo.mentionPosition + mentionInfo.mentionText.length + 1)
+        this.pasteHtml(text, info.mentionPosition,
+          info.mentionPosition + info.mentionText.length + 1)
       }
+    }
+  }
+
+  pasteHtml(html, startPos, endPos) {
+    var range, sel
+    sel = this.getWindowSelection()
+    range = document.createRange()
+    range.setStart(sel.anchorNode, startPos)
+    range.setEnd(sel.anchorNode, endPos)
+    range.deleteContents()
+
+    var el = document.createElement('div')
+    el.innerHTML = html
+    var frag = document.createDocumentFragment(),
+      node, lastNode
+    while ((node = el.firstChild)) {
+      lastNode = frag.appendChild(node)
+    }
+    range.insertNode(frag)
+
+    // Preserve the selection
+    if (lastNode) {
+      range = range.cloneRange()
+      range.setStartAfter(lastNode)
+      range.collapse(true)
+      sel.removeAllRanges()
+      sel.addRange(range)
     }
   }
 

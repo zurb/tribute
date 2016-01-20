@@ -77,7 +77,7 @@ var Tribute = function () {
     }
   }, {
     key: 'showMenuFor',
-    value: function showMenuFor(element, collectionItem) {
+    value: function showMenuFor(element, collectionItem, info) {
       // create the menu if it doesn't exist.
       if (!this.menu) {
         this.menu = function () {
@@ -105,7 +105,9 @@ var Tribute = function () {
 
       this.current = {
         element: element,
-        collection: collectionItem
+        collection: collectionItem,
+        selectedPath: info.mentionSelectedPath,
+        selectedOffset: info.mentionSelectedOffset
       };
 
       this.range.positionMenuAtCaret();
@@ -117,6 +119,7 @@ var Tribute = function () {
         this.menu.style.cssText = 'display: none;';
 
         this.current = {};
+        console.log('unsetCurrent');
       }
     }
   }, {
@@ -124,8 +127,13 @@ var Tribute = function () {
     value: function selectItemAtIndex(index) {
       var item = this.current.collection.values[index];
       var content = this.current.collection.selectCallback(item);
-      console.log(content);
-      // call cb function that updates textContent
+
+      this.replaceText(content);
+    }
+  }, {
+    key: 'replaceText',
+    value: function replaceText(content) {
+      this.range.replaceTriggerText(content, true, true);
     }
   }], [{
     key: 'defaultSelectCallback',
@@ -226,13 +234,16 @@ var TributeEvents = function () {
         triggerChar: function triggerChar(e, el, trigger) {
           _this.tribute.current.element = el;
           var info = _this.tribute.range.getTriggerInfo(false, false, true);
+          _this.tribute.current.selectedPath = info.mentionSelectedPath;
+          _this.tribute.current.selectedOffset = info.mentionSelectedOffset;
+          _this.tribute.current.trigger = trigger;
 
           if (info !== undefined) {
             var collectionItem = _this.tribute.collection.find(function (item) {
               return item.trigger = trigger;
             });
 
-            _this.tribute.showMenuFor(el, collectionItem);
+            _this.tribute.showMenuFor(el, collectionItem, info);
           }
         },
         space: function space(e, el) {
@@ -399,25 +410,56 @@ var TributeRange = function () {
     }
   }, {
     key: 'replaceTriggerText',
-    value: function replaceTriggerText(targetElement, path, offset, triggerCharSet, text, requireLeadingSpace, hasTrailingSpace) {
-      this.resetSelection(targetElement, path, offset);
+    value: function replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace) {
+      var context = this.tribute.current;
+      console.log(context);
+      this.resetSelection(context.element, context.selectedPath, context.selectedOffset);
 
-      var mentionInfo = this.getTriggerInfo(triggerCharSet, requireLeadingSpace, true, hasTrailingSpace);
+      var info = this.getTriggerInfo(requireLeadingSpace, true, hasTrailingSpace);
 
-      if (mentionInfo !== undefined) {
-        if (!this.isContentEditable()) {
+      if (info !== undefined) {
+        if (!this.isContentEditable(context.element)) {
           var myField = document.activeElement;
           text += ' ';
-          var startPos = mentionInfo.mentionPosition;
-          var endPos = mentionInfo.mentionPosition + mentionInfo.mentionText.length + 1;
+          var startPos = info.mentionPosition;
+          var endPos = info.mentionPosition + info.mentionText.length + 1;
           myField.value = myField.value.substring(0, startPos) + text + myField.value.substring(endPos, myField.value.length);
           myField.selectionStart = startPos + text.length;
           myField.selectionEnd = startPos + text.length;
         } else {
           // add a space to the end of the pasted text
           text += '\xA0';
-          pasteHtml(ctx, text, mentionInfo.mentionPosition, mentionInfo.mentionPosition + mentionInfo.mentionText.length + 1);
+          this.pasteHtml(text, info.mentionPosition, info.mentionPosition + info.mentionText.length + 1);
         }
+      }
+    }
+  }, {
+    key: 'pasteHtml',
+    value: function pasteHtml(html, startPos, endPos) {
+      var range, sel;
+      sel = this.getWindowSelection();
+      range = document.createRange();
+      range.setStart(sel.anchorNode, startPos);
+      range.setEnd(sel.anchorNode, endPos);
+      range.deleteContents();
+
+      var el = document.createElement('div');
+      el.innerHTML = html;
+      var frag = document.createDocumentFragment(),
+          node,
+          lastNode;
+      while (node = el.firstChild) {
+        lastNode = frag.appendChild(node);
+      }
+      range.insertNode(frag);
+
+      // Preserve the selection
+      if (lastNode) {
+        range = range.cloneRange();
+        range.setStartAfter(lastNode);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
       }
     }
   }, {
