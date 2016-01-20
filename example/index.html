@@ -168,7 +168,11 @@
           {key: 'sirwalterriley@zurb.com', value: 'Sir Walter Riley', email: 'jordan+riley@zurb.com'}
         ],
         selectCallback: function (item) {
-          return '<a href="test" title="' + item.email + '">' + item.value + '</a>';
+          if (this.range.isContentEditable(this.current.element)) {
+            return '<a href="test" title="' + item.email + '">' + item.value + '</a>';
+          }
+
+          return '@' + item.value;
         }
       })
 

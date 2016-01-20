@@ -21,7 +21,7 @@ var Tribute = function () {
         trigger: options.trigger || '@',
 
         // The function that gets call on select that retuns the content to insert
-        selectCallback: options.selectCallback || Tribute.defaultSelectCallback.bind(this),
+        selectCallback: (options.selectCallback || Tribute.defaultSelectCallback).bind(this),
 
         // the column to search against in the object
         lookup: options.lookup || 'key',
@@ -223,8 +223,11 @@ var TributeEvents = function () {
     value: function updateSelection(el) {
       this.tribute.current.element = el;
       var info = this.tribute.range.getTriggerInfo(false, false, true);
-      this.tribute.current.selectedPath = info.mentionSelectedPath;
-      this.tribute.current.selectedOffset = info.mentionSelectedOffset;
+
+      if (info) {
+        this.tribute.current.selectedPath = info.mentionSelectedPath;
+        this.tribute.current.selectedOffset = info.mentionSelectedOffset;
+      }
     }
   }, {
     key: 'callbacks',
@@ -233,7 +236,7 @@ var TributeEvents = function () {
 
       return {
         triggerChar: function triggerChar(e, el, trigger) {
-          if (!_this.tribute.current.selectedPath) return;
+          // if (!this.tribute.current.selectedPath) return
           _this.tribute.current.trigger = trigger;
 
           var collectionItem = _this.tribute.collection.find(function (item) {
