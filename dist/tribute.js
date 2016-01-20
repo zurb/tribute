@@ -19,8 +19,14 @@ var Tribute = function () {
         // The symbol that starts the lookup
         trigger: options.trigger || '@',
 
+        // The function that gets call on select that retuns the content to insert
+        selectCallback: options.selectCallback || Tribute.defaultSelectCallback.bind(this),
+
         // the column to search against in the object
         lookup: options.lookup || 'key',
+
+        // the column that contains the content to insert by default
+        fillAttr: options.fillAttr || 'value',
 
         // the array of objects
         values: options.values
@@ -114,10 +120,16 @@ var Tribute = function () {
     key: 'selectItemAtIndex',
     value: function selectItemAtIndex(index) {
       var item = this.current.collection.values[index];
-      console.log(item);
+      var content = this.current.collection.selectCallback(item);
+      console.log(content);
       // call cb function that updates textContent
     }
   }], [{
+    key: 'defaultSelectCallback',
+    value: function defaultSelectCallback(item) {
+      return '@' + item[this.current.collection.fillAttr];
+    }
+  }, {
     key: 'inputTypes',
     value: function inputTypes() {
       return ['TEXTAREA', 'INPUT'];

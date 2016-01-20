@@ -11,8 +11,14 @@ class Tribute {
         // The symbol that starts the lookup
         trigger: options.trigger || '@',
 
+        // The function that gets call on select that retuns the content to insert
+        selectCallback: options.selectCallback || Tribute.defaultSelectCallback.bind(this),
+
         // the column to search against in the object
         lookup: options.lookup || 'key',
+
+        // the column that contains the content to insert by default
+        fillAttr: options.fillAttr || 'value',
 
         // the array of objects
         values: options.values
@@ -26,6 +32,10 @@ class Tribute {
     new TributeRange(this)
     new TributeEvents(this)
     new TributeMenuEvents(this)
+  }
+
+  static defaultSelectCallback(item) {
+    return `@${item[this.current.collection.fillAttr]}`
   }
 
   static inputTypes() {
@@ -105,7 +115,8 @@ class Tribute {
 
   selectItemAtIndex(index) {
     let item = this.current.collection.values[index];
-    console.log(item)
+    let content = this.current.collection.selectCallback(item)
+    console.log(content)
     // call cb function that updates textContent
   }
 
@@ -383,7 +394,7 @@ class TributeRange {
     if (effectiveRange !== undefined && effectiveRange !== null) {
       var mostRecentTriggerCharPos = -1
       var triggerChar
-      this.tribute.triggers().forEach((c) => {
+      this.tribute.triggers().forEach(c => {
         var idx = effectiveRange.lastIndexOf(c)
         if (idx > mostRecentTriggerCharPos) {
           mostRecentTriggerCharPos = idx
@@ -503,7 +514,7 @@ class TributeRange {
     style.visibility = 'hidden'
 
     // transfer the element's properties to the div
-    properties.forEach((prop) => {
+    properties.forEach(prop => {
       style[prop] = computed[prop]
     })
 
