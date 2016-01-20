@@ -12,7 +12,6 @@ var Tribute = function () {
 
     this.expando = 0;
     this.instance = this.uuid();
-    this.globalCallbacks = options.callbacks || {};
     this.current = {};
 
     // array of {key: '', value: ''}
@@ -114,7 +113,6 @@ var Tribute = function () {
         this.menu.style.cssText = 'display: none;';
 
         this.current = {};
-        console.log('unsetCurrent');
       }
     }
   }, {
@@ -233,7 +231,7 @@ var TributeEvents = function () {
     value: function callbacks() {
       var _this = this;
 
-      return Object.assign({}, this.tribute.globalCallbacks, {
+      return {
         triggerChar: function triggerChar(e, el, trigger) {
           if (!_this.tribute.current.selectedPath) return;
           _this.tribute.current.trigger = trigger;
@@ -272,7 +270,7 @@ var TributeEvents = function () {
           // navigate down ul
           console.log('down:', _this.tribute, e, el);
         }
-      });
+      };
     }
   }], [{
     key: 'keys',
@@ -502,7 +500,7 @@ var TributeRange = function () {
         path.reverse();
         // getRangeAt may not exist, need alternative
         offset = sel.getRangeAt(0).startOffset;
-        console.log('offset', offset);
+
         return {
           selected: selected,
           path: path,

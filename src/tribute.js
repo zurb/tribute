@@ -2,7 +2,6 @@ class Tribute {
   constructor(options) {
     this.expando = 0
     this.instance = this.uuid()
-    this.globalCallbacks = options.callbacks || {}
     this.current = {}
 
     // array of {key: '', value: ''}
@@ -109,7 +108,6 @@ class Tribute {
       this.menu.style.cssText = 'display: none;'
 
       this.current = {}
-      console.log('unsetCurrent')
     }
   }
 
@@ -240,7 +238,7 @@ class TributeEvents {
   }
 
   callbacks() {
-    return Object.assign({}, this.tribute.globalCallbacks, {
+    return {
       triggerChar: (e, el, trigger) => {
         if (!this.tribute.current.selectedPath) return
         this.tribute.current.trigger = trigger
@@ -279,7 +277,7 @@ class TributeEvents {
         // navigate down ul
         console.log('down:', this.tribute, e, el)
       }
-    })
+    }
   }
 
 }
@@ -456,7 +454,7 @@ class TributeRange {
       path.reverse()
         // getRangeAt may not exist, need alternative
       offset = sel.getRangeAt(0).startOffset
-      console.log('offset', offset)
+
       return {
         selected: selected,
         path: path,

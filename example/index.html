@@ -164,9 +164,12 @@
     <script>
       var tribute = new Tribute({
         values: [
-          {key: 'jordan@zurb.com', value: 'Jordan Humphreys'},
-          {key: 'sirwalterriley@zurb.com', value: 'Sir Walter Riley'}
-        ]
+          {key: 'jordan@zurb.com', value: 'Jordan Humphreys', email: 'jordan@zurb.com'},
+          {key: 'sirwalterriley@zurb.com', value: 'Sir Walter Riley', email: 'jordan+riley@zurb.com'}
+        ],
+        selectCallback: function (item) {
+          return '<a href="test" title="' + item.email + '">' + item.value + '</a>';
+        }
       })
 
       tribute.attach(document.getElementById('test'))
