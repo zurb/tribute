@@ -87,7 +87,7 @@ class Tribute {
 
   showMenuFor(element, collectionItem) {
     let items
-    // create the menu if it doesn't exist.
+      // create the menu if it doesn't exist.
     if (!this.menu) {
       this.menu = this.createMenu()
       this.menuEvents.bind(this.menu)
@@ -101,7 +101,9 @@ class Tribute {
     }
 
     items = this.search.filter(this.current.mentionText, this.current.collection.values, {
-      pre: '<span>', post: '</span>', extract: function(el) {
+      pre: '<span>',
+      post: '</span>',
+      extract: function(el) {
         return el[this.current.collection.lookup]
       }.bind(this)
     })
@@ -159,6 +161,26 @@ class TributeMenuEvents {
     menu.addEventListener('keydown',
       this.tribute.events.keydown.bind(this.menu, this), false)
     document.addEventListener('click', this.tribute.events.click.bind(null, this), false)
+    window.addEventListener('resize', this.debounce(() => {
+      if (this.tribute.isActive) {
+        this.tribute.showMenuFor(this.tribute.current.element)
+      }
+    }, 300, false))
+  }
+
+  debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+      var context = this, args = arguments
+      var later = () => {
+        timeout = null
+        if (!immediate) func.apply(context, args)
+      }
+      var callNow = immediate && !timeout
+      clearTimeout(timeout)
+      timeout = setTimeout(later, wait)
+      if (callNow) func.apply(context, args)
+    }
   }
 }
 
@@ -178,7 +200,7 @@ class TributeEvents {
     }, {
       key: 27,
       value: 'ESCAPE'
-    },{
+    }, {
       key: 38,
       value: 'UP'
     }, {
@@ -311,11 +333,11 @@ class TributeEvents {
         if (this.tribute.isActive) {
           e.preventDefault()
           let count = this.tribute.current.filteredItems.length,
-              selected = this.tribute.menuSelected
+            selected = this.tribute.menuSelected
 
           if (count > selected && selected > 0) {
             this.tribute.menuSelected--
-            this.setActiveLi()
+              this.setActiveLi()
           }
         }
       },
@@ -324,11 +346,11 @@ class TributeEvents {
         if (this.tribute.isActive) {
           e.preventDefault()
           let count = this.tribute.current.filteredItems.length - 1,
-              selected = this.tribute.menuSelected
+            selected = this.tribute.menuSelected
 
           if (count > this.tribute.menuSelected) {
             this.tribute.menuSelected++
-            this.setActiveLi()
+              this.setActiveLi()
           }
         }
       }
@@ -337,7 +359,7 @@ class TributeEvents {
 
   setActiveLi(index) {
     let lis = this.tribute.menu.querySelectorAll('li'),
-        length = lis.length
+      length = lis.length
 
     for (let i = 0; i < length; i++) {
       let li = lis[i]
@@ -378,7 +400,7 @@ class TributeRange {
                                          zIndex: 10000;
                                          display: block;`
 
-      setTimeout(function () {
+      setTimeout(function() {
         this.scrollIntoView(document.activeElement);
       }.bind(this), 0)
     } else {

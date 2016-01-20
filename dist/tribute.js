@@ -109,7 +109,9 @@ var Tribute = function () {
       }
 
       items = this.search.filter(this.current.mentionText, this.current.collection.values, {
-        pre: '<span>', post: '</span>', extract: function (el) {
+        pre: '<span>',
+        post: '</span>',
+        extract: function (el) {
           return el[this.current.collection.lookup];
         }.bind(this)
       });
@@ -182,8 +184,32 @@ var TributeMenuEvents = function () {
   _createClass(TributeMenuEvents, [{
     key: 'bind',
     value: function bind(menu) {
+      var _this2 = this;
+
       menu.addEventListener('keydown', this.tribute.events.keydown.bind(this.menu, this), false);
       document.addEventListener('click', this.tribute.events.click.bind(null, this), false);
+      window.addEventListener('resize', this.debounce(function () {
+        if (_this2.tribute.isActive) {
+          _this2.tribute.showMenuFor(_this2.tribute.current.element);
+        }
+      }, 300, false));
+    }
+  }, {
+    key: 'debounce',
+    value: function debounce(func, wait, immediate) {
+      var timeout;
+      return function () {
+        var context = this,
+            args = arguments;
+        var later = function later() {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+      };
     }
   }]);
 
@@ -264,11 +290,11 @@ var TributeEvents = function () {
   }, {
     key: 'callbacks',
     value: function callbacks() {
-      var _this2 = this;
+      var _this3 = this;
 
       return {
         triggerChar: function triggerChar(e, el, trigger) {
-          var tribute = _this2.tribute;
+          var tribute = _this3.tribute;
           tribute.current.trigger = trigger;
 
           var collectionItem = tribute.collection.find(function (item) {
@@ -281,49 +307,49 @@ var TributeEvents = function () {
         },
         enter: function enter(e, el) {
           // choose selection
-          if (_this2.tribute.isActive) {
+          if (_this3.tribute.isActive) {
             e.preventDefault();
-            _this2.tribute.selectItemAtIndex(_this2.tribute.menuSelected);
-            _this2.tribute.hideMenu();
+            _this3.tribute.selectItemAtIndex(_this3.tribute.menuSelected);
+            _this3.tribute.hideMenu();
           }
         },
         escape: function escape(e, el) {
-          if (_this2.tribute.isActive) {
+          if (_this3.tribute.isActive) {
             e.preventDefault();
-            _this2.tribute.hideMenu();
+            _this3.tribute.hideMenu();
           }
         },
         tab: function tab(e, el) {
           // choose first match
-          if (_this2.tribute.isActive) {
+          if (_this3.tribute.isActive) {
             e.preventDefault();
-            _this2.tribute.selectItemAtIndex(0);
-            _this2.tribute.hideMenu();
+            _this3.tribute.selectItemAtIndex(0);
+            _this3.tribute.hideMenu();
           }
         },
         up: function up(e, el) {
           // navigate up ul
-          if (_this2.tribute.isActive) {
+          if (_this3.tribute.isActive) {
             e.preventDefault();
-            var count = _this2.tribute.current.filteredItems.length,
-                selected = _this2.tribute.menuSelected;
+            var count = _this3.tribute.current.filteredItems.length,
+                selected = _this3.tribute.menuSelected;
 
             if (count > selected && selected > 0) {
-              _this2.tribute.menuSelected--;
-              _this2.setActiveLi();
+              _this3.tribute.menuSelected--;
+              _this3.setActiveLi();
             }
           }
         },
         down: function down(e, el) {
           // navigate down ul
-          if (_this2.tribute.isActive) {
+          if (_this3.tribute.isActive) {
             e.preventDefault();
-            var count = _this2.tribute.current.filteredItems.length - 1,
-                selected = _this2.tribute.menuSelected;
+            var count = _this3.tribute.current.filteredItems.length - 1,
+                selected = _this3.tribute.menuSelected;
 
-            if (count > _this2.tribute.menuSelected) {
-              _this2.tribute.menuSelected++;
-              _this2.setActiveLi();
+            if (count > _this3.tribute.menuSelected) {
+              _this3.tribute.menuSelected++;
+              _this3.setActiveLi();
             }
           }
         }
@@ -609,7 +635,7 @@ var TributeRange = function () {
   }, {
     key: 'getTriggerInfo',
     value: function getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace) {
-      var _this3 = this;
+      var _this4 = this;
 
       var ctx = this.tribute.current;
       var selected = undefined,
@@ -636,7 +662,7 @@ var TributeRange = function () {
           var mostRecentTriggerCharPos = -1;
           var triggerChar = undefined;
 
-          _this3.tribute.triggers().forEach(function (c) {
+          _this4.tribute.triggers().forEach(function (c) {
             var idx = effectiveRange.lastIndexOf(c);
 
             if (idx > mostRecentTriggerCharPos) {
@@ -844,10 +870,10 @@ var TributeSearch = function () {
   _createClass(TributeSearch, [{
     key: 'simpleFilter',
     value: function simpleFilter(pattern, array) {
-      var _this4 = this;
+      var _this5 = this;
 
       return array.filter(function (string) {
-        return _this4.test(pattern, string);
+        return _this5.test(pattern, string);
       });
     }
   }, {
@@ -953,7 +979,7 @@ var TributeSearch = function () {
   }, {
     key: 'filter',
     value: function filter(pattern, arr, opts) {
-      var _this5 = this;
+      var _this6 = this;
 
       opts = opts || {};
       return arr.reduce(function (prev, element, idx, arr) {
@@ -966,7 +992,7 @@ var TributeSearch = function () {
             str = '';
           }
         }
-        var rendered = _this5.match(pattern, str, opts);
+        var rendered = _this6.match(pattern, str, opts);
         if (rendered != null) {
           prev[prev.length] = {
             string: rendered.rendered,
