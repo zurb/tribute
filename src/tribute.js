@@ -25,7 +25,7 @@ class Tribute {
     } else if (options.collection) {
       this.collection = options.collection
     } else {
-      console.warn(Error('collection', 'No collection specified.'))
+      throw new Error('collection', 'No collection specified.')
     }
 
     new TributeRange(this)
@@ -57,7 +57,7 @@ class Tribute {
 
   attach(element) {
     if (element.hasAttribute('data-tribute')) {
-      console.warn(Error('tribute', 'already bound to ' + element.nodeName))
+      throw new Error('tribute', 'already bound to ' + element.nodeName)
       return
     }
 
@@ -71,14 +71,14 @@ class Tribute {
       if (element.contentEditable) {
         element.contentEditable = true
       } else {
-        console.warn(Error('attach', 'Cannot bind to ' + element.nodeName))
+        throw new Error('attach', 'Cannot bind to ' + element.nodeName)
       }
     }
   }
 
   createMenu() {
     let wrapper = document.createElement('div'),
-      ul = document.createElement('ul')
+        ul = document.createElement('ul')
 
     wrapper.className = 'tribute-container'
     wrapper.appendChild(ul)
