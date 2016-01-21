@@ -13,6 +13,14 @@ var tribute = new Tribute({
 })
 ```
 
+You can pass multiple collections on initialization by passing in an array of collection objects to `collection`.
+
+```js
+var tribute = new Tribute({
+  collection: []
+})
+```
+
 #### A Collection
 Collections are configuration objects for Tribute, you can have multiple for instance. This is useful for scenarios where you may want to match multiple trigger keys, such as `@` for users and `#` for projects.
 
@@ -37,12 +45,4 @@ Collection object shown with defaults:
   // REQUIRED: the array of objects to match
   values: []
 }
-```
-
-You can pass multiple collections on initialization by passing in an array of collection objects to `collection`.
-
-```js
-var tribute = new Tribute({
-  collection: []
-})
 ```
