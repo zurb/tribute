@@ -1,4 +1,4 @@
-(() {
+(() => {
   class Tribute {
     constructor(options) {
       this.expando = this.menuSelected = 0
@@ -96,10 +96,6 @@
 
       this.isActive = true
       this.menuSelected = 0
-
-      if (!this.current.mentionText) {
-        this.current.mentionText = ''
-      }
 
       items = this.search.filter(this.current.mentionText, this.current.collection.values, {
         pre: '<span>',
@@ -379,7 +375,6 @@
     }
 
     positionMenuAtCaret() {
-      // getTriggerInfo(menuAlreadyActive, hasTrailingSpace)
       let context = this.tribute.current,
         coordinates
       let info = this.getTriggerInfo(false, false, true)
@@ -575,6 +570,7 @@
           }
         }
       }
+
       return text
     }
 
