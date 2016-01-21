@@ -21,6 +21,17 @@ var tribute = new Tribute({
 })
 ```
 
+#### Attaching to elements
+Once initialized, Tribute can be attached to an `input`, `textarea`, or an element that supports `contenteditable`.
+
+```html
+<div id="myEditableDiv">I'm a Meeseeks, look at me!</div>
+
+<script>
+  tribute.attach(document.getElementById('myEditableDiv'));
+</script>
+```
+
 #### A Collection
 Collections are configuration objects for Tribute, you can have multiple for each instance. This is useful for scenarios where you may want to match multiple trigger keys, such as `@` for users and `#` for projects.
 
