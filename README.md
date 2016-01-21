@@ -1,5 +1,5 @@
 # Tribute
-An `@mention` engine written in ES6.
+An `@mention` engine written in ES6, no dependencies.
 
 ### Initializing
 There are two ways to initialize Tribute, by passing an array of "collections" or by passing one collection object.
