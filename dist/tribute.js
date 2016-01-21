@@ -58,7 +58,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(Tribute, [{
       key: 'triggers',
       value: function triggers() {
-        console.log(this.collection);
         return this.collection.map(function (config) {
           return config.trigger;
         });

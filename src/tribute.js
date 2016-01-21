@@ -55,7 +55,6 @@
     }
 
     triggers() {
-      console.log(this.collection)
       return this.collection.map(config => {
         return config.trigger
       })
