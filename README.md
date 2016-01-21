@@ -57,3 +57,9 @@ Collection object shown with defaults:
   values: []
 }
 ```
+
+#### Remaining things before open source
+* Custom menu template
+* Test suite
+* Use documentFragment where possible
+* Iframe support
