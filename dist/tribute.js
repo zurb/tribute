@@ -20,19 +20,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       if (options.values) {
         this.collection = [{
-          // The symbol that starts the lookup
+          // symbol that starts the lookup
           trigger: options.trigger || '@',
 
-          // The function that gets called on select that retuns the content to insert
+          // function called on select that retuns the content to insert
           selectCallback: (options.selectCallback || Tribute.defaultSelectCallback).bind(this),
 
-          // the column to search against in the object
+          // column to search against in the object
           lookup: options.lookup || 'key',
 
-          // the column that contains the content to insert by default
+          // column that contains the content to insert by default
           fillAttr: options.fillAttr || 'value',
 
-          // the array of objects
+          // array of objects
           values: options.values
         }];
       } else if (options.collection) {
@@ -118,9 +118,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         items = this.search.filter(this.current.mentionText, this.current.collection.values, {
           pre: '<span>',
           post: '</span>',
-          extract: function (el) {
-            return el[this.current.collection.lookup];
-          }.bind(this)
+          extract: function extract(el) {
+            return el[_this2.current.collection.lookup];
+          }
         });
 
         this.current.filteredItems = items;
@@ -204,10 +204,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'debounce',
       value: function debounce(func, wait, immediate) {
+        var _this4 = this,
+            _arguments = arguments;
+
         var timeout;
         return function () {
-          var context = this,
-              args = arguments;
+          var context = _this4,
+              args = _arguments;
           var later = function later() {
             timeout = null;
             if (!immediate) func.apply(context, args);
@@ -298,11 +301,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'callbacks',
       value: function callbacks() {
-        var _this4 = this;
+        var _this5 = this;
 
         return {
           triggerChar: function triggerChar(e, el, trigger) {
-            var tribute = _this4.tribute;
+            var tribute = _this5.tribute;
             tribute.current.trigger = trigger;
 
             var collectionItem = tribute.collection.find(function (item) {
@@ -315,47 +318,47 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           },
           enter: function enter(e, el) {
             // choose selection
-            if (_this4.tribute.isActive) {
+            if (_this5.tribute.isActive) {
               e.preventDefault();
               setTimeout(function () {
-                _this4.tribute.selectItemAtIndex(_this4.tribute.menuSelected);
-                _this4.tribute.hideMenu();
+                _this5.tribute.selectItemAtIndex(_this5.tribute.menuSelected);
+                _this5.tribute.hideMenu();
               }, 0);
             }
           },
           escape: function escape(e, el) {
-            if (_this4.tribute.isActive) {
+            if (_this5.tribute.isActive) {
               e.preventDefault();
-              _this4.tribute.hideMenu();
+              _this5.tribute.hideMenu();
             }
           },
           tab: function tab(e, el) {
             // choose first match
-            _this4.callbacks().enter(e, el);
+            _this5.callbacks().enter(e, el);
           },
           up: function up(e, el) {
             // navigate up ul
-            if (_this4.tribute.isActive) {
+            if (_this5.tribute.isActive) {
               e.preventDefault();
-              var count = _this4.tribute.current.filteredItems.length,
-                  selected = _this4.tribute.menuSelected;
+              var count = _this5.tribute.current.filteredItems.length,
+                  selected = _this5.tribute.menuSelected;
 
               if (count > selected && selected > 0) {
-                _this4.tribute.menuSelected--;
-                _this4.setActiveLi();
+                _this5.tribute.menuSelected--;
+                _this5.setActiveLi();
               }
             }
           },
           down: function down(e, el) {
             // navigate down ul
-            if (_this4.tribute.isActive) {
+            if (_this5.tribute.isActive) {
               e.preventDefault();
-              var count = _this4.tribute.current.filteredItems.length - 1,
-                  selected = _this4.tribute.menuSelected;
+              var count = _this5.tribute.current.filteredItems.length - 1,
+                  selected = _this5.tribute.menuSelected;
 
-              if (count > _this4.tribute.menuSelected) {
-                _this4.tribute.menuSelected++;
-                _this4.setActiveLi();
+              if (count > _this5.tribute.menuSelected) {
+                _this5.tribute.menuSelected++;
+                _this5.setActiveLi();
               }
             }
           }
@@ -441,6 +444,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(TributeRange, [{
       key: 'positionMenuAtCaret',
       value: function positionMenuAtCaret() {
+        var _this6 = this;
+
         var context = this.tribute.current,
             coordinates = undefined;
         var info = this.getTriggerInfo(false, false, true);
@@ -456,8 +461,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           this.tribute.menu.style.cssText = 'top: ' + coordinates.top + 'px;\n                                           left: ' + coordinates.left + 'px;\n                                           position: absolute;\n                                           zIndex: 10000;\n                                           display: block;';
 
           setTimeout(function () {
-            this.scrollIntoView(document.activeElement);
-          }.bind(this), 0);
+            _this6.scrollIntoView(document.activeElement);
+          }, 0);
         } else {
           this.tribute.menu.style.cssText = 'display: none';
         }
@@ -644,7 +649,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'getTriggerInfo',
       value: function getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace) {
-        var _this5 = this;
+        var _this7 = this;
 
         var ctx = this.tribute.current;
         var selected = undefined,
@@ -671,7 +676,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             var mostRecentTriggerCharPos = -1;
             var triggerChar = undefined;
 
-            _this5.tribute.triggers().forEach(function (c) {
+            _this7.tribute.triggers().forEach(function (c) {
               var idx = effectiveRange.lastIndexOf(c);
 
               if (idx > mostRecentTriggerCharPos) {
@@ -884,10 +889,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(TributeSearch, [{
       key: 'simpleFilter',
       value: function simpleFilter(pattern, array) {
-        var _this6 = this;
+        var _this8 = this;
 
         return array.filter(function (string) {
-          return _this6.test(pattern, string);
+          return _this8.test(pattern, string);
         });
       }
     }, {
@@ -998,7 +1003,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'filter',
       value: function filter(pattern, arr, opts) {
-        var _this7 = this;
+        var _this9 = this;
 
         opts = opts || {};
         return arr.reduce(function (prev, element, idx, arr) {
@@ -1013,7 +1018,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }
           }
 
-          var rendered = _this7.match(pattern, str, opts);
+          var rendered = _this9.match(pattern, str, opts);
 
           if (rendered != null) {
             prev[prev.length] = {

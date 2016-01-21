@@ -8,19 +8,19 @@
 
       if (options.values) {
         this.collection = [{
-          // The symbol that starts the lookup
+          // symbol that starts the lookup
           trigger: options.trigger || '@',
 
-          // The function that gets called on select that retuns the content to insert
+          // function called on select that retuns the content to insert
           selectCallback: (options.selectCallback || Tribute.defaultSelectCallback).bind(this),
 
-          // the column to search against in the object
+          // column to search against in the object
           lookup: options.lookup || 'key',
 
-          // the column that contains the content to insert by default
+          // column that contains the content to insert by default
           fillAttr: options.fillAttr || 'value',
 
-          // the array of objects
+          // array of objects
           values: options.values
         }]
       } else if (options.collection) {
@@ -108,9 +108,9 @@
       items = this.search.filter(this.current.mentionText, this.current.collection.values, {
         pre: '<span>',
         post: '</span>',
-        extract: function(el) {
+        extract: (el) => {
           return el[this.current.collection.lookup]
-        }.bind(this)
+        }
       })
 
       this.current.filteredItems = items
@@ -175,7 +175,7 @@
 
     debounce(func, wait, immediate) {
       var timeout
-      return function() {
+      return () => {
         var context = this, args = arguments
         var later = () => {
           timeout = null
@@ -404,9 +404,9 @@
                                            zIndex: 10000;
                                            display: block;`
 
-        setTimeout(function() {
+        setTimeout(() => {
           this.scrollIntoView(document.activeElement)
-        }.bind(this), 0)
+        }, 0)
       } else {
         this.tribute.menu.style.cssText = 'display: none'
       }
