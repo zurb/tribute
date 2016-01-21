@@ -21,7 +21,7 @@
         <div class="callout large">
           <h3>We&rsquo;re stoked you want to try Foundation! </h3>
           <p id="test">To get going, this file (index.html) includes some basic styles you can modify, play around with, or totally destroy to get going.</p>
-          <p>Once you've exhausted the fun in this document, you should check out:</p>
+          <p id="testMultiple">Once you've exhausted the fun in this document, you should check out:</p>
           <div class="row">
             <div class="large-4 medium-4 columns">
               <p><a href="http://foundation.zurb.com/sites/docs/">Foundation Documentation</a><br />Everything you need to know about using the framework.</p>
@@ -162,6 +162,7 @@
 
     <script src="../dist/tribute.js"></script>
     <script>
+      // example of alternative callback
       var tribute = new Tribute({
         values: [
           {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'jordan@zurb.com'},
@@ -179,6 +180,51 @@
       tribute.attach(document.getElementById('test'))
       tribute.attach(document.getElementById('testInput'))
       tribute.attach(document.getElementById('testarea'))
+
+      var tributeMultipleTriggers = new Tribute({
+        collection: [{
+          // The function that gets call on select that retuns the content to insert
+          selectCallback: function (item) {
+            if (this.range.isContentEditable(this.current.element)) {
+              return '<a href="test" title="' + item.email + '">' + item.value + '</a>';
+            }
+
+            return '@' + item.value;
+          },
+
+          // the array of objects
+          values: [
+            {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'jordan@zurb.com'},
+            {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'jordan+riley@zurb.com'}
+          ]
+        },
+        {
+          // The symbol that starts the lookup
+          trigger: '#',
+
+          // The function that gets call on select that retuns the content to insert
+          selectCallback: function (item) {
+            if (this.range.isContentEditable(this.current.element)) {
+              return '<a href="'+item.url+'" title="' + item.key + '">#' + item.value + '</a>';
+            }
+
+            return '#' + item.value;
+          },
+
+          // the array of objects
+          values: [
+            {key: 'Lobster Barbaric', value: 'Lobster Barbaric', url: 'example.com/project/url'},
+            {key: 'Wild Sapphire', value: 'Wild Sapphire', url: 'example.com/project/url'},
+            {key: 'Pure Test', value: 'Pure Test', url: 'example.com/project/url'},
+            {key: 'Flying Donut', value: 'Flying Donut', url: 'example.com/project/url'},
+            {key: 'Harsh Scarecrow', value: 'Harsh Scarecrow', url: 'example.com/project/url'},
+            {key: 'Rich Serpent', value: 'Rich Serpent', url: 'example.com/project/url'}
+          ]
+        }]
+      })
+
+      tributeMultipleTriggers.attach(document.getElementById('testMultiple'))
+
     </script>
   </body>
 </html>

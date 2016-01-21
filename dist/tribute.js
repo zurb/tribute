@@ -9,6 +9,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 (function () {
   var Tribute = function () {
     function Tribute(options) {
+      var _this = this;
+
       _classCallCheck(this, Tribute);
 
       this.expando = this.menuSelected = 0;
@@ -34,7 +36,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           values: options.values
         }];
       } else if (options.collection) {
-        this.collection = options.collection;
+        this.collection = options.collection.map(function (item) {
+          return {
+            trigger: item.trigger || '@',
+            selectCallback: (item.selectCallback || Tribute.defaultSelectCallback).bind(_this),
+            lookup: item.lookup || 'key',
+            fillAttr: item.fillAttr || 'value',
+            values: item.values
+          };
+        });
       } else {
         throw new Error('collection', 'No collection specified.');
       }
@@ -48,6 +58,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(Tribute, [{
       key: 'triggers',
       value: function triggers() {
+        console.log(this.collection);
         return this.collection.map(function (config) {
           return config.trigger;
         });
@@ -93,7 +104,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'showMenuFor',
       value: function showMenuFor(element, collectionItem) {
-        var _this = this;
+        var _this2 = this;
 
         var items = undefined;
         // create the menu if it doesn't exist.
@@ -122,7 +133,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         items.forEach(function (item, index) {
           var li = document.createElement('li');
           li.setAttribute('data-index', index);
-          if (_this.menuSelected === index) {
+          if (_this2.menuSelected === index) {
             li.className = 'highlight';
           }
           li.innerHTML = item.string;
@@ -181,13 +192,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(TributeMenuEvents, [{
       key: 'bind',
       value: function bind(menu) {
-        var _this2 = this;
+        var _this3 = this;
 
         menu.addEventListener('keydown', this.tribute.events.keydown.bind(this.menu, this), false);
         document.addEventListener('click', this.tribute.events.click.bind(null, this), false);
         window.addEventListener('resize', this.debounce(function () {
-          if (_this2.tribute.isActive) {
-            _this2.tribute.showMenuFor(_this2.tribute.current.element);
+          if (_this3.tribute.isActive) {
+            _this3.tribute.showMenuFor(_this3.tribute.current.element);
           }
         }, 300, false));
       }
@@ -260,6 +271,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         if (isNaN(keyCode)) return;
 
         instance.updateSelection(this);
+
         var trigger = instance.tribute.triggers().find(function (trigger) {
           return trigger.charCodeAt(0) === keyCode;
         });
@@ -287,15 +299,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'callbacks',
       value: function callbacks() {
-        var _this3 = this;
+        var _this4 = this;
 
         return {
           triggerChar: function triggerChar(e, el, trigger) {
-            var tribute = _this3.tribute;
+            var tribute = _this4.tribute;
             tribute.current.trigger = trigger;
 
             var collectionItem = tribute.collection.find(function (item) {
-              return item.trigger = trigger;
+              return item.trigger === trigger;
             });
 
             tribute.current.collection = collectionItem;
@@ -304,47 +316,47 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           },
           enter: function enter(e, el) {
             // choose selection
-            if (_this3.tribute.isActive) {
+            if (_this4.tribute.isActive) {
               e.preventDefault();
               setTimeout(function () {
-                _this3.tribute.selectItemAtIndex(_this3.tribute.menuSelected);
-                _this3.tribute.hideMenu();
+                _this4.tribute.selectItemAtIndex(_this4.tribute.menuSelected);
+                _this4.tribute.hideMenu();
               }, 0);
             }
           },
           escape: function escape(e, el) {
-            if (_this3.tribute.isActive) {
+            if (_this4.tribute.isActive) {
               e.preventDefault();
-              _this3.tribute.hideMenu();
+              _this4.tribute.hideMenu();
             }
           },
           tab: function tab(e, el) {
             // choose first match
-            _this3.callbacks().enter(e, el);
+            _this4.callbacks().enter(e, el);
           },
           up: function up(e, el) {
             // navigate up ul
-            if (_this3.tribute.isActive) {
+            if (_this4.tribute.isActive) {
               e.preventDefault();
-              var count = _this3.tribute.current.filteredItems.length,
-                  selected = _this3.tribute.menuSelected;
+              var count = _this4.tribute.current.filteredItems.length,
+                  selected = _this4.tribute.menuSelected;
 
               if (count > selected && selected > 0) {
-                _this3.tribute.menuSelected--;
-                _this3.setActiveLi();
+                _this4.tribute.menuSelected--;
+                _this4.setActiveLi();
               }
             }
           },
           down: function down(e, el) {
             // navigate down ul
-            if (_this3.tribute.isActive) {
+            if (_this4.tribute.isActive) {
               e.preventDefault();
-              var count = _this3.tribute.current.filteredItems.length - 1,
-                  selected = _this3.tribute.menuSelected;
+              var count = _this4.tribute.current.filteredItems.length - 1,
+                  selected = _this4.tribute.menuSelected;
 
-              if (count > _this3.tribute.menuSelected) {
-                _this3.tribute.menuSelected++;
-                _this3.setActiveLi();
+              if (count > _this4.tribute.menuSelected) {
+                _this4.tribute.menuSelected++;
+                _this4.setActiveLi();
               }
             }
           }
@@ -633,7 +645,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'getTriggerInfo',
       value: function getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace) {
-        var _this4 = this;
+        var _this5 = this;
 
         var ctx = this.tribute.current;
         var selected = undefined,
@@ -660,7 +672,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             var mostRecentTriggerCharPos = -1;
             var triggerChar = undefined;
 
-            _this4.tribute.triggers().forEach(function (c) {
+            _this5.tribute.triggers().forEach(function (c) {
               var idx = effectiveRange.lastIndexOf(c);
 
               if (idx > mostRecentTriggerCharPos) {
@@ -873,10 +885,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(TributeSearch, [{
       key: 'simpleFilter',
       value: function simpleFilter(pattern, array) {
-        var _this5 = this;
+        var _this6 = this;
 
         return array.filter(function (string) {
-          return _this5.test(pattern, string);
+          return _this6.test(pattern, string);
         });
       }
     }, {
@@ -987,7 +999,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, {
       key: 'filter',
       value: function filter(pattern, arr, opts) {
-        var _this6 = this;
+        var _this7 = this;
 
         opts = opts || {};
         return arr.reduce(function (prev, element, idx, arr) {
@@ -1002,7 +1014,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }
           }
 
-          var rendered = _this6.match(pattern, str, opts);
+          var rendered = _this7.match(pattern, str, opts);
 
           if (rendered != null) {
             prev[prev.length] = {

@@ -24,7 +24,15 @@
           values: options.values
         }]
       } else if (options.collection) {
-        this.collection = options.collection
+        this.collection = options.collection.map(item => {
+          return {
+            trigger: item.trigger || '@',
+            selectCallback: (item.selectCallback || Tribute.defaultSelectCallback).bind(this),
+            lookup: item.lookup || 'key',
+            fillAttr: item.fillAttr || 'value',
+            values: item.values
+          }
+        })
       } else {
         throw new Error('collection', 'No collection specified.')
       }
@@ -47,6 +55,7 @@
     }
 
     triggers() {
+      console.log(this.collection)
       return this.collection.map(config => {
         return config.trigger
       })
@@ -265,6 +274,7 @@
       if (isNaN(keyCode)) return
 
       instance.updateSelection(this)
+
       let trigger = instance.tribute.triggers().find(trigger => {
         return trigger.charCodeAt(0) === keyCode
       })
@@ -296,7 +306,7 @@
           tribute.current.trigger = trigger
 
           let collectionItem = tribute.collection.find(item => {
-            return item.trigger = trigger
+            return item.trigger === trigger
           })
 
           tribute.current.collection = collectionItem
