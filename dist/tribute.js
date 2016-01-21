@@ -23,7 +23,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           // The symbol that starts the lookup
           trigger: options.trigger || '@',
 
-          // The function that gets call on select that retuns the content to insert
+          // The function that gets called on select that retuns the content to insert
           selectCallback: (options.selectCallback || Tribute.defaultSelectCallback).bind(this),
 
           // the column to search against in the object
