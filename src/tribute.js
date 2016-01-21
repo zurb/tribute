@@ -67,7 +67,6 @@
     attach(element) {
       if (element.hasAttribute('data-tribute')) {
         throw new Error('tribute', 'already bound to ' + element.nodeName)
-        return
       }
 
       element.setAttribute('data-tribute', this.uuid())

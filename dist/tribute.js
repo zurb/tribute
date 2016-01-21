@@ -72,7 +72,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       value: function attach(element) {
         if (element.hasAttribute('data-tribute')) {
           throw new Error('tribute', 'already bound to ' + element.nodeName);
-          return;
         }
 
         element.setAttribute('data-tribute', this.uuid());
