@@ -22,7 +22,7 @@ var tribute = new Tribute({
 ```
 
 #### A Collection
-Collections are configuration objects for Tribute, you can have multiple for instance. This is useful for scenarios where you may want to match multiple trigger keys, such as `@` for users and `#` for projects.
+Collections are configuration objects for Tribute, you can have multiple for each instance. This is useful for scenarios where you may want to match multiple trigger keys, such as `@` for users and `#` for projects.
 
 
 Collection object shown with defaults:
