@@ -368,6 +368,7 @@
 
   }
 
+  // Thanks to https://github.com/jeff-collins/ment.io
   class TributeRange {
     constructor(tribute) {
       this.tribute = tribute
@@ -829,6 +830,7 @@
 
   }
 
+  // Thanks to https://github.com/mattyork/fuzzy
   class TributeSearch {
     constructor(tribute) {
       this.tribute = tribute

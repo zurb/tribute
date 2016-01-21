@@ -417,6 +417,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return TributeEvents;
   }();
 
+  // Thanks to https://github.com/jeff-collins/ment.io
+
   var TributeRange = function () {
     function TributeRange(tribute) {
       _classCallCheck(this, TributeRange);
@@ -857,6 +859,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     return TributeRange;
   }();
+
+  // Thanks to https://github.com/mattyork/fuzzy
 
   var TributeSearch = function () {
     function TributeSearch(tribute) {
