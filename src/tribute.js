@@ -34,6 +34,8 @@ if (!Array.prototype.find) {
           // symbol that starts the lookup
           trigger: trigger || '@',
 
+          iframe: null,
+
           // function called on select that retuns the content to insert
           selectCallback: (selectCallback || Tribute.defaultSelectCallback).bind(this),
 
@@ -108,12 +110,12 @@ if (!Array.prototype.find) {
     }
 
     createMenu() {
-      let wrapper = document.createElement('div'),
-          ul = document.createElement('ul')
+      let wrapper = this.range.getDocument().createElement('div'),
+          ul = this.range.getDocument().createElement('ul')
 
       wrapper.className = 'tribute-container'
       wrapper.appendChild(ul)
-      return document.body.appendChild(wrapper)
+      return this.range.getDocument().body.appendChild(wrapper)
     }
 
     showMenuFor(element, collectionItem) {
@@ -142,7 +144,7 @@ if (!Array.prototype.find) {
       ul.innerHTML = ''
 
       items.forEach((item, index) => {
-        let li = document.createElement('li')
+        let li = this.range.getDocument().createElement('li')
         li.setAttribute('data-index', index)
         if (this.menuSelected === index) {
           li.className = 'highlight'
@@ -187,7 +189,8 @@ if (!Array.prototype.find) {
     bind(menu) {
       menu.addEventListener('keydown',
         this.tribute.events.keydown.bind(this.menu, this), false)
-      document.addEventListener('click', this.tribute.events.click.bind(null, this), false)
+      this.tribute.range.getDocument().addEventListener('click',
+        this.tribute.events.click.bind(null, this), false)
       window.addEventListener('resize', this.debounce(() => {
         if (this.tribute.isActive) {
           this.tribute.showMenuFor(this.tribute.current.element)
@@ -398,6 +401,19 @@ if (!Array.prototype.find) {
       this.tribute.range = this
     }
 
+    getDocument() {
+      let iframe
+      if (this.tribute.current.collection) {
+        iframe = this.tribute.current.collection.iframe
+      }
+
+      if (!iframe) {
+        return document
+      }
+
+      return iframe.contentWindow.document
+    }
+
     positionMenuAtCaret() {
       let context = this.tribute.current,
         coordinates
@@ -405,7 +421,7 @@ if (!Array.prototype.find) {
 
       if (info !== undefined) {
         if (!this.isContentEditable(context.element)) {
-          coordinates = this.getTextAreaOrInputUnderlinePosition(document.activeElement,
+          coordinates = this.getTextAreaOrInputUnderlinePosition(this.getDocument().activeElement,
             info.mentionPosition)
         } else {
           coordinates = this.getContentEditableCaretPosition(info.mentionPosition)
@@ -419,7 +435,7 @@ if (!Array.prototype.find) {
                                            display: block;`
 
         setTimeout(() => {
-          this.scrollIntoView(document.activeElement)
+          this.scrollIntoView(this.getDocument().activeElement)
         }, 0)
       } else {
         this.tribute.menu.style.cssText = 'display: none'
@@ -447,7 +463,7 @@ if (!Array.prototype.find) {
       }
       let sel = this.getWindowSelection()
 
-      range = document.createRange()
+      range = this.getDocument().createRange()
       range.setStart(elem, offset)
       range.setEnd(elem, offset)
       range.collapse(true)
@@ -464,7 +480,7 @@ if (!Array.prototype.find) {
       let nodeName = targetElement.nodeName
 
       if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {
-        if (targetElement !== document.activeElement) {
+        if (targetElement !== this.getDocument().activeElement) {
           targetElement.focus()
         }
       } else {
@@ -480,7 +496,7 @@ if (!Array.prototype.find) {
 
       if (info !== undefined) {
         if (!this.isContentEditable(context.element)) {
-          let myField = document.activeElement
+          let myField = this.getDocument().activeElement
           text += ' '
           let startPos = info.mentionPosition
           let endPos = info.mentionPosition + info.mentionText.length + 1
@@ -500,14 +516,14 @@ if (!Array.prototype.find) {
     pasteHtml(html, startPos, endPos) {
       let range, sel
       sel = this.getWindowSelection()
-      range = document.createRange()
+      range = this.getDocument().createRange()
       range.setStart(sel.anchorNode, startPos)
       range.setEnd(sel.anchorNode, endPos)
       range.deleteContents()
 
-      let el = document.createElement('div')
+      let el = this.getDocument().createElement('div')
       el.innerHTML = html
-      let frag = document.createDocumentFragment(),
+      let frag = this.getDocument().createDocumentFragment(),
         node, lastNode
       while ((node = el.firstChild)) {
         lastNode = frag.appendChild(node)
@@ -578,7 +594,7 @@ if (!Array.prototype.find) {
       let text
 
       if (!this.isContentEditable(context.element)) {
-        let textComponent = document.activeElement
+        let textComponent = this.getDocument().activeElement
         let startPos = textComponent.selectionStart
         text = textComponent.value.substring(0, startPos)
 
@@ -603,7 +619,7 @@ if (!Array.prototype.find) {
       let selected, path, offset
 
       if (!this.isContentEditable(ctx.element)) {
-        selected = document.activeElement
+        selected = this.getDocument().activeElement
       } else {
         // content editable
         let selectionInfo = this.getContentEditableSelectedPath()
@@ -683,7 +699,7 @@ if (!Array.prototype.find) {
 
       obj = element
 
-      while (obj !== document.body) {
+      while (obj !== this.getDocument().body) {
         if (obj.scrollTop && obj.scrollTop > 0) {
           coordinates.top -= obj.scrollTop
         }
@@ -728,9 +744,9 @@ if (!Array.prototype.find) {
 
       let isFirefox = (window.mozInnerScreenX !== null)
 
-      let div = document.createElement('div')
+      let div = this.getDocument().createElement('div')
       div.id = 'input-textarea-caret-position-mirror-div'
-      document.body.appendChild(div)
+      this.getDocument().body.appendChild(div)
 
       let style = div.style
       let computed = window.getComputedStyle ? getComputedStyle(element) : element.currentStyle
@@ -763,7 +779,7 @@ if (!Array.prototype.find) {
         div.textContent = div.textContent.replace(/\s/g, '\u00a0')
       }
 
-      let span = document.createElement('span')
+      let span = this.getDocument().createElement('span')
       span.textContent = element.value.substring(position) || '.'
       div.appendChild(span)
 
@@ -774,7 +790,7 @@ if (!Array.prototype.find) {
 
       this.localToGlobalCoordinates(element, coordinates)
 
-      document.body.removeChild(div)
+      this.getDocument().body.removeChild(div)
 
       return coordinates
     }
@@ -786,16 +802,16 @@ if (!Array.prototype.find) {
       let sel = this.getWindowSelection()
       let prevRange = sel.getRangeAt(0)
 
-      range = document.createRange()
+      range = this.getDocument().createRange()
       range.setStart(sel.anchorNode, selectedNodePosition)
       range.setEnd(sel.anchorNode, selectedNodePosition)
 
       range.collapse(false)
 
       // Create the marker element containing a single invisible character using DOM methods and insert it
-      markerEl = document.createElement('span')
+      markerEl = this.getDocument().createElement('span')
       markerEl.id = markerId
-      markerEl.appendChild(document.createTextNode(markerTextChar))
+      markerEl.appendChild(this.getDocument().createTextNode(markerTextChar))
       range.insertNode(markerEl)
       sel.removeAllRanges()
       sel.addRange(prevRange)

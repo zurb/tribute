@@ -60,6 +60,8 @@ if (!Array.prototype.find) {
             // symbol that starts the lookup
             trigger: trigger || '@',
 
+            iframe: null,
+
             // function called on select that retuns the content to insert
             selectCallback: (selectCallback || Tribute.defaultSelectCallback).bind(this),
 
@@ -129,12 +131,12 @@ if (!Array.prototype.find) {
       }, {
         key: 'createMenu',
         value: function createMenu() {
-          var wrapper = document.createElement('div'),
-              ul = document.createElement('ul');
+          var wrapper = this.range.getDocument().createElement('div'),
+              ul = this.range.getDocument().createElement('ul');
 
           wrapper.className = 'tribute-container';
           wrapper.appendChild(ul);
-          return document.body.appendChild(wrapper);
+          return this.range.getDocument().body.appendChild(wrapper);
         }
       }, {
         key: 'showMenuFor',
@@ -166,7 +168,7 @@ if (!Array.prototype.find) {
           ul.innerHTML = '';
 
           items.forEach(function (item, index) {
-            var li = document.createElement('li');
+            var li = _this2.range.getDocument().createElement('li');
             li.setAttribute('data-index', index);
             if (_this2.menuSelected === index) {
               li.className = 'highlight';
@@ -230,7 +232,7 @@ if (!Array.prototype.find) {
           var _this3 = this;
 
           menu.addEventListener('keydown', this.tribute.events.keydown.bind(this.menu, this), false);
-          document.addEventListener('click', this.tribute.events.click.bind(null, this), false);
+          this.tribute.range.getDocument().addEventListener('click', this.tribute.events.click.bind(null, this), false);
           window.addEventListener('resize', this.debounce(function () {
             if (_this3.tribute.isActive) {
               _this3.tribute.showMenuFor(_this3.tribute.current.element);
@@ -276,6 +278,9 @@ if (!Array.prototype.find) {
           element.addEventListener('keydown', this.keydown.bind(element, this), false);
           element.addEventListener('keyup', this.keyup.bind(element, this), false);
         }
+
+        // Google chrome retardedness
+
       }, {
         key: 'keydown',
         value: function keydown(instance, event) {
@@ -436,18 +441,6 @@ if (!Array.prototype.find) {
           }];
         }
       }, {
-        key: 'unescape',
-        value: function unescape(str) {
-          var r = /\\u([\d\w]{4})/gi;
-
-          return str.replace(r, function (match, grp) {
-            return String.fromCharCode(parseInt(grp, 16));
-          });
-        }
-
-        // Google chrome retardedness
-
-      }, {
         key: 'getKeyCode',
         value: function getKeyCode(event) {
           var keyCode = undefined;
@@ -478,6 +471,20 @@ if (!Array.prototype.find) {
       }
 
       _createClass(TributeRange, [{
+        key: 'getDocument',
+        value: function getDocument() {
+          var iframe = undefined;
+          if (this.tribute.current.collection) {
+            iframe = this.tribute.current.collection.iframe;
+          }
+
+          if (!iframe) {
+            return document;
+          }
+
+          return iframe.contentWindow.document;
+        }
+      }, {
         key: 'positionMenuAtCaret',
         value: function positionMenuAtCaret() {
           var _this6 = this;
@@ -488,7 +495,7 @@ if (!Array.prototype.find) {
 
           if (info !== undefined) {
             if (!this.isContentEditable(context.element)) {
-              coordinates = this.getTextAreaOrInputUnderlinePosition(document.activeElement, info.mentionPosition);
+              coordinates = this.getTextAreaOrInputUnderlinePosition(this.getDocument().activeElement, info.mentionPosition);
             } else {
               coordinates = this.getContentEditableCaretPosition(info.mentionPosition);
             }
@@ -497,7 +504,7 @@ if (!Array.prototype.find) {
             this.tribute.menu.style.cssText = 'top: ' + coordinates.top + 'px;\n                                           left: ' + coordinates.left + 'px;\n                                           position: absolute;\n                                           zIndex: 10000;\n                                           display: block;';
 
             setTimeout(function () {
-              _this6.scrollIntoView(document.activeElement);
+              _this6.scrollIntoView(_this6.getDocument().activeElement);
             }, 0);
           } else {
             this.tribute.menu.style.cssText = 'display: none';
@@ -526,7 +533,7 @@ if (!Array.prototype.find) {
           }
           var sel = this.getWindowSelection();
 
-          range = document.createRange();
+          range = this.getDocument().createRange();
           range.setStart(elem, offset);
           range.setEnd(elem, offset);
           range.collapse(true);
@@ -544,7 +551,7 @@ if (!Array.prototype.find) {
           var nodeName = targetElement.nodeName;
 
           if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {
-            if (targetElement !== document.activeElement) {
+            if (targetElement !== this.getDocument().activeElement) {
               targetElement.focus();
             }
           } else {
@@ -561,7 +568,7 @@ if (!Array.prototype.find) {
 
           if (info !== undefined) {
             if (!this.isContentEditable(context.element)) {
-              var myField = document.activeElement;
+              var myField = this.getDocument().activeElement;
               text += ' ';
               var startPos = info.mentionPosition;
               var endPos = info.mentionPosition + info.mentionText.length + 1;
@@ -581,14 +588,14 @@ if (!Array.prototype.find) {
           var range = undefined,
               sel = undefined;
           sel = this.getWindowSelection();
-          range = document.createRange();
+          range = this.getDocument().createRange();
           range.setStart(sel.anchorNode, startPos);
           range.setEnd(sel.anchorNode, endPos);
           range.deleteContents();
 
-          var el = document.createElement('div');
+          var el = this.getDocument().createElement('div');
           el.innerHTML = html;
-          var frag = document.createDocumentFragment(),
+          var frag = this.getDocument().createDocumentFragment(),
               node = undefined,
               lastNode = undefined;
           while (node = el.firstChild) {
@@ -664,7 +671,7 @@ if (!Array.prototype.find) {
           var text = undefined;
 
           if (!this.isContentEditable(context.element)) {
-            var textComponent = document.activeElement;
+            var textComponent = this.getDocument().activeElement;
             var startPos = textComponent.selectionStart;
             text = textComponent.value.substring(0, startPos);
           } else {
@@ -693,7 +700,7 @@ if (!Array.prototype.find) {
               offset = undefined;
 
           if (!this.isContentEditable(ctx.element)) {
-            selected = document.activeElement;
+            selected = this.getDocument().activeElement;
           } else {
             // content editable
             var selectionInfo = this.getContentEditableSelectedPath();
@@ -766,7 +773,7 @@ if (!Array.prototype.find) {
 
           obj = element;
 
-          while (obj !== document.body) {
+          while (obj !== this.getDocument().body) {
             if (obj.scrollTop && obj.scrollTop > 0) {
               coordinates.top -= obj.scrollTop;
             }
@@ -783,9 +790,9 @@ if (!Array.prototype.find) {
 
           var isFirefox = window.mozInnerScreenX !== null;
 
-          var div = document.createElement('div');
+          var div = this.getDocument().createElement('div');
           div.id = 'input-textarea-caret-position-mirror-div';
-          document.body.appendChild(div);
+          this.getDocument().body.appendChild(div);
 
           var style = div.style;
           var computed = window.getComputedStyle ? getComputedStyle(element) : element.currentStyle;
@@ -817,7 +824,7 @@ if (!Array.prototype.find) {
             div.textContent = div.textContent.replace(/\s/g, ' ');
           }
 
-          var span = document.createElement('span');
+          var span = this.getDocument().createElement('span');
           span.textContent = element.value.substring(position) || '.';
           div.appendChild(span);
 
@@ -828,7 +835,7 @@ if (!Array.prototype.find) {
 
           this.localToGlobalCoordinates(element, coordinates);
 
-          document.body.removeChild(div);
+          this.getDocument().body.removeChild(div);
 
           return coordinates;
         }
@@ -842,16 +849,16 @@ if (!Array.prototype.find) {
           var sel = this.getWindowSelection();
           var prevRange = sel.getRangeAt(0);
 
-          range = document.createRange();
+          range = this.getDocument().createRange();
           range.setStart(sel.anchorNode, selectedNodePosition);
           range.setEnd(sel.anchorNode, selectedNodePosition);
 
           range.collapse(false);
 
           // Create the marker element containing a single invisible character using DOM methods and insert it
-          markerEl = document.createElement('span');
+          markerEl = this.getDocument().createElement('span');
           markerEl.id = markerId;
-          markerEl.appendChild(document.createTextNode(markerTextChar));
+          markerEl.appendChild(this.getDocument().createTextNode(markerTextChar));
           range.insertNode(markerEl);
           sel.removeAllRanges();
           sel.addRange(prevRange);
