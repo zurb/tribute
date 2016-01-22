@@ -243,14 +243,6 @@ if (!Array.prototype.find) {
         this.keyup.bind(element, this), false)
     }
 
-    static unescape(str) {
-      let r = /\\u([\d\w]{4})/gi
-
-      return str.replace(r, (match, grp) => {
-        return String.fromCharCode(parseInt(grp, 16))
-      })
-    }
-
     // Google chrome retardedness
     static getKeyCode(event) {
       let keyCode
