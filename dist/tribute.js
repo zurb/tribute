@@ -673,8 +673,8 @@ if (!Array.prototype.find) {
       }, {
         key: 'getTextPrecedingCurrentSelection',
         value: function getTextPrecedingCurrentSelection() {
-          var context = this.tribute.current;
-          var text = undefined;
+          var context = this.tribute.current,
+              text = undefined;
 
           if (!this.isContentEditable(context.element)) {
             var textComponent = this.getDocument().activeElement;
@@ -882,10 +882,9 @@ if (!Array.prototype.find) {
       }, {
         key: 'scrollIntoView',
         value: function scrollIntoView(elem) {
-          // cheap hack in px - need to check styles relative to the element
-          var reasonableBuffer = 20;
+          var reasonableBuffer = 20,
+              clientRect = undefined;
           var maxScrollDisplacement = 100;
-          var clientRect = undefined;
           var e = elem;
 
           while (clientRect === undefined || clientRect.height === 0) {

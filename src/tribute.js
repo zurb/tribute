@@ -590,8 +590,7 @@ if (!Array.prototype.find) {
     }
 
     getTextPrecedingCurrentSelection() {
-      let context = this.tribute.current
-      let text
+      let context = this.tribute.current, text
 
       if (!this.isContentEditable(context.element)) {
         let textComponent = this.getDocument().activeElement
