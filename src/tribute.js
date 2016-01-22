@@ -21,7 +21,7 @@ if (!Array.prototype.find) {
   };
 }
 
-(() => {
+{
   class Tribute {
     constructor(options) {
       this.expando = this.menuSelected = 0
@@ -1013,4 +1013,4 @@ if (!Array.prototype.find) {
   }
 
   window.Tribute = Tribute
-})()
+}

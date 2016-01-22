@@ -21,7 +21,7 @@
   cursor: pointer;
 }
 
-.tribute-container li.highlight {
+.tribute-container li.highlight, .tribute-container li:hover{
   background: #ddd;
 }
 
