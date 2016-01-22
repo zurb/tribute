@@ -22,7 +22,7 @@ var tribute = new Tribute({
 ```
 
 #### Attaching to elements
-Once initialized, Tribute can be attached to an `input`, `textarea`, or an element that supports `contenteditable`.
+Once initialized, Tribute can be attached to an `input`, `textarea`, or an element that supports `contenteditable`. It also works in WYSIWYG iframes like TinyMCE.
 
 ```html
 <div id="myEditableDiv">I'm a Meeseeks, look at me!</div>
@@ -39,21 +39,24 @@ Collections are configuration objects for Tribute, you can have multiple for eac
 Collection object shown with defaults:
 ```js
 {
-  // The symbol that starts the lookup
+  // symbol that starts the lookup
   trigger: '@',
 
-  // The function that gets called on select that retuns the content to insert
+  // element to target for @mentions
+  iframe: null,
+
+  // function called on select that returns the content to insert
   selectCallback: function (item) {
     return '@' + item.value;
   },
 
-  // the column to search against in the object
+  // column to search against in the object
   lookup: 'key',
 
-  // the column that contains the content to insert by default
+  // column that contains the content to insert by default
   fillAttr: 'value',
 
-  // REQUIRED: the array of objects to match
+  // REQUIRED: array of objects to match
   values: []
 }
 ```
@@ -61,5 +64,3 @@ Collection object shown with defaults:
 #### Remaining things before open source
 * Custom menu template
 * Test suite
-* Use documentFragment where possible
-* Iframe support

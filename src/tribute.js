@@ -52,6 +52,7 @@ if (!Array.prototype.find) {
         this.collection = collection.map(item => {
           return {
             trigger: item.trigger || '@',
+            iframe: item.iframe || null,
             selectCallback: (item.selectCallback || Tribute.defaultSelectCallback).bind(this),
             lookup: item.lookup || 'key',
             fillAttr: item.fillAttr || 'value',
