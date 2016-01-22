@@ -45,6 +45,8 @@ Collection object shown with defaults:
   // element to target for @mentions
   iframe: null,
 
+  selectClass: 'highlight',
+
   // function called on select that returns the content to insert
   selectCallback: function (item) {
     return '@' + item.value;
