@@ -23,31 +23,31 @@ if (!Array.prototype.find) {
 
 {
   class Tribute {
-    constructor(options) {
+    constructor({values=null, trigger='@', selectCallback=null, lookup='key', fillAttr='value', collection=null}) {
       this.expando = this.menuSelected = 0
       this.instance = this.uuid()
       this.current = {}
       this.isActive = false
 
-      if (options.values) {
+      if (values) {
         this.collection = [{
           // symbol that starts the lookup
-          trigger: options.trigger || '@',
+          trigger: trigger || '@',
 
           // function called on select that retuns the content to insert
-          selectCallback: (options.selectCallback || Tribute.defaultSelectCallback).bind(this),
+          selectCallback: (selectCallback || Tribute.defaultSelectCallback).bind(this),
 
           // column to search against in the object
-          lookup: options.lookup || 'key',
+          lookup: lookup || 'key',
 
           // column that contains the content to insert by default
-          fillAttr: options.fillAttr || 'value',
+          fillAttr: fillAttr || 'value',
 
           // array of objects
-          values: options.values
+          values: values
         }]
-      } else if (options.collection) {
-        this.collection = options.collection.map(item => {
+      } else if (collection) {
+        this.collection = collection.map(item => {
           return {
             trigger: item.trigger || '@',
             selectCallback: (item.selectCallback || Tribute.defaultSelectCallback).bind(this),

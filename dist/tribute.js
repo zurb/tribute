@@ -32,8 +32,21 @@ if (!Array.prototype.find) {
 {
   (function () {
     var Tribute = function () {
-      function Tribute(options) {
+      function Tribute(_ref) {
         var _this = this;
+
+        var _ref$values = _ref.values;
+        var values = _ref$values === undefined ? null : _ref$values;
+        var _ref$trigger = _ref.trigger;
+        var trigger = _ref$trigger === undefined ? '@' : _ref$trigger;
+        var _ref$selectCallback = _ref.selectCallback;
+        var selectCallback = _ref$selectCallback === undefined ? null : _ref$selectCallback;
+        var _ref$lookup = _ref.lookup;
+        var lookup = _ref$lookup === undefined ? 'key' : _ref$lookup;
+        var _ref$fillAttr = _ref.fillAttr;
+        var fillAttr = _ref$fillAttr === undefined ? 'value' : _ref$fillAttr;
+        var _ref$collection = _ref.collection;
+        var collection = _ref$collection === undefined ? null : _ref$collection;
 
         _classCallCheck(this, Tribute);
 
@@ -42,25 +55,25 @@ if (!Array.prototype.find) {
         this.current = {};
         this.isActive = false;
 
-        if (options.values) {
+        if (values) {
           this.collection = [{
             // symbol that starts the lookup
-            trigger: options.trigger || '@',
+            trigger: trigger || '@',
 
             // function called on select that retuns the content to insert
-            selectCallback: (options.selectCallback || Tribute.defaultSelectCallback).bind(this),
+            selectCallback: (selectCallback || Tribute.defaultSelectCallback).bind(this),
 
             // column to search against in the object
-            lookup: options.lookup || 'key',
+            lookup: lookup || 'key',
 
             // column that contains the content to insert by default
-            fillAttr: options.fillAttr || 'value',
+            fillAttr: fillAttr || 'value',
 
             // array of objects
-            values: options.values
+            values: values
           }];
-        } else if (options.collection) {
-          this.collection = options.collection.map(function (item) {
+        } else if (collection) {
+          this.collection = collection.map(function (item) {
             return {
               trigger: item.trigger || '@',
               selectCallback: (item.selectCallback || Tribute.defaultSelectCallback).bind(_this),
