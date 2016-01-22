@@ -37,6 +37,10 @@ if (!Array.prototype.find) {
 
         var _ref$values = _ref.values;
         var values = _ref$values === undefined ? null : _ref$values;
+        var _ref$iframe = _ref.iframe;
+        var iframe = _ref$iframe === undefined ? null : _ref$iframe;
+        var _ref$selectClass = _ref.selectClass;
+        var selectClass = _ref$selectClass === undefined ? 'highlight' : _ref$selectClass;
         var _ref$trigger = _ref.trigger;
         var trigger = _ref$trigger === undefined ? '@' : _ref$trigger;
         var _ref$selectCallback = _ref.selectCallback;
@@ -58,18 +62,20 @@ if (!Array.prototype.find) {
         if (values) {
           this.collection = [{
             // symbol that starts the lookup
-            trigger: trigger || '@',
+            trigger: trigger,
 
-            iframe: null,
+            iframe: iframe,
+
+            selectClass: selectClass,
 
             // function called on select that retuns the content to insert
             selectCallback: (selectCallback || Tribute.defaultSelectCallback).bind(this),
 
             // column to search against in the object
-            lookup: lookup || 'key',
+            lookup: lookup,
 
             // column that contains the content to insert by default
-            fillAttr: fillAttr || 'value',
+            fillAttr: fillAttr,
 
             // array of objects
             values: values
@@ -77,10 +83,12 @@ if (!Array.prototype.find) {
         } else if (collection) {
           this.collection = collection.map(function (item) {
             return {
-              trigger: item.trigger || '@',
+              trigger: item.trigger || trigger,
+              iframe: item.iframe || iframe,
+              selectClass: item.selectClass || selectClass,
               selectCallback: (item.selectCallback || Tribute.defaultSelectCallback).bind(_this),
-              lookup: item.lookup || 'key',
-              fillAttr: item.fillAttr || 'value',
+              lookup: item.lookup || lookup,
+              fillAttr: item.fillAttr || fillAttr,
               values: item.values
             };
           });
@@ -171,7 +179,7 @@ if (!Array.prototype.find) {
             var li = _this2.range.getDocument().createElement('li');
             li.setAttribute('data-index', index);
             if (_this2.menuSelected === index) {
-              li.className = 'highlight';
+              li.className = _this2.current.collection.selectClass;
             }
             li.innerHTML = item.string;
             ul.appendChild(li);
@@ -414,7 +422,7 @@ if (!Array.prototype.find) {
           for (var i = 0; i < length; i++) {
             var li = lis[i];
             if (i === this.tribute.menuSelected) {
-              li.className = 'highlight';
+              li.className = this.tribute.current.collection.selectClass;
             } else {
               li.className = '';
             }
@@ -548,9 +556,7 @@ if (!Array.prototype.find) {
       }, {
         key: 'resetSelection',
         value: function resetSelection(targetElement, path, offset) {
-          var nodeName = targetElement.nodeName;
-
-          if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {
+          if (!this.isContentEditable(targetElement)) {
             if (targetElement !== this.getDocument().activeElement) {
               targetElement.focus();
             }

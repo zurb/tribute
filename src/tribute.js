@@ -23,7 +23,7 @@ if (!Array.prototype.find) {
 
 {
   class Tribute {
-    constructor({values=null, trigger='@', selectCallback=null, lookup='key', fillAttr='value', collection=null}) {
+    constructor({values=null, iframe=null, selectClass='highlight', trigger='@', selectCallback=null, lookup='key', fillAttr='value', collection=null}) {
       this.expando = this.menuSelected = 0
       this.instance = this.uuid()
       this.current = {}
@@ -32,18 +32,20 @@ if (!Array.prototype.find) {
       if (values) {
         this.collection = [{
           // symbol that starts the lookup
-          trigger: trigger || '@',
+          trigger: trigger,
 
-          iframe: null,
+          iframe: iframe,
+
+          selectClass: selectClass,
 
           // function called on select that retuns the content to insert
           selectCallback: (selectCallback || Tribute.defaultSelectCallback).bind(this),
 
           // column to search against in the object
-          lookup: lookup || 'key',
+          lookup: lookup,
 
           // column that contains the content to insert by default
-          fillAttr: fillAttr || 'value',
+          fillAttr: fillAttr,
 
           // array of objects
           values: values
@@ -51,11 +53,12 @@ if (!Array.prototype.find) {
       } else if (collection) {
         this.collection = collection.map(item => {
           return {
-            trigger: item.trigger || '@',
-            iframe: item.iframe || null,
+            trigger: item.trigger || trigger,
+            iframe: item.iframe || iframe,
+            selectClass: item.selectClass || selectClass,
             selectCallback: (item.selectCallback || Tribute.defaultSelectCallback).bind(this),
-            lookup: item.lookup || 'key',
-            fillAttr: item.fillAttr || 'value',
+            lookup: item.lookup || lookup,
+            fillAttr: item.fillAttr || fillAttr,
             values: item.values
           }
         })
@@ -148,7 +151,7 @@ if (!Array.prototype.find) {
         let li = this.range.getDocument().createElement('li')
         li.setAttribute('data-index', index)
         if (this.menuSelected === index) {
-          li.className = 'highlight'
+          li.className = this.current.collection.selectClass
         }
         li.innerHTML = item.string
         ul.appendChild(li)
@@ -386,7 +389,7 @@ if (!Array.prototype.find) {
       for (let i = 0; i < length; i++) {
         let li = lis[i]
         if (i === this.tribute.menuSelected) {
-          li.className = 'highlight'
+          li.className = this.tribute.current.collection.selectClass
         } else {
           li.className = ''
         }
@@ -416,8 +419,7 @@ if (!Array.prototype.find) {
     }
 
     positionMenuAtCaret() {
-      let context = this.tribute.current,
-        coordinates
+      let context = this.tribute.current, coordinates
       let info = this.getTriggerInfo(false, false, true)
 
       if (info !== undefined) {
@@ -478,9 +480,7 @@ if (!Array.prototype.find) {
     }
 
     resetSelection(targetElement, path, offset) {
-      let nodeName = targetElement.nodeName
-
-      if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {
+      if (!this.isContentEditable(targetElement)) {
         if (targetElement !== this.getDocument().activeElement) {
           targetElement.focus()
         }
@@ -524,8 +524,7 @@ if (!Array.prototype.find) {
 
       let el = this.getDocument().createElement('div')
       el.innerHTML = html
-      let frag = this.getDocument().createDocumentFragment(),
-        node, lastNode
+      let frag = this.getDocument().createDocumentFragment(), node, lastNode
       while ((node = el.firstChild)) {
         lastNode = frag.appendChild(node)
       }
@@ -712,36 +711,14 @@ if (!Array.prototype.find) {
     }
 
     getTextAreaOrInputUnderlinePosition(element, position) {
-      let properties = [
-        'direction',
-        'boxSizing',
-        'width',
-        'height',
-        'overflowX',
-        'overflowY',
-        'borderTopWidth',
-        'borderRightWidth',
-        'borderBottomWidth',
-        'borderLeftWidth',
-        'paddingTop',
-        'paddingRight',
-        'paddingBottom',
-        'paddingLeft',
-        'fontStyle',
-        'fontVariant',
-        'fontWeight',
-        'fontStretch',
-        'fontSize',
-        'fontSizeAdjust',
-        'lineHeight',
-        'fontFamily',
-        'textAlign',
-        'textTransform',
-        'textIndent',
-        'textDecoration',
-        'letterSpacing',
-        'wordSpacing'
-      ]
+      let properties = ['direction', 'boxSizing', 'width', 'height', 'overflowX',
+                        'overflowY', 'borderTopWidth', 'borderRightWidth',
+                        'borderBottomWidth', 'borderLeftWidth', 'paddingTop',
+                        'paddingRight', 'paddingBottom', 'paddingLeft',
+                        'fontStyle', 'fontVariant', 'fontWeight', 'fontStretch',
+                        'fontSize', 'fontSizeAdjust', 'lineHeight', 'fontFamily',
+                        'textAlign', 'textTransform', 'textIndent',
+                        'textDecoration', 'letterSpacing', 'wordSpacing']
 
       let isFirefox = (window.mozInnerScreenX !== null)
 
