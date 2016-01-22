@@ -806,10 +806,8 @@ if (!Array.prototype.find) {
     }
 
     scrollIntoView(elem) {
-      // cheap hack in px - need to check styles relative to the element
-      let reasonableBuffer = 20
+      let reasonableBuffer = 20, clientRect
       let maxScrollDisplacement = 100
-      let clientRect
       let e = elem
 
       while (clientRect === undefined || clientRect.height === 0) {
