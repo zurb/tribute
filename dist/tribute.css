@@ -7,6 +7,7 @@
   max-width: 500px;
   overflow: auto;
   display: block;
+  z-index: 999999;
 }
 
 .tribute-container ul {
@@ -17,6 +18,7 @@
 
 .tribute-container li {
   padding: 5px 5px;
+  cursor: pointer;
 }
 
 .tribute-container li.highlight {
