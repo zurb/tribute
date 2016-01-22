@@ -45,6 +45,7 @@ Collection object shown with defaults:
   // element to target for @mentions
   iframe: null,
 
+  // class added in the flyout menu for active item
   selectClass: 'highlight',
 
   // function called on select that returns the content to insert
