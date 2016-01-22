@@ -1,5 +1,5 @@
 # Tribute
-An `@mention` engine written in ES6, no dependencies.
+A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Firefox, Chrome, iOS Safari, Safari, IE 9+, Edge 12.
 
 ### Initializing
 There are two ways to initialize Tribute, by passing an array of "collections" or by passing one collection object.
