@@ -25,10 +25,10 @@ var tribute = new Tribute({
 Once initialized, Tribute can be attached to an `input`, `textarea`, or an element that supports `contenteditable`. It also works in WYSIWYG iframes like TinyMCE.
 
 ```html
-<div id="myEditableDiv">I'm a Meeseeks, look at me!</div>
+<div id="caaanDo">I'm Mr. Meeseeks, look at me!</div>
 
 <script>
-  tribute.attach(document.getElementById('myEditableDiv'));
+  tribute.attach(document.getElementById('caaanDo'));
 </script>
 ```
 
