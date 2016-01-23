@@ -43,8 +43,8 @@ if (!Array.prototype.find) {
         var selectClass = _ref$selectClass === undefined ? 'highlight' : _ref$selectClass;
         var _ref$trigger = _ref.trigger;
         var trigger = _ref$trigger === undefined ? '@' : _ref$trigger;
-        var _ref$selectCallback = _ref.selectCallback;
-        var selectCallback = _ref$selectCallback === undefined ? null : _ref$selectCallback;
+        var _ref$selectTemplate = _ref.selectTemplate;
+        var selectTemplate = _ref$selectTemplate === undefined ? null : _ref$selectTemplate;
         var _ref$menuItemTemplate = _ref.menuItemTemplate;
         var menuItemTemplate = _ref$menuItemTemplate === undefined ? null : _ref$menuItemTemplate;
         var _ref$lookup = _ref.lookup;
@@ -71,7 +71,7 @@ if (!Array.prototype.find) {
             selectClass: selectClass,
 
             // function called on select that retuns the content to insert
-            selectCallback: (selectCallback || Tribute.defaultSelectCallback).bind(this),
+            selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
 
             menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
 
@@ -90,7 +90,7 @@ if (!Array.prototype.find) {
               trigger: item.trigger || trigger,
               iframe: item.iframe || iframe,
               selectClass: item.selectClass || selectClass,
-              selectCallback: (item.selectCallback || Tribute.defaultSelectCallback).bind(_this),
+              selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(_this),
               menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(_this),
               lookup: item.lookup || lookup,
               fillAttr: item.fillAttr || fillAttr,
@@ -210,7 +210,7 @@ if (!Array.prototype.find) {
         key: 'selectItemAtIndex',
         value: function selectItemAtIndex(index) {
           var item = this.current.collection.values[index];
-          var content = this.current.collection.selectCallback(item);
+          var content = this.current.collection.selectTemplate(item);
 
           this.replaceText(content);
         }
@@ -220,8 +220,8 @@ if (!Array.prototype.find) {
           this.range.replaceTriggerText(content, true, true);
         }
       }], [{
-        key: 'defaultSelectCallback',
-        value: function defaultSelectCallback(item) {
+        key: 'defaultSelectTemplate',
+        value: function defaultSelectTemplate(item) {
           return '@' + item[this.current.collection.fillAttr];
         }
       }, {

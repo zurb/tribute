@@ -49,7 +49,7 @@ Collection object shown with defaults:
   selectClass: 'highlight',
 
   // function called on select that returns the content to insert
-  selectCallback: function (item) {
+  selectTemplate: function (item) {
     return '@' + item.value;
   },
 

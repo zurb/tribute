@@ -168,7 +168,7 @@
           {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'jordan@zurb.com'},
           {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'jordan+riley@zurb.com'}
         ],
-        selectCallback: function (item) {
+        selectTemplate: function (item) {
           if (this.range.isContentEditable(this.current.element)) {
             return '<a href="test" title="' + item.email + '">' + item.value + '</a>';
           }
@@ -184,7 +184,7 @@
       var tributeMultipleTriggers = new Tribute({
         collection: [{
           // The function that gets call on select that retuns the content to insert
-          selectCallback: function (item) {
+          selectTemplate: function (item) {
             if (this.range.isContentEditable(this.current.element)) {
               return '<a href="test" title="' + item.email + '">' + item.value + '</a>';
             }
@@ -203,7 +203,7 @@
           trigger: '#',
 
           // The function that gets call on select that retuns the content to insert
-          selectCallback: function (item) {
+          selectTemplate: function (item) {
             if (this.range.isContentEditable(this.current.element)) {
               return '<a href="'+item.url+'" title="' + item.key + '">#' + item.value + '</a>';
             }

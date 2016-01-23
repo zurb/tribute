@@ -25,7 +25,7 @@ if (!Array.prototype.find) {
   class Tribute {
     constructor({
         values=null, iframe=null, selectClass='highlight', trigger='@',
-        selectCallback=null, menuItemTemplate=null,lookup='key',
+        selectTemplate=null, menuItemTemplate=null,lookup='key',
         fillAttr='value', collection=null}) {
 
       this.expando = this.menuSelected = 0
@@ -43,7 +43,7 @@ if (!Array.prototype.find) {
           selectClass: selectClass,
 
           // function called on select that retuns the content to insert
-          selectCallback: (selectCallback || Tribute.defaultSelectCallback).bind(this),
+          selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
 
           menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
 
@@ -62,7 +62,7 @@ if (!Array.prototype.find) {
             trigger: item.trigger || trigger,
             iframe: item.iframe || iframe,
             selectClass: item.selectClass || selectClass,
-            selectCallback: (item.selectCallback || Tribute.defaultSelectCallback).bind(this),
+            selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(this),
             menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
             lookup: item.lookup || lookup,
             fillAttr: item.fillAttr || fillAttr,
@@ -79,7 +79,7 @@ if (!Array.prototype.find) {
       new TributeSearch(this)
     }
 
-    static defaultSelectCallback(item) {
+    static defaultSelectTemplate(item) {
       return `@${item[this.current.collection.fillAttr]}`
     }
 
@@ -184,7 +184,7 @@ if (!Array.prototype.find) {
 
     selectItemAtIndex(index) {
       let item = this.current.collection.values[index]
-      let content = this.current.collection.selectCallback(item)
+      let content = this.current.collection.selectTemplate(item)
 
       this.replaceText(content)
     }
