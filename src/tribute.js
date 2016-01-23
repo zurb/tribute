@@ -844,7 +844,6 @@ if (!Array.prototype.find) {
         window.scrollTo(0, targetY)
       }
     }
-
   }
 
   // Thanks to https://github.com/mattyork/fuzzy
@@ -987,9 +986,6 @@ if (!Array.prototype.find) {
           return prev
         }, [])
 
-      // Sort by score. Browsers are inconsistent wrt stable/unstable
-      // sorting, so force stable by using the index in the case of tie.
-      // See http://ofb.net/~sethml/is-sort-stable.html
       .sort((a, b) => {
         let compare = b.score - a.score
         if (compare) return compare
