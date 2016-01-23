@@ -45,6 +45,8 @@ if (!Array.prototype.find) {
         var trigger = _ref$trigger === undefined ? '@' : _ref$trigger;
         var _ref$selectCallback = _ref.selectCallback;
         var selectCallback = _ref$selectCallback === undefined ? null : _ref$selectCallback;
+        var _ref$menuItemTemplate = _ref.menuItemTemplate;
+        var menuItemTemplate = _ref$menuItemTemplate === undefined ? null : _ref$menuItemTemplate;
         var _ref$lookup = _ref.lookup;
         var lookup = _ref$lookup === undefined ? 'key' : _ref$lookup;
         var _ref$fillAttr = _ref.fillAttr;
@@ -71,6 +73,8 @@ if (!Array.prototype.find) {
             // function called on select that retuns the content to insert
             selectCallback: (selectCallback || Tribute.defaultSelectCallback).bind(this),
 
+            menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
+
             // column to search against in the object
             lookup: lookup,
 
@@ -87,6 +91,7 @@ if (!Array.prototype.find) {
               iframe: item.iframe || iframe,
               selectClass: item.selectClass || selectClass,
               selectCallback: (item.selectCallback || Tribute.defaultSelectCallback).bind(_this),
+              menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(_this),
               lookup: item.lookup || lookup,
               fillAttr: item.fillAttr || fillAttr,
               values: item.values
@@ -161,6 +166,10 @@ if (!Array.prototype.find) {
           this.isActive = true;
           this.menuSelected = 0;
 
+          if (!this.current.mentionText) {
+            this.current.mentionText = '';
+          }
+
           items = this.search.filter(this.current.mentionText, this.current.collection.values, {
             pre: '<span>',
             post: '</span>',
@@ -181,7 +190,7 @@ if (!Array.prototype.find) {
             if (_this2.menuSelected === index) {
               li.className = _this2.current.collection.selectClass;
             }
-            li.innerHTML = item.string;
+            li.innerHTML = _this2.current.collection.menuItemTemplate(item);
             ul.appendChild(li);
           });
 
@@ -214,6 +223,11 @@ if (!Array.prototype.find) {
         key: 'defaultSelectCallback',
         value: function defaultSelectCallback(item) {
           return '@' + item[this.current.collection.fillAttr];
+        }
+      }, {
+        key: 'defaultMenuItemTemplate',
+        value: function defaultMenuItemTemplate(matchItem) {
+          return matchItem.string;
         }
       }, {
         key: 'inputTypes',
@@ -431,22 +445,7 @@ if (!Array.prototype.find) {
       }], [{
         key: 'keys',
         value: function keys() {
-          return [{
-            key: 9,
-            value: 'TAB'
-          }, {
-            key: 13,
-            value: 'ENTER'
-          }, {
-            key: 27,
-            value: 'ESCAPE'
-          }, {
-            key: 38,
-            value: 'UP'
-          }, {
-            key: 40,
-            value: 'DOWN'
-          }];
+          return [{ key: 9, value: 'TAB' }, { key: 13, value: 'ENTER' }, { key: 27, value: 'ESCAPE' }, { key: 38, value: 'UP' }, { key: 40, value: 'DOWN' }];
         }
       }, {
         key: 'getKeyCode',

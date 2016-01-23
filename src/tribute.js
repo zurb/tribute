@@ -23,7 +23,11 @@ if (!Array.prototype.find) {
 
 {
   class Tribute {
-    constructor({values=null, iframe=null, selectClass='highlight', trigger='@', selectCallback=null, lookup='key', fillAttr='value', collection=null}) {
+    constructor({
+        values=null, iframe=null, selectClass='highlight', trigger='@',
+        selectCallback=null, menuItemTemplate=null,lookup='key',
+        fillAttr='value', collection=null}) {
+
       this.expando = this.menuSelected = 0
       this.instance = this.uuid()
       this.current = {}
@@ -41,6 +45,8 @@ if (!Array.prototype.find) {
           // function called on select that retuns the content to insert
           selectCallback: (selectCallback || Tribute.defaultSelectCallback).bind(this),
 
+          menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
+
           // column to search against in the object
           lookup: lookup,
 
@@ -57,6 +63,7 @@ if (!Array.prototype.find) {
             iframe: item.iframe || iframe,
             selectClass: item.selectClass || selectClass,
             selectCallback: (item.selectCallback || Tribute.defaultSelectCallback).bind(this),
+            menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
             lookup: item.lookup || lookup,
             fillAttr: item.fillAttr || fillAttr,
             values: item.values
@@ -74,6 +81,10 @@ if (!Array.prototype.find) {
 
     static defaultSelectCallback(item) {
       return `@${item[this.current.collection.fillAttr]}`
+    }
+
+    static defaultMenuItemTemplate(matchItem) {
+      return matchItem.string
     }
 
     static inputTypes() {
@@ -130,6 +141,10 @@ if (!Array.prototype.find) {
       this.isActive = true
       this.menuSelected = 0
 
+      if (!this.current.mentionText) {
+        this.current.mentionText = ''
+      }
+
       items = this.search.filter(this.current.mentionText, this.current.collection.values, {
         pre: '<span>',
         post: '</span>',
@@ -150,7 +165,7 @@ if (!Array.prototype.find) {
         if (this.menuSelected === index) {
           li.className = this.current.collection.selectClass
         }
-        li.innerHTML = item.string
+        li.innerHTML = this.current.collection.menuItemTemplate(item)
         ul.appendChild(li)
       })
 
