@@ -56,7 +56,7 @@ Collection object shown with defaults:
   // template for displaying item in menu
   menuItemTemplate: function (matchResult) {
     return matchResult.string;
-  }
+  },
 
   // column to search against in the object
   lookup: 'key',
