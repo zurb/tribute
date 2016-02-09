@@ -50,7 +50,7 @@ Collection object shown with defaults:
 
   // function called on select that returns the content to insert
   selectTemplate: function (item) {
-    return '@' + item.value;
+    return '@' + item.original.value;
   },
 
   // template for displaying item in menu
