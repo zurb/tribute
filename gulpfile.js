@@ -3,7 +3,7 @@ var plumber   = require('gulp-plumber');
 var sass      = require('gulp-sass');
 var webserver = require('gulp-webserver');
 var opn       = require('opn');
-var babel = require('gulp-babel');
+var babel     = require('gulp-babel');
 
 var sourcePaths = {
   styles: ['scss/**/*.scss'],
