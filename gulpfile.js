@@ -32,7 +32,7 @@ gulp.task('webserver', function() {
     .pipe(webserver({
       host:             server.host,
       port:             server.port,
-      livereload:       true,
+      livereload:       false,
       directoryListing: false
     }));
 });

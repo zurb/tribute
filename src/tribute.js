@@ -252,21 +252,6 @@ if (!Array.prototype.find) {
         this.keyup.bind(element, this), false)
     }
 
-    // Google chrome retardedness
-    static getKeyCode(event) {
-      let keyCode
-
-      if (event.key) {
-        return event.key.charCodeAt(0)
-      }
-
-      if (event.keyIdentifier) {
-        return parseInt(event.keyIdentifier.substr(2), 16)
-      }
-
-      return event.keyCode
-    }
-
     keydown(instance, event) {
       let element = this
       instance.commandEvent = false
@@ -278,7 +263,6 @@ if (!Array.prototype.find) {
         }
       })
     }
-
 
     click(instance, event) {
       let tribute = instance.tribute
@@ -293,21 +277,36 @@ if (!Array.prototype.find) {
     }
 
     keyup(instance, event) {
-      let keyCode = TributeEvents.getKeyCode(event)
-      if (isNaN(keyCode)) return
-
       instance.updateSelection(this)
 
-      let trigger = instance.tribute.triggers().find(trigger => {
-        return trigger.charCodeAt(0) === keyCode
-      })
+      if (!instance.tribute.isActive) {
+        let keyCode = instance.getKeyCode(instance, this, event)
 
-      if (typeof trigger !== 'undefined') {
-        instance.callbacks().triggerChar(event, this, trigger)
+        if (isNaN(keyCode)) return
+
+        let trigger = instance.tribute.triggers().find(trigger => {
+          return trigger.charCodeAt(0) === keyCode
+        })
+
+        if (typeof trigger !== 'undefined') {
+          instance.callbacks().triggerChar(event, this, trigger)
+        }
       }
 
       if (instance.tribute.current.trigger && instance.commandEvent === false) {
         instance.tribute.showMenuFor(this)
+      }
+    }
+
+    getKeyCode(instance, el, event) {
+      let char
+      let tribute = instance.tribute
+      let info = tribute.range.getTriggerInfo(false, false, true)
+
+      if (info) {
+        return info.mentionTriggerChar.charCodeAt(0)
+      } else {
+        return false
       }
     }
 
@@ -374,11 +373,11 @@ if (!Array.prototype.find) {
           if (this.tribute.isActive) {
             e.preventDefault()
             let count = this.tribute.current.filteredItems.length - 1,
-              selected = this.tribute.menuSelected
+                selected = this.tribute.menuSelected
 
-            if (count > this.tribute.menuSelected) {
+            if (count > selected) {
               this.tribute.menuSelected++
-                this.setActiveLi()
+              this.setActiveLi()
             }
           }
         }
@@ -387,7 +386,7 @@ if (!Array.prototype.find) {
 
     setActiveLi(index) {
       let lis = this.tribute.menu.querySelectorAll('li'),
-        length = lis.length
+          length = lis.length
 
       for (let i = 0; i < length; i++) {
         let li = lis[i]

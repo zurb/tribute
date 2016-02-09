@@ -300,9 +300,6 @@ if (!Array.prototype.find) {
           element.addEventListener('keydown', this.keydown.bind(element, this), false);
           element.addEventListener('keyup', this.keyup.bind(element, this), false);
         }
-
-        // Google chrome retardedness
-
       }, {
         key: 'keydown',
         value: function keydown(instance, event) {
@@ -332,21 +329,45 @@ if (!Array.prototype.find) {
       }, {
         key: 'keyup',
         value: function keyup(instance, event) {
-          var keyCode = TributeEvents.getKeyCode(event);
-          if (isNaN(keyCode)) return;
+          var _this5 = this;
 
           instance.updateSelection(this);
 
-          var trigger = instance.tribute.triggers().find(function (trigger) {
-            return trigger.charCodeAt(0) === keyCode;
-          });
+          if (!instance.tribute.isActive) {
+            var _ret2 = function () {
+              var keyCode = instance.getKeyCode(instance, _this5, event);
 
-          if (typeof trigger !== 'undefined') {
-            instance.callbacks().triggerChar(event, this, trigger);
+              if (isNaN(keyCode)) return {
+                  v: undefined
+                };
+
+              var trigger = instance.tribute.triggers().find(function (trigger) {
+                return trigger.charCodeAt(0) === keyCode;
+              });
+
+              if (typeof trigger !== 'undefined') {
+                instance.callbacks().triggerChar(event, _this5, trigger);
+              }
+            }();
+
+            if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
           }
 
           if (instance.tribute.current.trigger && instance.commandEvent === false) {
             instance.tribute.showMenuFor(this);
+          }
+        }
+      }, {
+        key: 'getKeyCode',
+        value: function getKeyCode(instance, el, event) {
+          var char = undefined;
+          var tribute = instance.tribute;
+          var info = tribute.range.getTriggerInfo(false, false, true);
+
+          if (info) {
+            return info.mentionTriggerChar.charCodeAt(0);
+          } else {
+            return false;
           }
         }
       }, {
@@ -364,11 +385,11 @@ if (!Array.prototype.find) {
       }, {
         key: 'callbacks',
         value: function callbacks() {
-          var _this5 = this;
+          var _this6 = this;
 
           return {
             triggerChar: function triggerChar(e, el, trigger) {
-              var tribute = _this5.tribute;
+              var tribute = _this6.tribute;
               tribute.current.trigger = trigger;
 
               var collectionItem = tribute.collection.find(function (item) {
@@ -381,47 +402,47 @@ if (!Array.prototype.find) {
             },
             enter: function enter(e, el) {
               // choose selection
-              if (_this5.tribute.isActive) {
+              if (_this6.tribute.isActive) {
                 e.preventDefault();
                 setTimeout(function () {
-                  _this5.tribute.selectItemAtIndex(_this5.tribute.menuSelected);
-                  _this5.tribute.hideMenu();
+                  _this6.tribute.selectItemAtIndex(_this6.tribute.menuSelected);
+                  _this6.tribute.hideMenu();
                 }, 0);
               }
             },
             escape: function escape(e, el) {
-              if (_this5.tribute.isActive) {
+              if (_this6.tribute.isActive) {
                 e.preventDefault();
-                _this5.tribute.hideMenu();
+                _this6.tribute.hideMenu();
               }
             },
             tab: function tab(e, el) {
               // choose first match
-              _this5.callbacks().enter(e, el);
+              _this6.callbacks().enter(e, el);
             },
             up: function up(e, el) {
               // navigate up ul
-              if (_this5.tribute.isActive) {
+              if (_this6.tribute.isActive) {
                 e.preventDefault();
-                var count = _this5.tribute.current.filteredItems.length,
-                    selected = _this5.tribute.menuSelected;
+                var count = _this6.tribute.current.filteredItems.length,
+                    selected = _this6.tribute.menuSelected;
 
                 if (count > selected && selected > 0) {
-                  _this5.tribute.menuSelected--;
-                  _this5.setActiveLi();
+                  _this6.tribute.menuSelected--;
+                  _this6.setActiveLi();
                 }
               }
             },
             down: function down(e, el) {
               // navigate down ul
-              if (_this5.tribute.isActive) {
+              if (_this6.tribute.isActive) {
                 e.preventDefault();
-                var count = _this5.tribute.current.filteredItems.length - 1,
-                    selected = _this5.tribute.menuSelected;
+                var count = _this6.tribute.current.filteredItems.length - 1,
+                    selected = _this6.tribute.menuSelected;
 
-                if (count > _this5.tribute.menuSelected) {
-                  _this5.tribute.menuSelected++;
-                  _this5.setActiveLi();
+                if (count > selected) {
+                  _this6.tribute.menuSelected++;
+                  _this6.setActiveLi();
                 }
               }
             }
@@ -446,21 +467,6 @@ if (!Array.prototype.find) {
         key: 'keys',
         value: function keys() {
           return [{ key: 9, value: 'TAB' }, { key: 13, value: 'ENTER' }, { key: 27, value: 'ESCAPE' }, { key: 38, value: 'UP' }, { key: 40, value: 'DOWN' }];
-        }
-      }, {
-        key: 'getKeyCode',
-        value: function getKeyCode(event) {
-          var keyCode = undefined;
-
-          if (event.key) {
-            return event.key.charCodeAt(0);
-          }
-
-          if (event.keyIdentifier) {
-            return parseInt(event.keyIdentifier.substr(2), 16);
-          }
-
-          return event.keyCode;
         }
       }]);
 
@@ -494,7 +500,7 @@ if (!Array.prototype.find) {
       }, {
         key: 'positionMenuAtCaret',
         value: function positionMenuAtCaret() {
-          var _this6 = this;
+          var _this7 = this;
 
           var context = this.tribute.current,
               coordinates = undefined;
@@ -511,7 +517,7 @@ if (!Array.prototype.find) {
             this.tribute.menu.style.cssText = 'top: ' + coordinates.top + 'px;\n                                           left: ' + coordinates.left + 'px;\n                                           position: absolute;\n                                           zIndex: 10000;\n                                           display: block;';
 
             setTimeout(function () {
-              _this6.scrollIntoView(_this6.getDocument().activeElement);
+              _this7.scrollIntoView(_this7.getDocument().activeElement);
             }, 0);
           } else {
             this.tribute.menu.style.cssText = 'display: none';
@@ -697,7 +703,7 @@ if (!Array.prototype.find) {
       }, {
         key: 'getTriggerInfo',
         value: function getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace) {
-          var _this7 = this;
+          var _this8 = this;
 
           var ctx = this.tribute.current;
           var selected = undefined,
@@ -720,11 +726,11 @@ if (!Array.prototype.find) {
           var effectiveRange = this.getTextPrecedingCurrentSelection();
 
           if (effectiveRange !== undefined && effectiveRange !== null) {
-            var _ret2 = function () {
+            var _ret3 = function () {
               var mostRecentTriggerCharPos = -1;
               var triggerChar = undefined;
 
-              _this7.tribute.triggers().forEach(function (c) {
+              _this8.tribute.triggers().forEach(function (c) {
                 var idx = effectiveRange.lastIndexOf(c);
 
                 if (idx > mostRecentTriggerCharPos) {
@@ -757,7 +763,7 @@ if (!Array.prototype.find) {
               }
             }();
 
-            if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+            if ((typeof _ret3 === 'undefined' ? 'undefined' : _typeof(_ret3)) === "object") return _ret3.v;
           }
         }
       }, {
@@ -936,10 +942,10 @@ if (!Array.prototype.find) {
       _createClass(TributeSearch, [{
         key: 'simpleFilter',
         value: function simpleFilter(pattern, array) {
-          var _this8 = this;
+          var _this9 = this;
 
           return array.filter(function (string) {
-            return _this8.test(pattern, string);
+            return _this9.test(pattern, string);
           });
         }
       }, {
@@ -1050,7 +1056,7 @@ if (!Array.prototype.find) {
       }, {
         key: 'filter',
         value: function filter(pattern, arr, opts) {
-          var _this9 = this;
+          var _this10 = this;
 
           opts = opts || {};
           return arr.reduce(function (prev, element, idx, arr) {
@@ -1065,7 +1071,7 @@ if (!Array.prototype.find) {
               }
             }
 
-            var rendered = _this9.match(pattern, str, opts);
+            var rendered = _this10.match(pattern, str, opts);
 
             if (rendered != null) {
               prev[prev.length] = {
