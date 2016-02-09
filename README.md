@@ -54,8 +54,8 @@ Collection object shown with defaults:
   },
 
   // template for displaying item in menu
-  menuItemTemplate: function (matchResult) {
-    return matchResult.string;
+  menuItemTemplate: function (item) {
+    return item.string;
   },
 
   // column to search against in the object
@@ -68,6 +68,3 @@ Collection object shown with defaults:
   values: []
 }
 ```
-
-#### Remaining things before open source
-* Test suite
