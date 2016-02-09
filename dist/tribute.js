@@ -209,9 +209,8 @@ if (!Array.prototype.find) {
       }, {
         key: 'selectItemAtIndex',
         value: function selectItemAtIndex(index) {
-          var item = this.current.collection.values[index];
+          var item = this.current.filteredItems[index];
           var content = this.current.collection.selectTemplate(item);
-
           this.replaceText(content);
         }
       }, {
@@ -222,7 +221,7 @@ if (!Array.prototype.find) {
       }], [{
         key: 'defaultSelectTemplate',
         value: function defaultSelectTemplate(item) {
-          return '@' + item[this.current.collection.fillAttr];
+          return '@' + item.original[this.current.collection.fillAttr];
         }
       }, {
         key: 'defaultMenuItemTemplate',

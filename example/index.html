@@ -170,10 +170,10 @@
         ],
         selectTemplate: function (item) {
           if (this.range.isContentEditable(this.current.element)) {
-            return '<a href="test" title="' + item.email + '">' + item.value + '</a>';
+            return '<a href="test" title="' + item.original.email + '">' + item.original.value + '</a>';
           }
 
-          return '@' + item.value;
+          return '@' + item.original.value;
         }
       });
 
@@ -186,10 +186,10 @@
           // The function that gets call on select that retuns the content to insert
           selectTemplate: function (item) {
             if (this.range.isContentEditable(this.current.element)) {
-              return '<a href="test" title="' + item.email + '">' + item.value + '</a>';
+              return '<a href="test" title="' + item.original.email + '">' + item.original.value + '</a>';
             }
 
-            return '@' + item.value;
+            return '@' + item.original.value;
           },
 
           // the array of objects
@@ -205,10 +205,10 @@
           // The function that gets call on select that retuns the content to insert
           selectTemplate: function (item) {
             if (this.range.isContentEditable(this.current.element)) {
-              return '<a href="'+item.url+'" title="' + item.key + '">#' + item.value + '</a>';
+              return '<a href="'+item.original.url+'" title="' + item.original.key + '">#' + item.original.value + '</a>';
             }
 
-            return '#' + item.value;
+            return '#' + item.original.value;
           },
 
           // the array of objects

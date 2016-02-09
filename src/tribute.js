@@ -80,7 +80,7 @@ if (!Array.prototype.find) {
     }
 
     static defaultSelectTemplate(item) {
-      return `@${item[this.current.collection.fillAttr]}`
+      return `@${item.original[this.current.collection.fillAttr]}`
     }
 
     static defaultMenuItemTemplate(matchItem) {
@@ -183,9 +183,8 @@ if (!Array.prototype.find) {
     }
 
     selectItemAtIndex(index) {
-      let item = this.current.collection.values[index]
+      let item = this.current.filteredItems[index]
       let content = this.current.collection.selectTemplate(item)
-
       this.replaceText(content)
     }
 
