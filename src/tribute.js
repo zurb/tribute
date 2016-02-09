@@ -192,7 +192,6 @@ if (!Array.prototype.find) {
     replaceText(content) {
       this.range.replaceTriggerText(content, true, true)
     }
-
   }
 
   class TributeMenuEvents {
@@ -279,6 +278,7 @@ if (!Array.prototype.find) {
         }
       })
     }
+
 
     click(instance, event) {
       let tribute = instance.tribute
