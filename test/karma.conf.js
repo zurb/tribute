@@ -21,8 +21,8 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'dist/tribute.js',
-      'test/spec/**/*.js'
+      '../dist/tribute.js',
+      '../test/spec/**/*.js'
     ],
 
     // list of files / patterns to exclude
