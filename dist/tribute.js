@@ -125,15 +125,15 @@ if (!Array.prototype.find) {
 
           if (element.constructor === NodeList) {
             for (var i = 0; i < element.length; ++i) {
-              var _el = element[i];
+              var el = element[i];
 
-              if (_el.hasAttribute('data-tribute')) {
-                console.warn('Tribute was already bound to ' + _el.nodeName);
+              if (el.hasAttribute('data-tribute')) {
+                console.warn('Tribute was already bound to ' + el.nodeName);
               }
 
-              this.ensureEditable(_el);
-              this.events.bind(_el);
-              _el.setAttribute('data-tribute', true);
+              this.ensureEditable(el);
+              this.events.bind(el);
+              el.setAttribute('data-tribute', true);
             }
           } else {
             if (element.hasAttribute('data-tribute')) {
@@ -504,7 +504,6 @@ if (!Array.prototype.find) {
 
     // Thanks to https://github.com/jeff-collins/ment.io
 
-
     var TributeRange = function () {
       function TributeRange(tribute) {
         _classCallCheck(this, TributeRange);
@@ -666,9 +665,9 @@ if (!Array.prototype.find) {
           }
 
           for (var i = 0; i < element.parentNode.childNodes.length; i++) {
-            var _node = element.parentNode.childNodes[i];
+            var node = element.parentNode.childNodes[i];
 
-            if (_node === element) {
+            if (node === element) {
               return i;
             }
           }
@@ -960,7 +959,6 @@ if (!Array.prototype.find) {
     }();
 
     // Thanks to https://github.com/mattyork/fuzzy
-
 
     var TributeSearch = function () {
       function TributeSearch(tribute) {
