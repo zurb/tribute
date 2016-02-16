@@ -6,6 +6,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// one issue
+// 1) collection should be reset on backspace out or space out of lookup
+
 if (!Array.prototype.find) {
   Array.prototype.find = function (predicate) {
     if (this === null) {
@@ -57,7 +60,6 @@ if (!Array.prototype.find) {
         _classCallCheck(this, Tribute);
 
         this.expando = this.menuSelected = 0;
-        this.instance = this.uuid();
         this.current = {};
         this.isActive = false;
 
@@ -115,20 +117,31 @@ if (!Array.prototype.find) {
           });
         }
       }, {
-        key: 'uuid',
-        value: function uuid() {
-          return 'trbt' + (+new Date() + ++this.expando);
-        }
-      }, {
         key: 'attach',
         value: function attach(element) {
-          if (element.hasAttribute('data-tribute')) {
-            throw new Error('tribute', 'already bound to ' + element.nodeName);
+          if (!element) {
+            throw new Error('tribute', 'Must pass in a DOM node.');
           }
 
-          element.setAttribute('data-tribute', this.uuid());
-          this.ensureEditable(element);
-          this.events.bind(element);
+          if (element.constructor === NodeList) {
+            for (var i = 0; i < element.length; ++i) {
+              var el = element[i];
+
+              if (el.hasAttribute('data-tribute')) {
+                console.warning('Tribute was already bound to ' + el.nodeName);
+              }
+
+              this.ensureEditable(el);
+              this.events.bind(el);
+            }
+          } else {
+            if (element.hasAttribute('data-tribute')) {
+              console.warning('Tribute was already bound to ' + element.nodeName);
+            }
+
+            this.ensureEditable(element);
+            this.events.bind(element);
+          }
         }
       }, {
         key: 'ensureEditable',
@@ -302,6 +315,11 @@ if (!Array.prototype.find) {
       }, {
         key: 'keydown',
         value: function keydown(instance, event) {
+          if (instance.shouldDeactivate(event)) {
+            console.log('deactivate');
+            instance.tribute.isActive = false;
+          }
+
           var element = this;
           instance.commandEvent = false;
 
@@ -324,6 +342,19 @@ if (!Array.prototype.find) {
           } else if (tribute.current.element) {
             tribute.hideMenu();
           }
+        }
+      }, {
+        key: 'shouldDeactivate',
+        value: function shouldDeactivate(event) {
+          if (!this.tribute.isActive) return false;
+          console.log('check activation', this.tribute.current);
+          window.current = this.tribute.current;
+          if (this.tribute.current && this.tribute.current.mentionText && this.tribute.current.mentionText.length == 0 && event.keyCode === 8) {
+            console.log('deactivate!');
+            return true;
+          }
+
+          return false;
         }
       }, {
         key: 'keyup',
@@ -451,7 +482,7 @@ if (!Array.prototype.find) {
         key: 'setActiveLi',
         value: function setActiveLi(index) {
           var lis = this.tribute.menu.querySelectorAll('li'),
-              length = lis.length;
+              length = lis.length >>> 0;
 
           for (var i = 0; i < length; i++) {
             var li = lis[i];

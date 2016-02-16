@@ -1,3 +1,6 @@
+// one issue
+// 1) collection should be reset on backspace out or space out of lookup
+
 if (!Array.prototype.find) {
   Array.prototype.find = function(predicate) {
     if (this === null) {
@@ -29,7 +32,6 @@ if (!Array.prototype.find) {
         fillAttr='value', collection=null}) {
 
       this.expando = this.menuSelected = 0
-      this.instance = this.uuid()
       this.current = {}
       this.isActive = false
 
@@ -97,18 +99,30 @@ if (!Array.prototype.find) {
       })
     }
 
-    uuid() {
-      return `trbt${(+ new Date()) + (++this.expando)}`
-    }
-
     attach(element) {
-      if (element.hasAttribute('data-tribute')) {
-        throw new Error('tribute', 'already bound to ' + element.nodeName)
+      if (!element) {
+        throw new Error('tribute', 'Must pass in a DOM node.')
       }
 
-      element.setAttribute('data-tribute', this.uuid())
-      this.ensureEditable(element)
-      this.events.bind(element)
+      if (element.constructor === NodeList) {
+        for (var i = 0; i < element.length; ++i) {
+          let el = element[i]
+
+          if (el.hasAttribute('data-tribute')) {
+            console.warning('Tribute was already bound to ' + el.nodeName)
+          }
+
+          this.ensureEditable(el)
+          this.events.bind(el)
+        }
+      } else {
+        if (element.hasAttribute('data-tribute')) {
+          console.warning('Tribute was already bound to ' + element.nodeName)
+        }
+
+        this.ensureEditable(element)
+        this.events.bind(element)
+      }
     }
 
     ensureEditable(element) {
@@ -236,7 +250,7 @@ if (!Array.prototype.find) {
 
     static keys() {
       return [
-        {key: 9, value: 'TAB'},
+        {key: 9,  value: 'TAB'},
         {key: 13, value: 'ENTER'},
         {key: 27, value: 'ESCAPE'},
         {key: 38, value: 'UP'},
@@ -252,6 +266,11 @@ if (!Array.prototype.find) {
     }
 
     keydown(instance, event) {
+      if (instance.shouldDeactivate(event)) {
+        console.log('deactivate')
+        instance.tribute.isActive = false
+      }
+
       let element = this
       instance.commandEvent = false
 
@@ -273,6 +292,21 @@ if (!Array.prototype.find) {
       } else if (tribute.current.element) {
         tribute.hideMenu()
       }
+    }
+
+    shouldDeactivate(event) {
+      if (!this.tribute.isActive) return false;
+      console.log('check activation', this.tribute.current)
+      window.current = this.tribute.current
+      if (this.tribute.current &&
+        this.tribute.current.mentionText &&
+        this.tribute.current.mentionText.length == 0 &&
+        event.keyCode === 8) {
+          console.log('deactivate!')
+          return true
+      }
+
+      return false
     }
 
     keyup(instance, event) {
@@ -359,11 +393,11 @@ if (!Array.prototype.find) {
           if (this.tribute.isActive) {
             e.preventDefault()
             let count = this.tribute.current.filteredItems.length,
-              selected = this.tribute.menuSelected
+                selected = this.tribute.menuSelected
 
             if (count > selected && selected > 0) {
               this.tribute.menuSelected--
-                this.setActiveLi()
+              this.setActiveLi()
             }
           }
         },
@@ -385,7 +419,7 @@ if (!Array.prototype.find) {
 
     setActiveLi(index) {
       let lis = this.tribute.menu.querySelectorAll('li'),
-          length = lis.length
+          length = lis.length >>> 0
 
       for (let i = 0; i < length; i++) {
         let li = lis[i]

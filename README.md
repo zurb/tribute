@@ -27,8 +27,14 @@ Once initialized, Tribute can be attached to an `input`, `textarea`, or an eleme
 ```html
 <div id="caaanDo">I'm Mr. Meeseeks, look at me!</div>
 
+<div class="mentionable">Some text here.</div>
+<div class="mentionable">Some more text over here.</div>
+
 <script>
   tribute.attach(document.getElementById('caaanDo'));
+
+  // also works with NodeList
+  tribute.attach(document.querySelectorAll('.mentionable'))
 </script>
 ```
 
