@@ -334,7 +334,6 @@ if (!Array.prototype.find) {
       }, {
         key: 'click',
         value: function click(instance, event) {
-          console.log('click', event.target);
           var tribute = instance.tribute;
 
           if (tribute.menu && tribute.menu.contains(event.target)) {
@@ -349,10 +348,8 @@ if (!Array.prototype.find) {
         key: 'shouldDeactivate',
         value: function shouldDeactivate(event) {
           if (!this.tribute.isActive) return false;
-          console.log('check activation', this.tribute.current);
           window.current = this.tribute.current;
           if (this.tribute.current && this.tribute.current.mentionText && this.tribute.current.mentionText.length == 0 && event.keyCode === 8) {
-            console.log('deactivate!');
             return true;
           }
 
