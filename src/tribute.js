@@ -101,11 +101,12 @@ if (!Array.prototype.find) {
 
     attach(element) {
       if (!element) {
-        throw new Error('[Tribute] Must pass in a DOM node.')
+        throw new Error('[Tribute] Must pass in a DOM node or NodeList.')
       }
 
       if (element.constructor === NodeList) {
-        for (var i = 0; i < element.length; ++i) {
+        let length = element.length
+        for (var i = 0; i < length; ++i) {
           let el = element[i]
 
           if (el.hasAttribute('data-tribute')) {
