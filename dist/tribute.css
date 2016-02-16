@@ -11,6 +11,7 @@
   .tribute-container ul {
     margin: 0;
     margin-top: 2px;
+    list-style: none;
     background: #efefef; }
   .tribute-container li {
     padding: 5px 5px;
