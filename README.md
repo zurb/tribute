@@ -38,7 +38,7 @@ Once initialized, Tribute can be attached to an `input`, `textarea`, or an eleme
 </script>
 ```
 
-#### A Collection
+### A Collection
 Collections are configuration objects for Tribute, you can have multiple for each instance. This is useful for scenarios where you may want to match multiple trigger keys, such as `@` for users and `#` for projects.
 
 
@@ -75,8 +75,8 @@ Collection object shown with defaults:
 }
 ```
 
-#### Tips
-##### Links inside contenteditable are not clickable.
+### Tips
+#### Links inside contenteditable are not clickable.
 If you want to embed a link in your `selectTemplate` then you need to make sure that the
 anchor is wrapped in an element with `contenteditable="false"`. This makes the anchor
 clickable *and* fixes issues with matches being modifiable.
