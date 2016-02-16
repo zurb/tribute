@@ -76,7 +76,7 @@ Collection object shown with defaults:
 ```
 
 #### Tips
-##### Links inside contenteditable is not clickable.
+##### Links inside contenteditable are not clickable.
 If you want to embed a link in your `selectTemplate` then you need to make sure that the
 anchor is wrapped in an element with `contenteditable="false"`. This makes the anchor
 clickable *and* fixes issues with matches being modifiable.
