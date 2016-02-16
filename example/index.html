@@ -170,13 +170,14 @@
         ],
         selectTemplate: function (item) {
           if (this.range.isContentEditable(this.current.element)) {
-            return '<a href="test" title="' + item.original.email + '">' + item.original.value + '</a>';
+            return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
           }
 
           return '@' + item.original.value;
         }
       });
 
+      tribute.attach(document.getElementById('test'));
       tribute.attach(document.getElementById('test'));
       tribute.attach(document.getElementById('testInput'));
       tribute.attach(document.getElementById('testarea'));
@@ -186,7 +187,7 @@
           // The function that gets call on select that retuns the content to insert
           selectTemplate: function (item) {
             if (this.range.isContentEditable(this.current.element)) {
-              return '<a href="test" title="' + item.original.email + '">' + item.original.value + '</a>';
+              return '<a href="http://zurb.com" title="' + item.original.email + '">' + item.original.value + '</a>';
             }
 
             return '@' + item.original.value;

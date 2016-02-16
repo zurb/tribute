@@ -114,6 +114,7 @@ if (!Array.prototype.find) {
 
           this.ensureEditable(el)
           this.events.bind(el)
+          el.setAttribute('data-tribute', true);
         }
       } else {
         if (element.hasAttribute('data-tribute')) {
@@ -122,6 +123,7 @@ if (!Array.prototype.find) {
 
         this.ensureEditable(element)
         this.events.bind(element)
+        element.setAttribute('data-tribute', true);
       }
     }
 
@@ -267,7 +269,6 @@ if (!Array.prototype.find) {
 
     keydown(instance, event) {
       if (instance.shouldDeactivate(event)) {
-        console.log('deactivate')
         instance.tribute.isActive = false
       }
 
@@ -283,6 +284,7 @@ if (!Array.prototype.find) {
     }
 
     click(instance, event) {
+      console.log('click', event.target)
       let tribute = instance.tribute
 
       if (tribute.menu && tribute.menu.contains(event.target)) {

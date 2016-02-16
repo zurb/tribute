@@ -74,3 +74,21 @@ Collection object shown with defaults:
   values: []
 }
 ```
+
+#### Tips
+##### Links inside contenteditable is not clickable.
+If you want to embed a link in your `selectTemplate` then you need to make sure that the
+anchor is wrapped in an element with `contenteditable="false"`. This makes the anchor
+clickable *and* fixes issues with matches being modifiable.
+
+```js
+var tribute = new Tribute({
+  values: [
+    {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'jordan@zurb.com'},
+    {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'jordan+riley@zurb.com'}
+  ],
+  selectTemplate: function (item) {
+    return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
+  }
+});
+```
