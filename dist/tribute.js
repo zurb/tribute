@@ -128,7 +128,7 @@ if (!Array.prototype.find) {
               var el = element[i];
 
               if (el.hasAttribute('data-tribute')) {
-                console.warning('Tribute was already bound to ' + el.nodeName);
+                console.warn('Tribute was already bound to ' + el.nodeName);
               }
 
               this.ensureEditable(el);
@@ -137,7 +137,7 @@ if (!Array.prototype.find) {
             }
           } else {
             if (element.hasAttribute('data-tribute')) {
-              console.warning('Tribute was already bound to ' + element.nodeName);
+              console.warn('Tribute was already bound to ' + element.nodeName);
             }
 
             this.ensureEditable(element);
