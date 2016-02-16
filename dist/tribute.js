@@ -100,7 +100,7 @@ if (!Array.prototype.find) {
             };
           });
         } else {
-          throw new Error('collection', 'No collection specified.');
+          throw new Error('[Tribute] No collection specified.');
         }
 
         new TributeRange(this);
@@ -120,7 +120,7 @@ if (!Array.prototype.find) {
         key: 'attach',
         value: function attach(element) {
           if (!element) {
-            throw new Error('tribute', 'Must pass in a DOM node.');
+            throw new Error('[Tribute] Must pass in a DOM node.');
           }
 
           if (element.constructor === NodeList) {
@@ -152,7 +152,7 @@ if (!Array.prototype.find) {
             if (element.contentEditable) {
               element.contentEditable = true;
             } else {
-              throw new Error('attach', 'Cannot bind to ' + element.nodeName);
+              throw new Error('[Tribute] Cannot bind to ' + element.nodeName);
             }
           }
         }
