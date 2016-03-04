@@ -28,7 +28,7 @@ if (!Array.prototype.find) {
         selectTemplate=null, menuItemTemplate=null,lookup='key',
         fillAttr='value', collection=null}) {
 
-      this.expando = this.menuSelected = 0
+      this.menuSelected = 0
       this.current = {}
       this.isActive = false
 
