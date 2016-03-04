@@ -297,7 +297,12 @@ if (!Array.prototype.find) {
       if (!this.tribute.isActive) return false
 
       if (this.tribute.current.mentionText.length === 0) {
-        return true
+        let eventKeyPressed = false
+        TributeEvents.keys().forEach(o => {
+          if (event.keyCode === o.key) eventKeyPressed = true
+        })
+
+        return !eventKeyPressed
       }
 
       return false
@@ -305,6 +310,8 @@ if (!Array.prototype.find) {
 
     keyup(instance, event) {
       instance.updateSelection(this)
+
+      if (event.keyCode === 27) return
 
       if (!instance.tribute.isActive) {
         let keyCode = instance.getKeyCode(instance, this, event)

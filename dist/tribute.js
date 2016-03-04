@@ -348,7 +348,12 @@ if (!Array.prototype.find) {
           if (!this.tribute.isActive) return false;
 
           if (this.tribute.current.mentionText.length === 0) {
-            return true;
+            var eventKeyPressed = false;
+            TributeEvents.keys().forEach(function (o) {
+              if (event.keyCode === o.key) eventKeyPressed = true;
+            });
+
+            return !eventKeyPressed;
           }
 
           return false;
@@ -359,6 +364,8 @@ if (!Array.prototype.find) {
           var _this5 = this;
 
           instance.updateSelection(this);
+
+          if (event.keyCode === 27) return;
 
           if (!instance.tribute.isActive) {
             var _ret2 = function () {
