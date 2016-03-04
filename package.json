@@ -26,5 +26,5 @@
     "test": "karma start test/karma.conf.js"
   },
   "author": "Jordan Humphreys <jordan@zurb.com>",
-  "license": "ISC"
+  "license": "MIT"
 }
