@@ -6,9 +6,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// one issue
-// 1) collection should be reset on backspace out or space out of lookup
-
 if (!Array.prototype.find) {
   Array.prototype.find = function (predicate) {
     if (this === null) {
@@ -349,8 +346,8 @@ if (!Array.prototype.find) {
         key: 'shouldDeactivate',
         value: function shouldDeactivate(event) {
           if (!this.tribute.isActive) return false;
-          window.current = this.tribute.current;
-          if (this.tribute.current && this.tribute.current.mentionText && this.tribute.current.mentionText.length == 0 && event.keyCode === 8) {
+
+          if (this.tribute.current.mentionText.length === 0) {
             return true;
           }
 

@@ -1,27 +1,24 @@
-// one issue
-// 1) collection should be reset on backspace out or space out of lookup
-
 if (!Array.prototype.find) {
   Array.prototype.find = function(predicate) {
     if (this === null) {
-      throw new TypeError('Array.prototype.find called on null or undefined');
+      throw new TypeError('Array.prototype.find called on null or undefined')
     }
     if (typeof predicate !== 'function') {
-      throw new TypeError('predicate must be a function');
+      throw new TypeError('predicate must be a function')
     }
-    var list = Object(this);
-    var length = list.length >>> 0;
-    var thisArg = arguments[1];
-    var value;
+    var list = Object(this)
+    var length = list.length >>> 0
+    var thisArg = arguments[1]
+    var value
 
     for (var i = 0; i < length; i++) {
-      value = list[i];
+      value = list[i]
       if (predicate.call(thisArg, value, i, list)) {
-        return value;
+        return value
       }
     }
-    return undefined;
-  };
+    return undefined
+  }
 }
 
 {
@@ -115,7 +112,7 @@ if (!Array.prototype.find) {
 
           this.ensureEditable(el)
           this.events.bind(el)
-          el.setAttribute('data-tribute', true);
+          el.setAttribute('data-tribute', true)
         }
       } else {
         if (element.hasAttribute('data-tribute')) {
@@ -124,7 +121,7 @@ if (!Array.prototype.find) {
 
         this.ensureEditable(element)
         this.events.bind(element)
-        element.setAttribute('data-tribute', true);
+        element.setAttribute('data-tribute', true)
       }
     }
 
@@ -297,13 +294,10 @@ if (!Array.prototype.find) {
     }
 
     shouldDeactivate(event) {
-      if (!this.tribute.isActive) return false;
-      window.current = this.tribute.current
-      if (this.tribute.current &&
-        this.tribute.current.mentionText &&
-        this.tribute.current.mentionText.length == 0 &&
-        event.keyCode === 8) {
-          return true
+      if (!this.tribute.isActive) return false
+
+      if (this.tribute.current.mentionText.length === 0) {
+        return true
       }
 
       return false
@@ -678,7 +672,7 @@ if (!Array.prototype.find) {
             mostRecentTriggerCharPos = idx
             triggerChar = c
           }
-        });
+        })
 
         if (mostRecentTriggerCharPos >= 0 &&
           (
