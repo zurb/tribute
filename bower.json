@@ -1,0 +1,24 @@
+{
+  "name": "tribute",
+  "description": "Native ES6 @mentions",
+  "version": "1.0.0",
+  "main": "dist/tribute.js",
+  "authors": [
+    "Jordan Humphreys <jordan@zurb.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "mentions",
+    "autocomplete",
+    "fuzzy",
+    "search"
+  ],
+  "homepage": "https://github.com/zurb/tribute",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ]
+}
