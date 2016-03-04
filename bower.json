@@ -2,7 +2,10 @@
   "name": "tribute",
   "description": "Native ES6 @mentions",
   "version": "1.0.0",
-  "main": "dist/tribute.js",
+  "main": [
+    "dist/tribute.js",
+    "dist/tribute.css"
+  ],
   "authors": [
     "Jordan Humphreys <jordan@zurb.com>"
   ],
