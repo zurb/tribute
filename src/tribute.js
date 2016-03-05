@@ -96,33 +96,29 @@ if (!Array.prototype.find) {
       })
     }
 
-    attach(element) {
-      if (!element) {
+    attach(el) {
+      if (!el) {
         throw new Error('[Tribute] Must pass in a DOM node or NodeList.')
       }
 
-      if (element.constructor === NodeList) {
-        let length = element.length
+      if (el.constructor === NodeList) {
+        let length = el.length
         for (var i = 0; i < length; ++i) {
-          let el = element[i]
-
-          if (el.hasAttribute('data-tribute')) {
-            console.warn('Tribute was already bound to ' + el.nodeName)
-          }
-
-          this.ensureEditable(el)
-          this.events.bind(el)
-          el.setAttribute('data-tribute', true)
+          this._attach(el[i])
         }
       } else {
-        if (element.hasAttribute('data-tribute')) {
-          console.warn('Tribute was already bound to ' + element.nodeName)
-        }
-
-        this.ensureEditable(element)
-        this.events.bind(element)
-        element.setAttribute('data-tribute', true)
+        this._attach(el)
       }
+    }
+
+    _attach(el) {
+      if (el.hasAttribute('data-tribute')) {
+        console.warn('Tribute was already bound to ' + el.nodeName)
+      }
+
+      this.ensureEditable(el)
+      this.events.bind(el)
+      el.setAttribute('data-tribute', true)
     }
 
     ensureEditable(element) {
