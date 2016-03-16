@@ -7,7 +7,7 @@ var babel     = require('gulp-babel');
 
 var sourcePaths = {
   styles: ['scss/**/*.scss'],
-  es6: ['src/**/*.js']
+  es6: ['js/**/*.js']
 };
 
 var distPaths = {
