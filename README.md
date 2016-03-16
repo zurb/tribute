@@ -34,7 +34,7 @@ Once initialized, Tribute can be attached to an `input`, `textarea`, or an eleme
   tribute.attach(document.getElementById('caaanDo'));
 
   // also works with NodeList
-  tribute.attach(document.querySelectorAll('.mentionable'))
+  tribute.attach(document.querySelectorAll('.mentionable'));
 </script>
 ```
 
@@ -77,6 +77,30 @@ Collection object shown with defaults:
 
 ### Tips
 Some useful approaches to common roadblocks when implementing @mentions.
+
+#### Updating a collection with new data
+You can update an instance of Tribute on the fly. If you have new data you want to insert into a collection you can access the collection values array directly:
+
+```
+tribute.collection.values.push([
+  {name: 'Howard Johnson', occupation: 'Panda Wrangler', age: 27},
+  {name: 'Fluffy Croutons', occupation: 'Crouton Fluffer', age: 32}
+]);
+```
+
+You can access and update any attribute on the collection in this way.
+
+#### Programmatically detecting an active tribute dropdown
+If you need to know when Tribute is active you can access the `isActive` property of an instance.
+
+```
+if (tribute.isActive) {
+  console.log('Somebody is being mentioned!');
+} else {
+  console.log("Who's this guy talking to?");
+}
+```
+
 #### Links inside contenteditable are not clickable.
 If you want to embed a link in your `selectTemplate` then you need to make sure that the
 anchor is wrapped in an element with `contenteditable="false"`. This makes the anchor
