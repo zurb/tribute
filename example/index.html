@@ -74,12 +74,12 @@
       // example of alternative callback
       var tribute = new Tribute({
         values: [
-          {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'jordan@zurb.com'},
-          {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'jordan+riley@zurb.com'}
+          {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com'},
+          {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com'}
         ],
         selectTemplate: function (item) {
           if (this.range.isContentEditable(this.current.element)) {
-            return '<a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a>';
+            return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
           }
 
           return '@' + item.original.value;

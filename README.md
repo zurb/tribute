@@ -109,8 +109,8 @@ clickable *and* fixes issues with matches being modifiable.
 ```js
 var tribute = new Tribute({
   values: [
-    {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'jordan@zurb.com'},
-    {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'jordan+riley@zurb.com'}
+    {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com'},
+    {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com'}
   ],
   selectTemplate: function (item) {
     return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
