@@ -657,6 +657,10 @@ if (!Array.prototype.find) {
       }, {
         key: 'getWindowSelection',
         value: function getWindowSelection() {
+          if (this.tribute.collection.iframe) {
+            return this.tribute.collection.iframe.contentWindow.getSelection();
+          }
+
           return window.getSelection();
         }
       }, {
