@@ -719,28 +719,6 @@ if (!Array.prototype.find) {
       return element.nodeName !== 'INPUT' && element.nodeName !== 'TEXTAREA'
     }
 
-    localToGlobalCoordinates(element, coordinates) {
-      let obj = element
-
-      while (obj) {
-        coordinates.left += obj.offsetLeft + obj.clientLeft
-        coordinates.top += obj.offsetTop + obj.clientTop
-        obj = obj.offsetParent
-      }
-
-      obj = element
-
-      while (obj !== this.getDocument().body) {
-        if (obj.scrollTop && obj.scrollTop > 0) {
-          coordinates.top -= obj.scrollTop
-        }
-        if (obj.scrollLeft && obj.scrollLeft > 0) {
-          coordinates.left -= obj.scrollLeft
-        }
-        obj = obj.parentNode
-      }
-    }
-
     getTextAreaOrInputUnderlinePosition(element, position) {
       let properties = ['direction', 'boxSizing', 'width', 'height', 'overflowX',
                         'overflowY', 'borderTopWidth', 'borderRightWidth',
@@ -792,12 +770,11 @@ if (!Array.prototype.find) {
       span.textContent = element.value.substring(position) || '.'
       div.appendChild(span)
 
+      let rect = element.getBoundingClientRect()
       let coordinates = {
-        top: span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
-        left: span.offsetLeft + parseInt(computed.borderLeftWidth)
+        top: rect.top + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
+        left: rect.left + span.offsetLeft + parseInt(computed.borderLeftWidth)
       }
-
-      this.localToGlobalCoordinates(element, coordinates)
 
       this.getDocument().body.removeChild(div)
 
@@ -825,12 +802,11 @@ if (!Array.prototype.find) {
       sel.removeAllRanges()
       sel.addRange(prevRange)
 
+      let rect = markerEl.getBoundingClientRect()
       let coordinates = {
-        left: 0,
-        top: markerEl.offsetHeight
+        left: rect.left,
+        top: rect.top + markerEl.offsetHeight
       }
-
-      this.localToGlobalCoordinates(markerEl, coordinates)
 
       markerEl.parentNode.removeChild(markerEl)
       return coordinates
