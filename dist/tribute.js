@@ -121,8 +121,8 @@ if (!Array.prototype.find) {
           }
 
           if (el.constructor === NodeList) {
-            var length = el.length;
-            for (var i = 0; i < length; ++i) {
+            var _length = el.length;
+            for (var i = 0; i < _length; ++i) {
               this._attach(el[i]);
             }
           } else {
@@ -166,7 +166,7 @@ if (!Array.prototype.find) {
         value: function showMenuFor(element, collectionItem) {
           var _this2 = this;
 
-          var items = undefined;
+          var items = void 0;
           // create the menu if it doesn't exist.
           if (!this.menu) {
             this.menu = this.createMenu();
@@ -369,7 +369,7 @@ if (!Array.prototype.find) {
               var keyCode = instance.getKeyCode(instance, _this5, event);
 
               if (isNaN(keyCode)) return {
-                  v: undefined
+                  v: void 0
                 };
 
               var trigger = instance.tribute.triggers().find(function (trigger) {
@@ -391,7 +391,7 @@ if (!Array.prototype.find) {
       }, {
         key: 'getKeyCode',
         value: function getKeyCode(instance, el, event) {
-          var char = undefined;
+          var char = void 0;
           var tribute = instance.tribute;
           var info = tribute.range.getTriggerInfo(false, false, true);
 
@@ -506,6 +506,7 @@ if (!Array.prototype.find) {
 
     // Thanks to https://github.com/jeff-collins/ment.io
 
+
     var TributeRange = function () {
       function TributeRange(tribute) {
         _classCallCheck(this, TributeRange);
@@ -517,7 +518,7 @@ if (!Array.prototype.find) {
       _createClass(TributeRange, [{
         key: 'getDocument',
         value: function getDocument() {
-          var iframe = undefined;
+          var iframe = void 0;
           if (this.tribute.current.collection) {
             iframe = this.tribute.current.collection.iframe;
           }
@@ -534,7 +535,7 @@ if (!Array.prototype.find) {
           var _this7 = this;
 
           var context = this.tribute.current,
-              coordinates = undefined;
+              coordinates = void 0;
           var info = this.getTriggerInfo(false, false, true);
 
           if (info !== undefined) {
@@ -557,7 +558,7 @@ if (!Array.prototype.find) {
       }, {
         key: 'selectElement',
         value: function selectElement(targetElement, path, offset) {
-          var range = undefined;
+          var range = void 0;
           var elem = targetElement;
 
           if (path) {
@@ -627,8 +628,8 @@ if (!Array.prototype.find) {
       }, {
         key: 'pasteHtml',
         value: function pasteHtml(html, startPos, endPos) {
-          var range = undefined,
-              sel = undefined;
+          var range = void 0,
+              sel = void 0;
           sel = this.getWindowSelection();
           range = this.getDocument().createRange();
           range.setStart(sel.anchorNode, startPos);
@@ -638,8 +639,8 @@ if (!Array.prototype.find) {
           var el = this.getDocument().createElement('div');
           el.innerHTML = html;
           var frag = this.getDocument().createDocumentFragment(),
-              node = undefined,
-              lastNode = undefined;
+              node = void 0,
+              lastNode = void 0;
           while (node = el.firstChild) {
             lastNode = frag.appendChild(node);
           }
@@ -671,9 +672,9 @@ if (!Array.prototype.find) {
           }
 
           for (var i = 0; i < element.parentNode.childNodes.length; i++) {
-            var node = element.parentNode.childNodes[i];
+            var _node = element.parentNode.childNodes[i];
 
-            if (node === element) {
+            if (_node === element) {
               return i;
             }
           }
@@ -685,10 +686,10 @@ if (!Array.prototype.find) {
           var sel = this.getWindowSelection();
           var selected = sel.anchorNode;
           var path = [];
-          var offset = undefined;
+          var offset = void 0;
 
           if (selected != null) {
-            var i = undefined;
+            var i = void 0;
             var ce = selected.contentEditable;
             while (selected !== null && ce !== 'true') {
               i = this.getNodePositionInParent(selected);
@@ -714,7 +715,7 @@ if (!Array.prototype.find) {
         key: 'getTextPrecedingCurrentSelection',
         value: function getTextPrecedingCurrentSelection() {
           var context = this.tribute.current,
-              text = undefined;
+              text = void 0;
 
           if (!this.isContentEditable(context.element)) {
             var textComponent = this.getDocument().activeElement;
@@ -741,9 +742,9 @@ if (!Array.prototype.find) {
           var _this8 = this;
 
           var ctx = this.tribute.current;
-          var selected = undefined,
-              path = undefined,
-              offset = undefined;
+          var selected = void 0,
+              path = void 0,
+              offset = void 0;
 
           if (!this.isContentEditable(ctx.element)) {
             selected = this.getDocument().activeElement;
@@ -763,7 +764,7 @@ if (!Array.prototype.find) {
           if (effectiveRange !== undefined && effectiveRange !== null) {
             var _ret3 = function () {
               var mostRecentTriggerCharPos = -1;
-              var triggerChar = undefined;
+              var triggerChar = void 0;
 
               _this8.tribute.triggers().forEach(function (c) {
                 var idx = effectiveRange.lastIndexOf(c);
@@ -805,29 +806,6 @@ if (!Array.prototype.find) {
         key: 'isContentEditable',
         value: function isContentEditable(element) {
           return element.nodeName !== 'INPUT' && element.nodeName !== 'TEXTAREA';
-        }
-      }, {
-        key: 'localToGlobalCoordinates',
-        value: function localToGlobalCoordinates(element, coordinates) {
-          var obj = element;
-
-          while (obj) {
-            coordinates.left += obj.offsetLeft + obj.clientLeft;
-            coordinates.top += obj.offsetTop + obj.clientTop;
-            obj = obj.offsetParent;
-          }
-
-          obj = element;
-
-          while (obj !== this.getDocument().body) {
-            if (obj.scrollTop && obj.scrollTop > 0) {
-              coordinates.top -= obj.scrollTop;
-            }
-            if (obj.scrollLeft && obj.scrollLeft > 0) {
-              coordinates.left -= obj.scrollLeft;
-            }
-            obj = obj.parentNode;
-          }
         }
       }, {
         key: 'getTextAreaOrInputUnderlinePosition',
@@ -874,12 +852,11 @@ if (!Array.prototype.find) {
           span.textContent = element.value.substring(position) || '.';
           div.appendChild(span);
 
+          var rect = element.getBoundingClientRect();
           var coordinates = {
-            top: span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
-            left: span.offsetLeft + parseInt(computed.borderLeftWidth)
+            top: rect.top + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
+            left: rect.left + span.offsetLeft + parseInt(computed.borderLeftWidth)
           };
-
-          this.localToGlobalCoordinates(element, coordinates);
 
           this.getDocument().body.removeChild(div);
 
@@ -889,9 +866,9 @@ if (!Array.prototype.find) {
         key: 'getContentEditableCaretPosition',
         value: function getContentEditableCaretPosition(selectedNodePosition) {
           var markerTextChar = '﻿';
-          var markerEl = undefined,
+          var markerEl = void 0,
               markerId = 'sel_' + new Date().getTime() + '_' + Math.random().toString().substr(2);
-          var range = undefined;
+          var range = void 0;
           var sel = this.getWindowSelection();
           var prevRange = sel.getRangeAt(0);
 
@@ -909,12 +886,11 @@ if (!Array.prototype.find) {
           sel.removeAllRanges();
           sel.addRange(prevRange);
 
+          var rect = markerEl.getBoundingClientRect();
           var coordinates = {
-            left: 0,
-            top: markerEl.offsetHeight
+            left: rect.left,
+            top: rect.top + markerEl.offsetHeight
           };
-
-          this.localToGlobalCoordinates(markerEl, coordinates);
 
           markerEl.parentNode.removeChild(markerEl);
           return coordinates;
@@ -923,7 +899,7 @@ if (!Array.prototype.find) {
         key: 'scrollIntoView',
         value: function scrollIntoView(elem) {
           var reasonableBuffer = 20,
-              clientRect = undefined;
+              clientRect = void 0;
           var maxScrollDisplacement = 100;
           var e = elem;
 
@@ -966,6 +942,7 @@ if (!Array.prototype.find) {
 
     // Thanks to https://github.com/mattyork/fuzzy
 
+
     var TributeSearch = function () {
       function TributeSearch(tribute) {
         _classCallCheck(this, TributeSearch);
@@ -1000,8 +977,8 @@ if (!Array.prototype.find) {
               pre = opts.pre || '',
               post = opts.post || '',
               compareString = opts.caseSensitive && string || string.toLowerCase(),
-              ch = undefined,
-              compareChar = undefined;
+              ch = void 0,
+              compareChar = void 0;
 
           pattern = opts.caseSensitive && pattern || pattern.toLowerCase();
 
@@ -1035,8 +1012,8 @@ if (!Array.prototype.find) {
 
           var c = pattern[patternIndex];
           var index = string.indexOf(c, stringIndex);
-          var best = undefined,
-              temp = undefined;
+          var best = void 0,
+              temp = void 0;
 
           while (index > -1) {
             patternCache.push(index);
