@@ -101,7 +101,7 @@ if (!Array.prototype.find) {
         throw new Error('[Tribute] Must pass in a DOM node or NodeList.')
       }
 
-      if (el.constructor === NodeList) {
+      if (el.constructor === NodeList || el.constructor === HTMLCollection) {
         let length = el.length
         for (var i = 0; i < length; ++i) {
           this._attach(el[i])
