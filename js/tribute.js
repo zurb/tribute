@@ -107,7 +107,7 @@ if (!Array.prototype.find) {
       }
 
       // Is el an Array/Array-like object?
-      if (el.constructor === NodeList || el.constructor === HTMLCollection) {
+      if (el.constructor === NodeList || el.constructor === HTMLCollection || el.constructor === Array) {
         let length = el.length
         for (var i = 0; i < length; ++i) {
           this._attach(el[i])
