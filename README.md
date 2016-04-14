@@ -2,7 +2,7 @@
 A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Firefox, Chrome, iOS Safari, Safari, IE 9+, Edge 12+, Android 4+.
 
 ### Installing
-There are a few ways to install Tribute; Bower, as an NPM Module, or by downloading the JS from the `dist` folder in this repo.
+There are a few ways to install Tribute; [Bower](http://bower.io/), as an [NPM Module](https://npmjs.com/package/tributejs), or by [downloading](https://github.com/zurb/tribute/archive/master.zip) from the `dist` folder in this repo.
 
 #### Bower
 Bower is a great way to manage your JS dependencies. You can install tribute by running the following command:
