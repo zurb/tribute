@@ -120,7 +120,13 @@ if (!Array.prototype.find) {
             throw new Error('[Tribute] Must pass in a DOM node or NodeList.');
           }
 
-          if (el.constructor === NodeList || el.constructor === HTMLCollection) {
+          // Check if it is a jQuery collection
+          if (typeof jQuery !== 'undefined' && el instanceof jQuery) {
+            el = el.get();
+          }
+
+          // Is el an Array/Array-like object?
+          if (el.constructor === NodeList || el.constructor === HTMLCollection || el.constructor === Array) {
             var length = el.length;
             for (var i = 0; i < length; ++i) {
               this._attach(el[i]);
