@@ -781,9 +781,9 @@ if (!Array.prototype.find) {
       div.appendChild(span)
 
       let rect = element.getBoundingClientRect()
-      var doc = document.documentElement;
-      var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-      var windowTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
+      var doc = document.documentElement
+      var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
+      var windowTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0)
       let coordinates = {
         top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
         left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
