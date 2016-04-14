@@ -858,9 +858,12 @@ if (!Array.prototype.find) {
           div.appendChild(span);
 
           var rect = element.getBoundingClientRect();
+          var doc = document.documentElement;
+          var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+          var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
           var coordinates = {
-            top: rect.top + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
-            left: rect.left + span.offsetLeft + parseInt(computed.borderLeftWidth)
+            top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
+            left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
           };
 
           this.getDocument().body.removeChild(div);
