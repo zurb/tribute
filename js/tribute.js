@@ -1003,5 +1003,11 @@ if (!Array.prototype.find) {
     }
   }
 
-  window.Tribute = Tribute
+
+  if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+    module.exports = Tribute
+  } else {
+    window.Tribute = Tribute
+  }
+
 }

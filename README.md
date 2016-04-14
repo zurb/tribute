@@ -1,6 +1,42 @@
 # Tribute
 A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Firefox, Chrome, iOS Safari, Safari, IE 9+, Edge 12+, Android 4+.
 
+### Installing
+There are a few ways to install Tribute; Bower, as an NPM Module, or by downloading the JS from the `dist` folder in this repo.
+
+#### Bower
+Bower is a great way to manage your JS dependencies. You can install tribute by running the following command:
+```
+bower install tribute
+```
+
+You can then link to Tribute in your code with the following markup:
+```
+<script src="bower_components/tribute/dist/tribute.js"></script>
+<link rel="stylesheet" href="bower_components/tribute/dist/tribute.css" />
+```
+
+#### NPM Module
+You can install Tribute by running:
+```
+npm install tributejs
+```
+
+Or by adding Tribute to your `package.json` file.
+
+#### Download or Clone
+Or you can [download the repo](https://github.com/zurb/tribute/archive/master.zip) or clone it localy with this command:
+```
+git clone git@github.com:zurb/tribute.git
+```
+You can then copy the files in the `dist` directory to your project.
+```
+<script src="js/tribute.js"></script>
+<link rel="stylesheet" href="js/tribute.css" />
+```
+
+That's it! Now you are ready to initialize Tribute.
+
 ### Initializing
 There are two ways to initialize Tribute, by passing an array of "collections" or by passing one collection object.
 
@@ -22,7 +58,7 @@ var tribute = new Tribute({
 ```
 
 #### Attaching to elements
-Once initialized, Tribute can be attached to an `input`, `textarea`, or an element that supports `contenteditable`. It also works in WYSIWYG iframes like TinyMCE.
+Once initialized, Tribute can be attached to an `input`, `textarea`, or an element that supports `contenteditable`.
 
 ```html
 <div id="caaanDo">I'm Mr. Meeseeks, look at me!</div>
