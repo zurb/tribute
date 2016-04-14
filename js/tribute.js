@@ -101,6 +101,12 @@ if (!Array.prototype.find) {
         throw new Error('[Tribute] Must pass in a DOM node or NodeList.')
       }
 
+      // Check if it is a jQuery collection
+      if (typeof jQuery !== 'undefined' && el instanceof jQuery) {
+        el = el.get()
+      }
+
+      // Is el an Array/Array-like object?
       if (el.constructor === NodeList || el.constructor === HTMLCollection) {
         let length = el.length
         for (var i = 0; i < length; ++i) {
