@@ -6,19 +6,22 @@ There are a few ways to install Tribute; Bower, as an NPM Module, or by download
 
 #### Bower
 Bower is a great way to manage your JS dependencies. You can install tribute by running the following command:
-```
+
+```shell
 bower install tribute
 ```
 
 You can then link to Tribute in your code with the following markup:
-```
+
+```html
 <script src="bower_components/tribute/dist/tribute.js"></script>
 <link rel="stylesheet" href="bower_components/tribute/dist/tribute.css" />
 ```
 
 #### NPM Module
 You can install Tribute by running:
-```
+
+```shell
 npm install tributejs
 ```
 
@@ -26,11 +29,14 @@ Or by adding Tribute to your `package.json` file.
 
 #### Download or Clone
 Or you can [download the repo](https://github.com/zurb/tribute/archive/master.zip) or clone it localy with this command:
-```
+
+```shell
 git clone git@github.com:zurb/tribute.git
 ```
+
 You can then copy the files in the `dist` directory to your project.
-```
+
+```html
 <script src="js/tribute.js"></script>
 <link rel="stylesheet" href="js/tribute.css" />
 ```
