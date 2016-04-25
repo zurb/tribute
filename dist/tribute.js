@@ -58,6 +58,7 @@ if (!Array.prototype.find) {
 
         this.menuSelected = 0;
         this.current = {};
+        this.inputEvent = false;
         this.isActive = false;
 
         if (values) {
@@ -314,6 +315,7 @@ if (!Array.prototype.find) {
         value: function bind(element) {
           element.addEventListener('keydown', this.keydown.bind(element, this), false);
           element.addEventListener('keyup', this.keyup.bind(element, this), false);
+          element.addEventListener('input', this.input.bind(element, this), false);
         }
       }, {
         key: 'keydown',
@@ -333,6 +335,12 @@ if (!Array.prototype.find) {
           });
         }
       }, {
+        key: 'input',
+        value: function input(instance, event) {
+          instance.inputEvent = true;
+          instance.keyup.call(this, instance, event);
+        }
+      }, {
         key: 'click',
         value: function click(instance, event) {
           var tribute = instance.tribute;
@@ -346,26 +354,13 @@ if (!Array.prototype.find) {
           }
         }
       }, {
-        key: 'shouldDeactivate',
-        value: function shouldDeactivate(event) {
-          if (!this.tribute.isActive) return false;
-
-          if (this.tribute.current.mentionText.length === 0) {
-            var eventKeyPressed = false;
-            TributeEvents.keys().forEach(function (o) {
-              if (event.keyCode === o.key) eventKeyPressed = true;
-            });
-
-            return !eventKeyPressed;
-          }
-
-          return false;
-        }
-      }, {
         key: 'keyup',
         value: function keyup(instance, event) {
           var _this5 = this;
 
+          if (instance.inputEvent) {
+            instance.inputEvent = false;
+          }
           instance.updateSelection(this);
 
           if (event.keyCode === 27) return;
@@ -393,6 +388,22 @@ if (!Array.prototype.find) {
           if (instance.tribute.current.trigger && instance.commandEvent === false) {
             instance.tribute.showMenuFor(this);
           }
+        }
+      }, {
+        key: 'shouldDeactivate',
+        value: function shouldDeactivate(event) {
+          if (!this.tribute.isActive) return false;
+
+          if (this.tribute.current.mentionText.length === 0) {
+            var eventKeyPressed = false;
+            TributeEvents.keys().forEach(function (o) {
+              if (event.keyCode === o.key) eventKeyPressed = true;
+            });
+
+            return !eventKeyPressed;
+          }
+
+          return false;
         }
       }, {
         key: 'getKeyCode',

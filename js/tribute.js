@@ -30,6 +30,7 @@ if (!Array.prototype.find) {
 
       this.menuSelected = 0
       this.current = {}
+      this.inputEvent = false
       this.isActive = false
 
       if (values) {
@@ -265,6 +266,8 @@ if (!Array.prototype.find) {
         this.keydown.bind(element, this), false)
       element.addEventListener('keyup',
         this.keyup.bind(element, this), false)
+      element.addEventListener('input',
+        this.input.bind(element, this), false)
     }
 
     keydown(instance, event) {
@@ -283,6 +286,11 @@ if (!Array.prototype.find) {
       })
     }
 
+    input(instance, event) {
+      instance.inputEvent = true
+      instance.keyup.call(this, instance, event)
+    }
+
     click(instance, event) {
       let tribute = instance.tribute
 
@@ -295,22 +303,10 @@ if (!Array.prototype.find) {
       }
     }
 
-    shouldDeactivate(event) {
-      if (!this.tribute.isActive) return false
-
-      if (this.tribute.current.mentionText.length === 0) {
-        let eventKeyPressed = false
-        TributeEvents.keys().forEach(o => {
-          if (event.keyCode === o.key) eventKeyPressed = true
-        })
-
-        return !eventKeyPressed
-      }
-
-      return false
-    }
-
     keyup(instance, event) {
+      if (instance.inputEvent) {
+        instance.inputEvent = false
+      }
       instance.updateSelection(this)
 
       if (event.keyCode === 27) return
@@ -332,6 +328,21 @@ if (!Array.prototype.find) {
       if (instance.tribute.current.trigger && instance.commandEvent === false) {
         instance.tribute.showMenuFor(this)
       }
+    }
+
+    shouldDeactivate(event) {
+      if (!this.tribute.isActive) return false
+
+      if (this.tribute.current.mentionText.length === 0) {
+        let eventKeyPressed = false
+        TributeEvents.keys().forEach(o => {
+          if (event.keyCode === o.key) eventKeyPressed = true
+        })
+
+        return !eventKeyPressed
+      }
+
+      return false
     }
 
     getKeyCode(instance, el, event) {
