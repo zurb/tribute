@@ -48,7 +48,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row" id="content">
       <div class="large-8 medium-8 columns">
         <h5>Tribute on traditional form elements!</h5>
         <form>
@@ -73,6 +73,7 @@
     <script>
       // example of alternative callback
       var tribute = new Tribute({
+        menuContainer: document.getElementById('content'),
         values: [
           {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com'},
           {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com'}

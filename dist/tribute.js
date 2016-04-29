@@ -53,6 +53,8 @@ if (!Array.prototype.find) {
         var fillAttr = _ref$fillAttr === undefined ? 'value' : _ref$fillAttr;
         var _ref$collection = _ref.collection;
         var collection = _ref$collection === undefined ? null : _ref$collection;
+        var _ref$menuContainer = _ref.menuContainer;
+        var menuContainer = _ref$menuContainer === undefined ? null : _ref$menuContainer;
 
         _classCallCheck(this, Tribute);
 
@@ -60,6 +62,7 @@ if (!Array.prototype.find) {
         this.current = {};
         this.inputEvent = false;
         this.isActive = false;
+        this.menuContainer = menuContainer;
 
         if (values) {
           this.collection = [{
@@ -166,6 +169,11 @@ if (!Array.prototype.find) {
 
           wrapper.className = 'tribute-container';
           wrapper.appendChild(ul);
+
+          if (this.menuContainer) {
+            return this.menuContainer.appendChild(wrapper);
+          }
+
           return this.range.getDocument().body.appendChild(wrapper);
         }
       }, {

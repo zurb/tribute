@@ -26,12 +26,13 @@ if (!Array.prototype.find) {
     constructor({
         values=null, iframe=null, selectClass='highlight', trigger='@',
         selectTemplate=null, menuItemTemplate=null,lookup='key',
-        fillAttr='value', collection=null}) {
+        fillAttr='value', collection=null, menuContainer=null}) {
 
       this.menuSelected = 0
       this.current = {}
       this.inputEvent = false
       this.isActive = false
+      this.menuContainer = menuContainer
 
       if (values) {
         this.collection = [{
@@ -144,6 +145,11 @@ if (!Array.prototype.find) {
 
       wrapper.className = 'tribute-container'
       wrapper.appendChild(ul)
+
+      if (this.menuContainer) {
+        return this.menuContainer.appendChild(wrapper)
+      }
+
       return this.range.getDocument().body.appendChild(wrapper)
     }
 
