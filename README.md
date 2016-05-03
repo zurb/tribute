@@ -106,6 +106,9 @@ Collection object shown with defaults:
     return item.string;
   },
 
+  // specify an alternative parent container for the menu
+  menuContainer: document.body,
+
   // column to search against in the object
   lookup: 'key',
 
