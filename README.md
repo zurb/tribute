@@ -198,7 +198,7 @@ Sometimes you may need to have the Tribute menu attach to a scrollable parent el
 ```
 
 ## Contributing
-We welcome contributions to Tribute. There are many areas where we would love to see community contributes that we will outline below, but first, let's go over how to develop in Tribute.
+We welcome contributions to Tribute. There are many areas where we would love to see community contributions that we have outlined below, but first, let's go over how to develop in Tribute.
 
 Install dependencies:
 ```sh
