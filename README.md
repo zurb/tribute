@@ -197,3 +197,32 @@ Sometimes you may need to have the Tribute menu attach to a scrollable parent el
 }
 ```
 
+### Contributing
+We welcome contributions to Tribute. There are many areas where we would love to see community contributes that we will outline below, but first, let's go over how to develop in Tribute.
+
+Install dependencies:
+```sh
+npm install
+```
+
+Run gulp:
+```sh
+gulp
+```
+
+That's it! Now you can use the `example/index.html` to test out changes to the code base. All changes to `js` and `scss` will recompile on the fly.
+
+Once you have made your changes, feel free to submit a pull request.
+
+#### What's next
+The major focus that we could use help with is creating wrappers for different JavaScript frameworks. Some of the ones we are interested in. We also see a couple of areas for improving compatability with different rendering situations, such as in iframes inside of rich text editors.
+
+##### TODO
+* Angular 1 wrapper
+* Angular 2 wrapper
+* React wrapper
+* Ember component
+* Compatability with WYSIWYG editors (TinyMCE, etc)
+* Testing
+
+
