@@ -187,3 +187,13 @@ You can override the default `menuItemTemplate` with your own output on initiali
 }
 ```
 
+#### Embedding Tribute in a scrollable container.
+Sometimes you may need to have the Tribute menu attach to a scrollable parent element so that if the user scrolls the container the menu will scroll with it. To do this, you can set `menuContainer` to the node that is the scrollable parent.
+
+```js
+{
+  //..other config options
+  menuContainer: document.getElementById('wrapper')
+}
+```
+
