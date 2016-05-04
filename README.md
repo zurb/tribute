@@ -215,7 +215,7 @@ That's it! Now you can use the `example/index.html` to test out changes to the c
 Once you have made your changes, feel free to submit a pull request.
 
 #### What's next
-The major focus that we could use help with is creating wrappers for different JavaScript frameworks. Some of the ones we are interested in. We also see a couple of areas for improving compatability with different rendering situations, such as in iframes inside of rich text editors.
+The major focus that we could use help with is creating wrappers for different JavaScript frameworks. Some of the ones we are interested in are outlined below. We also see a couple of areas for improving compatability with different rendering situations, such as in iframes inside of rich text editors.
 
 ##### TODO
 * Angular 1 wrapper
