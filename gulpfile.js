@@ -38,11 +38,11 @@ gulp.task('webserver', function() {
 });
 
 gulp.task('es6', function () {
-	return gulp.src(sourcePaths.es6)
-		.pipe(babel({
-			presets: ['es2015']
-		}))
-		.pipe(gulp.dest(distPaths.js));
+  return gulp.src(sourcePaths.es6)
+    .pipe(babel({
+      presets: ['es2015']
+    }))
+    .pipe(gulp.dest(distPaths.js));
 });
 
 gulp.task('openbrowser', function() {

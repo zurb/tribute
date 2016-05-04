@@ -120,6 +120,18 @@ Collection object shown with defaults:
 }
 ```
 
+#### Template Item
+Both the `selectTemplate` and the `menuItemTemplate` have access to the `item` object. This is a meta object containing the matched object from your values collection, wrapped in a search result.
+
+```js
+{
+  index: 0
+  original: {} // your original object from values array
+  score: 5
+  string: "<span>J</span><span>o</span>rdan Hum<span>p</span>hreys"
+}
+```
+
 ### Tips
 Some useful approaches to common roadblocks when implementing @mentions.
 
@@ -162,3 +174,16 @@ var tribute = new Tribute({
   }
 });
 ```
+
+#### How do I add an image to the items in the list?
+You can override the default `menuItemTemplate` with your own output on initialization. This allows you to replace the `innerHTML` of the `li` of each item in the list. You can use `item.string` to return the markup for the fuzzy match.
+
+```js
+{
+  //..other config options
+  menuItemTemplate: function (item) {
+    return '<img src="'+item.original.avatar_url + '">' + item.string;
+  }
+}
+```
+
