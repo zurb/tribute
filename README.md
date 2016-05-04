@@ -5,7 +5,7 @@ A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Fir
 There are a few ways to install Tribute; [Bower](http://bower.io/), as an [NPM Module](https://npmjs.com/package/tributejs), or by [downloading](https://github.com/zurb/tribute/archive/master.zip) from the `dist` folder in this repo.
 
 #### Bower
-Bower is a great way to manage your JS dependencies. You can install tribute by running the following command:
+Bower is a great way to manage your JS dependencies. You can install Tribute by running the following command:
 
 ```shell
 bower install tribute
