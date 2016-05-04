@@ -147,7 +147,7 @@ tribute.collection[0].values.push([
 
 This would update the first configuration object in the collection array with new values. You can access and update any attribute on the collection in this way.
 
-### Programmatically detecting an active tribute dropdown
+### Programmatically detecting an active Tribute dropdown
 If you need to know when Tribute is active you can access the `isActive` property of an instance.
 
 ```js
