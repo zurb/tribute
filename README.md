@@ -1,10 +1,10 @@
 # Tribute
 A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Firefox, Chrome, iOS Safari, Safari, IE 9+, Edge 12+, Android 4+, and Windows Phone.
 
-### Installing
+# Installing
 There are a few ways to install Tribute; [Bower](http://bower.io/), as an [NPM Module](https://npmjs.com/package/tributejs), or by [downloading](https://github.com/zurb/tribute/archive/master.zip) from the `dist` folder in this repo.
 
-#### Bower
+## Bower
 Bower is a great way to manage your JS dependencies. You can install Tribute by running the following command:
 
 ```shell
@@ -18,7 +18,7 @@ You can then link to Tribute in your code with the following markup:
 <link rel="stylesheet" href="bower_components/tribute/dist/tribute.css" />
 ```
 
-#### NPM Module
+## NPM Module
 You can install Tribute by running:
 
 ```shell
@@ -27,7 +27,7 @@ npm install tributejs
 
 Or by adding Tribute to your `package.json` file.
 
-#### Download or Clone
+## Download or Clone
 Or you can [download the repo](https://github.com/zurb/tribute/archive/master.zip) or clone it localy with this command:
 
 ```shell
@@ -43,7 +43,7 @@ You can then copy the files in the `dist` directory to your project.
 
 That's it! Now you are ready to initialize Tribute.
 
-### Initializing
+# Initializing
 There are two ways to initialize Tribute, by passing an array of "collections" or by passing one collection object.
 
 ```js
@@ -63,7 +63,7 @@ var tribute = new Tribute({
 })
 ```
 
-#### Attaching to elements
+## Attaching to elements
 Once initialized, Tribute can be attached to an `input`, `textarea`, or an element that supports `contenteditable`.
 
 ```html
@@ -80,7 +80,7 @@ Once initialized, Tribute can be attached to an `input`, `textarea`, or an eleme
 </script>
 ```
 
-### A Collection
+# A Collection
 Collections are configuration objects for Tribute, you can have multiple for each instance. This is useful for scenarios where you may want to match multiple trigger keys, such as `@` for users and `#` for projects.
 
 
@@ -120,7 +120,7 @@ Collection object shown with defaults:
 }
 ```
 
-#### Template Item
+## Template Item
 Both the `selectTemplate` and the `menuItemTemplate` have access to the `item` object. This is a meta object containing the matched object from your values collection, wrapped in a search result.
 
 ```js
@@ -132,10 +132,10 @@ Both the `selectTemplate` and the `menuItemTemplate` have access to the `item` o
 }
 ```
 
-### Tips
+# Tips
 Some useful approaches to common roadblocks when implementing @mentions.
 
-#### Updating a collection with new data
+## Updating a collection with new data
 You can update an instance of Tribute on the fly. If you have new data you want to insert into a collection you can access the collection values array directly:
 
 ```js
@@ -147,7 +147,7 @@ tribute.collection[0].values.push([
 
 This would update the first configuration object in the collection array with new values. You can access and update any attribute on the collection in this way.
 
-#### Programmatically detecting an active tribute dropdown
+## Programmatically detecting an active tribute dropdown
 If you need to know when Tribute is active you can access the `isActive` property of an instance.
 
 ```js
@@ -158,7 +158,7 @@ if (tribute.isActive) {
 }
 ```
 
-#### Links inside contenteditable are not clickable.
+## Links inside contenteditable are not clickable.
 If you want to embed a link in your `selectTemplate` then you need to make sure that the
 anchor is wrapped in an element with `contenteditable="false"`. This makes the anchor
 clickable *and* fixes issues with matches being modifiable.
@@ -175,7 +175,7 @@ var tribute = new Tribute({
 });
 ```
 
-#### How do I add an image to the items in the list?
+## How do I add an image to the items in the list?
 You can override the default `menuItemTemplate` with your own output on initialization. This allows you to replace the `innerHTML` of the `li` of each item in the list. You can use `item.string` to return the markup for the fuzzy match.
 
 ```js
@@ -187,7 +187,7 @@ You can override the default `menuItemTemplate` with your own output on initiali
 }
 ```
 
-#### Embedding Tribute in a scrollable container.
+## Embedding Tribute in a scrollable container.
 Sometimes you may need to have the Tribute menu attach to a scrollable parent element so that if the user scrolls the container the menu will scroll with it. To do this, you can set `menuContainer` to the node that is the scrollable parent.
 
 ```js
@@ -197,7 +197,7 @@ Sometimes you may need to have the Tribute menu attach to a scrollable parent el
 }
 ```
 
-### Contributing
+# Contributing
 We welcome contributions to Tribute. There are many areas where we would love to see community contributes that we will outline below, but first, let's go over how to develop in Tribute.
 
 Install dependencies:
@@ -214,10 +214,10 @@ That's it! Now you can use the `example/index.html` to test out changes to the c
 
 Once you have made your changes, feel free to submit a pull request.
 
-#### What's next
+## What's next
 The major focus that we could use help with is creating wrappers for different JavaScript frameworks. Some of the ones we are interested in are outlined below. We also see a couple of areas for improving compatability with different rendering situations, such as in iframes inside of rich text editors.
 
-##### TODO
+## TODO
 * Angular 1 wrapper
 * Angular 2 wrapper
 * React wrapper
