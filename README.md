@@ -14,8 +14,8 @@ bower install tribute
 You can then link to Tribute in your code with the following markup:
 
 ```html
-<script src="bower_components/tribute/dist/tribute.js"></script>
 <link rel="stylesheet" href="bower_components/tribute/dist/tribute.css" />
+<script src="bower_components/tribute/dist/tribute.js"></script>
 ```
 
 ### NPM Module
