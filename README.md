@@ -37,8 +37,8 @@ git clone git@github.com:zurb/tribute.git
 You can then copy the files in the `dist` directory to your project.
 
 ```html
-<script src="js/tribute.js"></script>
 <link rel="stylesheet" href="js/tribute.css" />
+<script src="js/tribute.js"></script>
 ```
 
 That's it! Now you are ready to initialize Tribute.
