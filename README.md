@@ -139,13 +139,13 @@ Some useful approaches to common roadblocks when implementing @mentions.
 You can update an instance of Tribute on the fly. If you have new data you want to insert into a collection you can access the collection values array directly:
 
 ```js
-tribute.collection.values.push([
+tribute.collection[0].values.push([
   {name: 'Howard Johnson', occupation: 'Panda Wrangler', age: 27},
   {name: 'Fluffy Croutons', occupation: 'Crouton Fluffer', age: 32}
 ]);
 ```
 
-You can access and update any attribute on the collection in this way.
+This would update the first configuration object in the collection array with new values. You can access and update any attribute on the collection in this way.
 
 #### Programmatically detecting an active tribute dropdown
 If you need to know when Tribute is active you can access the `isActive` property of an instance.
