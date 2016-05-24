@@ -178,9 +178,9 @@ if (!Array.prototype.find) {
 
       this.current.filteredItems = items
 
-      if(!items.length) {
-        this.hideMenu();
-        return;
+      if (!items.length) {
+        this.hideMenu()
+        return
       }
 
       let ul = this.menu.querySelector('ul')
