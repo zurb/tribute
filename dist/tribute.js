@@ -205,6 +205,11 @@ if (!Array.prototype.find) {
 
           this.current.filteredItems = items;
 
+          if (!items.length) {
+            this.hideMenu();
+            return;
+          }
+
           var ul = this.menu.querySelector('ul');
 
           ul.innerHTML = '';
