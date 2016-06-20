@@ -132,6 +132,16 @@ Both the `selectTemplate` and the `menuItemTemplate` have access to the `item` o
 }
 ```
 
+### Replace Event
+You can bind to the `tribute-replaced` event to know when we have updated your targeted Tribute element.
+
+If your element has an ID of `myElement`:
+```js
+document.getElementById('myElement').addEventListener('tribute-replaced', function (e) {
+  console.log('Text replaced!');
+});
+```
+
 ## Tips
 Some useful approaches to common roadblocks when implementing @mentions.
 

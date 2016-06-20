@@ -21,6 +21,22 @@ if (!Array.prototype.find) {
   }
 }
 
+(function () {
+
+  if ( typeof window.CustomEvent === "function" ) return false
+
+  function CustomEvent ( event, params ) {
+    params = params || { bubbles: false, cancelable: false, detail: undefined }
+    var evt = document.createEvent( 'CustomEvent' )
+    evt.initCustomEvent( event, params.bubbles, params.cancelable, params.detail )
+    return evt
+   }
+
+  CustomEvent.prototype = window.Event.prototype
+
+  window.CustomEvent = CustomEvent
+})()
+
 {
   class Tribute {
     constructor({
@@ -555,6 +571,9 @@ if (!Array.prototype.find) {
 
       let info = this.getTriggerInfo(requireLeadingSpace, true, hasTrailingSpace)
 
+      // Create the event
+      let replaceEvent = new CustomEvent('tribute-replaced', { detail: text })
+
       if (info !== undefined) {
         if (!this.isContentEditable(context.element)) {
           let myField = this.getDocument().activeElement
@@ -571,6 +590,8 @@ if (!Array.prototype.find) {
           this.pasteHtml(text, info.mentionPosition,
             info.mentionPosition + info.mentionText.length + 1)
         }
+
+        context.element.dispatchEvent(replaceEvent)
       }
     }
 
