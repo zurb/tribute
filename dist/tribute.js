@@ -376,6 +376,12 @@ if (!Array.prototype.find) {
 
           if (tribute.menu && tribute.menu.contains(event.target)) {
             var li = event.target;
+            while (li.nodeName.toLowerCase() !== 'li') {
+              li = li.parentNode;
+              if (!li || li === tribute.menu) {
+                throw new Error('cannot find the <li> container for the click');
+              }
+            }
             tribute.selectItemAtIndex(li.getAttribute('data-index'));
             tribute.hideMenu();
           } else if (tribute.current.element) {
