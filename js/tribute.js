@@ -324,9 +324,9 @@ if (!Array.prototype.find) {
       if (tribute.menu && tribute.menu.contains(event.target)) {
         let li = event.target
         while (li.nodeName.toLowerCase() !== 'li') {
-           li = li.parentNode;
+           li = li.parentNode
            if (!li || li === tribute.menu) {
-             throw new Error('cannot find the <li> container for the click');
+             throw new Error('cannot find the <li> container for the click')
            }
         }
         tribute.selectItemAtIndex(li.getAttribute('data-index'))
