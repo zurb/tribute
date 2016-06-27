@@ -147,8 +147,8 @@ if (!Array.prototype.find) {
 
           // Is el an Array/Array-like object?
           if (el.constructor === NodeList || el.constructor === HTMLCollection || el.constructor === Array) {
-            var _length = el.length;
-            for (var i = 0; i < _length; ++i) {
+            var length = el.length;
+            for (var i = 0; i < length; ++i) {
               this._attach(el[i]);
             }
           } else {
@@ -729,9 +729,9 @@ if (!Array.prototype.find) {
           }
 
           for (var i = 0; i < element.parentNode.childNodes.length; i++) {
-            var _node = element.parentNode.childNodes[i];
+            var node = element.parentNode.childNodes[i];
 
-            if (_node === element) {
+            if (node === element) {
               return i;
             }
           }
