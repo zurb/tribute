@@ -29,7 +29,6 @@
     </style>
   </head>
   <body>
-
     <div class="row">
       <div class="large-12 columns">
         <h1>Tribute Demo</h1>
@@ -66,7 +65,11 @@
           </div>
         </form>
       </div>
+    </div>
 
+    <div class="row">
+      <input type="button" onclick="forceBodyScroll()" value="force body scroll" />
+      <input type="button" onclick="forceContainerScroll()" value="force container scroll" />
     </div>
 
     <script src="../dist/tribute.js?2983982"></script>
@@ -138,6 +141,36 @@
       document.getElementById('test').addEventListener('tribute-replaced', function (e) {
         console.log('Text replaced by Tribute!');
       });
+
+      function forceBodyScroll() {
+        document.body.style.height = window.innerHeight + 100 + 'px';
+        window.scrollTo(0, 70);
+        document.body.firstElementChild.style.marginTop = '70px';
+      }
+
+      function forceContainerScroll() {
+        var containerHeight = 800;
+        var container = document.createElement('div');
+        container.style.margin = '0 auto';
+        container.style.width = '800px';
+        container.style.overflow = 'auto';
+        container.style.height = containerHeight + 'px';
+
+        var elements = document.body.querySelectorAll('.row');
+
+        Array.prototype.forEach.call(elements, function(element) {
+          container.appendChild(element);
+        });
+
+        var div = document.createElement('div');
+        div.style.height = (containerHeight + 10) + 'px';
+        container.appendChild(div);
+
+        document.body.insertBefore(container, document.body.firstChild);
+
+        container.scrollTop = 70;
+        container.firstElementChild.style.marginTop = '70px';
+      }
     </script>
   </body>
 </html>
