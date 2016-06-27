@@ -68,8 +68,8 @@
     </div>
 
     <div class="row">
-      <input type="button" onclick="forceBodyScroll()" value="force body scroll" />
-      <input type="button" onclick="forceContainerScroll()" value="force container scroll" />
+      <input type="button" data-action="forceBodyScroll" onclick="forceBodyScroll()" value="force body scroll" />
+      <input type="button" data-action="forceContainerScroll" onclick="forceContainerScroll()" value="force container scroll" />
     </div>
 
     <script src="../dist/tribute.js?2983982"></script>
@@ -143,12 +143,16 @@
       });
 
       function forceBodyScroll() {
+        document.querySelector('[data-action="forceBodyScroll"]').disabled = true;
+
         document.body.style.height = window.innerHeight + 100 + 'px';
         window.scrollTo(0, 70);
         document.body.firstElementChild.style.marginTop = '70px';
       }
 
       function forceContainerScroll() {
+        document.querySelector('[data-action="forceContainerScroll"]').disabled = true;
+
         var containerHeight = 800;
         var container = document.createElement('div');
         container.style.margin = '0 auto';
