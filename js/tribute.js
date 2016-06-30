@@ -629,7 +629,7 @@ if (!Array.prototype.find) {
 
     getWindowSelection() {
       if (this.tribute.collection.iframe) {
-        return this.tribute.collection.iframe.contentWindow.getSelection();
+        return this.tribute.collection.iframe.contentWindow.getSelection()
       }
 
       return window.getSelection()
