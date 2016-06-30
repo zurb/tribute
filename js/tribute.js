@@ -281,6 +281,7 @@ if (!Array.prototype.find) {
     static keys() {
       return [
         {key: 9,  value: 'TAB'},
+        {key: 8,  value: 'DELETE'},
         {key: 13, value: 'ENTER'},
         {key: 27, value: 'ESCAPE'},
         {key: 38, value: 'UP'},
@@ -459,6 +460,11 @@ if (!Array.prototype.find) {
               this.tribute.menuSelected++
               this.setActiveLi()
             }
+          }
+        },
+        delete: (e, el) => {
+          if (this.tribute.isActive && this.tribute.current.mentionText.length < 1) {
+            this.tribute.hideMenu();
           }
         }
       }

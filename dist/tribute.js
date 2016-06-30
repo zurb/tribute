@@ -528,6 +528,11 @@ if (!Array.prototype.find) {
                   _this6.setActiveLi();
                 }
               }
+            },
+            delete: function _delete(e, el) {
+              if (_this6.tribute.isActive && _this6.tribute.current.mentionText.length < 1) {
+                _this6.tribute.hideMenu();
+              }
             }
           };
         }
@@ -549,7 +554,7 @@ if (!Array.prototype.find) {
       }], [{
         key: 'keys',
         value: function keys() {
-          return [{ key: 9, value: 'TAB' }, { key: 13, value: 'ENTER' }, { key: 27, value: 'ESCAPE' }, { key: 38, value: 'UP' }, { key: 40, value: 'DOWN' }];
+          return [{ key: 9, value: 'TAB' }, { key: 8, value: 'DELETE' }, { key: 13, value: 'ENTER' }, { key: 27, value: 'ESCAPE' }, { key: 38, value: 'UP' }, { key: 40, value: 'DOWN' }];
         }
       }]);
 
