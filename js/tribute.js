@@ -42,7 +42,7 @@ if (!Array.prototype.find) {
     constructor({
         values=null, iframe=null, selectClass='highlight', trigger='@',
         selectTemplate=null, menuItemTemplate=null,lookup='key',
-        fillAttr='value', collection=null, menuContainer=null}) {
+        fillAttr='value', collection=null, menuContainer=null, noMatchTemplate=null}) {
 
       this.menuSelected = 0
       this.current = {}
@@ -62,7 +62,17 @@ if (!Array.prototype.find) {
           // function called on select that retuns the content to insert
           selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
 
+          // function called that returns content for an item
           menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
+
+          // function called when menu is empty, disables hiding of menu.
+          noMatchTemplate: ((t) => {
+            if (typeof t === 'function') {
+              return t.bind(this)
+            }
+
+            return null
+          })(noMatchTemplate),
 
           // column to search against in the object
           lookup: lookup,
@@ -81,6 +91,14 @@ if (!Array.prototype.find) {
             selectClass: item.selectClass || selectClass,
             selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(this),
             menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
+            // function called when menu is empty, disables hiding of menu.
+            noMatchTemplate: ((t) => {
+              if (typeof t === 'function') {
+                return t.bind(this)
+              }
+
+              return null
+            })(noMatchTemplate),
             lookup: item.lookup || lookup,
             fillAttr: item.fillAttr || fillAttr,
             values: item.values
@@ -194,12 +212,17 @@ if (!Array.prototype.find) {
 
       this.current.filteredItems = items
 
+      let ul = this.menu.querySelector('ul')
+
       if (!items.length) {
-        this.hideMenu()
+        if (!this.current.collection.noMatchTemplate) {
+          this.hideMenu()
+        } else {
+          ul.innerHTML = this.current.collection.noMatchTemplate()
+        }
+
         return
       }
-
-      let ul = this.menu.querySelector('ul')
 
       ul.innerHTML = ''
 
@@ -227,6 +250,7 @@ if (!Array.prototype.find) {
     }
 
     selectItemAtIndex(index) {
+      if (!index) return
       let item = this.current.filteredItems[index]
       let content = this.current.collection.selectTemplate(item)
       this.replaceText(content)

@@ -71,6 +71,8 @@ if (!Array.prototype.find) {
         var collection = _ref$collection === undefined ? null : _ref$collection;
         var _ref$menuContainer = _ref.menuContainer;
         var menuContainer = _ref$menuContainer === undefined ? null : _ref$menuContainer;
+        var _ref$noMatchTemplate = _ref.noMatchTemplate;
+        var noMatchTemplate = _ref$noMatchTemplate === undefined ? null : _ref$noMatchTemplate;
 
         _classCallCheck(this, Tribute);
 
@@ -92,7 +94,17 @@ if (!Array.prototype.find) {
             // function called on select that retuns the content to insert
             selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
 
+            // function called that returns content for an item
             menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
+
+            // function called when menu is empty, disables hiding of menu.
+            noMatchTemplate: function (t) {
+              if (typeof t === 'function') {
+                return t.bind(_this);
+              }
+
+              return null;
+            }(noMatchTemplate),
 
             // column to search against in the object
             lookup: lookup,
@@ -111,6 +123,14 @@ if (!Array.prototype.find) {
               selectClass: item.selectClass || selectClass,
               selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(_this),
               menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(_this),
+              // function called when menu is empty, disables hiding of menu.
+              noMatchTemplate: function (t) {
+                if (typeof t === 'function') {
+                  return t.bind(_this);
+                }
+
+                return null;
+              }(noMatchTemplate),
               lookup: item.lookup || lookup,
               fillAttr: item.fillAttr || fillAttr,
               values: item.values
@@ -221,12 +241,17 @@ if (!Array.prototype.find) {
 
           this.current.filteredItems = items;
 
+          var ul = this.menu.querySelector('ul');
+
           if (!items.length) {
-            this.hideMenu();
+            if (!this.current.collection.noMatchTemplate) {
+              this.hideMenu();
+            } else {
+              ul.innerHTML = this.current.collection.noMatchTemplate();
+            }
+
             return;
           }
-
-          var ul = this.menu.querySelector('ul');
 
           ul.innerHTML = '';
 
@@ -255,6 +280,7 @@ if (!Array.prototype.find) {
       }, {
         key: 'selectItemAtIndex',
         value: function selectItemAtIndex(index) {
+          if (!index) return;
           var item = this.current.filteredItems[index];
           var content = this.current.collection.selectTemplate(item);
           this.replaceText(content);
