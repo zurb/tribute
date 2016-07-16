@@ -244,6 +244,8 @@ if (!Array.prototype.find) {
           var ul = this.menu.querySelector('ul');
 
           if (!items.length) {
+            var noMatchEvent = new CustomEvent('tribute-no-match', { detail: this.menu });
+            this.current.element.dispatchEvent(noMatchEvent);
             if (!this.current.collection.noMatchTemplate) {
               this.hideMenu();
             } else {

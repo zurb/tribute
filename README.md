@@ -146,6 +146,16 @@ document.getElementById('myElement').addEventListener('tribute-replaced', functi
 });
 ```
 
+### No Match Event
+You can bind to the `tribute-no-match` event to know when no match is found in your collection.
+
+If your element has an ID of `myElement`:
+```js
+document.getElementById('myElement').addEventListener('tribute-no-match', function (e) {
+  console.log('No match found!');
+});
+```
+
 ## Tips
 Some useful approaches to common roadblocks when implementing @mentions.
 

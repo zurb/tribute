@@ -215,6 +215,8 @@ if (!Array.prototype.find) {
       let ul = this.menu.querySelector('ul')
 
       if (!items.length) {
+        let noMatchEvent = new CustomEvent('tribute-no-match', { detail: this.menu })
+        this.current.element.dispatchEvent(noMatchEvent)
         if (!this.current.collection.noMatchTemplate) {
           this.hideMenu()
         } else {
