@@ -292,6 +292,32 @@ if (!Array.prototype.find) {
         value: function replaceText(content) {
           this.range.replaceTriggerText(content, true, true);
         }
+      }, {
+        key: '_append',
+        value: function _append(collection, element, newValues, replace) {
+          if (this.isActive) {
+            if (!replace) {
+              collection.values = collection.values.concat(newValues);
+            } else {
+              collection.values = newValues;
+            }
+          }
+        }
+      }, {
+        key: 'append',
+        value: function append(collectionIndex, newValues, replace) {
+          var index = parseInt(collectionIndex);
+          if (typeof index !== 'number') throw new Error('please provide an index for the collection to update.');
+
+          var collection = this.collection[index];
+
+          this._append(this.current.collection, this.current.element, newValues, replace);
+        }
+      }, {
+        key: 'appendCurrent',
+        value: function appendCurrent(newValues, replace) {
+          this._append(this.current.collection, this.current.element, newValues, replace);
+        }
       }], [{
         key: 'defaultSelectTemplate',
         value: function defaultSelectTemplate(item) {

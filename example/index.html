@@ -143,7 +143,8 @@
       });
 
       document.getElementById('test').addEventListener('tribute-no-match', function (e) {
-        console.log('no match');
+        var values = [{key: 'Cheese Tacos', value: 'Cheese Tacos', email: 'cheesetacos@zurb.com'}];
+        tribute.appendCurrent(values);
       });
     </script>
   </body>

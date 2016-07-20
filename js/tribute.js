@@ -261,6 +261,30 @@ if (!Array.prototype.find) {
     replaceText(content) {
       this.range.replaceTriggerText(content, true, true)
     }
+
+    _append(collection, element, newValues, replace) {
+      if (this.isActive) {
+        if (!replace) {
+          collection.values = collection.values.concat(newValues)
+        } else {
+          collection.values = newValues
+        }
+      }
+    }
+
+    append(collectionIndex, newValues, replace) {
+      let index = parseInt(collectionIndex)
+      if (typeof index !== 'number') throw new Error('please provide an index for the collection to update.')
+
+      let collection = this.collection[index]
+
+      this._append(this.current.collection, this.current.element, newValues, replace)
+    }
+
+    appendCurrent(newValues, replace) {
+      this._append(this.current.collection, this.current.element, newValues, replace)
+    }
+
   }
 
   class TributeMenuEvents {
