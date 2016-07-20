@@ -71,6 +71,8 @@ if (!Array.prototype.find) {
         var collection = _ref$collection === undefined ? null : _ref$collection;
         var _ref$menuContainer = _ref.menuContainer;
         var menuContainer = _ref$menuContainer === undefined ? null : _ref$menuContainer;
+        var _ref$noMatchTemplate = _ref.noMatchTemplate;
+        var noMatchTemplate = _ref$noMatchTemplate === undefined ? null : _ref$noMatchTemplate;
 
         _classCallCheck(this, Tribute);
 
@@ -92,7 +94,17 @@ if (!Array.prototype.find) {
             // function called on select that retuns the content to insert
             selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
 
+            // function called that returns content for an item
             menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
+
+            // function called when menu is empty, disables hiding of menu.
+            noMatchTemplate: function (t) {
+              if (typeof t === 'function') {
+                return t.bind(_this);
+              }
+
+              return null;
+            }(noMatchTemplate),
 
             // column to search against in the object
             lookup: lookup,
@@ -111,6 +123,14 @@ if (!Array.prototype.find) {
               selectClass: item.selectClass || selectClass,
               selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(_this),
               menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(_this),
+              // function called when menu is empty, disables hiding of menu.
+              noMatchTemplate: function (t) {
+                if (typeof t === 'function') {
+                  return t.bind(_this);
+                }
+
+                return null;
+              }(noMatchTemplate),
               lookup: item.lookup || lookup,
               fillAttr: item.fillAttr || fillAttr,
               values: item.values
@@ -221,12 +241,19 @@ if (!Array.prototype.find) {
 
           this.current.filteredItems = items;
 
+          var ul = this.menu.querySelector('ul');
+
           if (!items.length) {
-            this.hideMenu();
+            var noMatchEvent = new CustomEvent('tribute-no-match', { detail: this.menu });
+            this.current.element.dispatchEvent(noMatchEvent);
+            if (!this.current.collection.noMatchTemplate) {
+              this.hideMenu();
+            } else {
+              ul.innerHTML = this.current.collection.noMatchTemplate();
+            }
+
             return;
           }
-
-          var ul = this.menu.querySelector('ul');
 
           ul.innerHTML = '';
 
@@ -255,6 +282,8 @@ if (!Array.prototype.find) {
       }, {
         key: 'selectItemAtIndex',
         value: function selectItemAtIndex(index) {
+          index = parseInt(index);
+          if (typeof index !== 'number') return;
           var item = this.current.filteredItems[index];
           var content = this.current.collection.selectTemplate(item);
           this.replaceText(content);
@@ -263,6 +292,32 @@ if (!Array.prototype.find) {
         key: 'replaceText',
         value: function replaceText(content) {
           this.range.replaceTriggerText(content, true, true);
+        }
+      }, {
+        key: '_append',
+        value: function _append(collection, element, newValues, replace) {
+          if (this.isActive) {
+            if (!replace) {
+              collection.values = collection.values.concat(newValues);
+            } else {
+              collection.values = newValues;
+            }
+          }
+        }
+      }, {
+        key: 'append',
+        value: function append(collectionIndex, newValues, replace) {
+          var index = parseInt(collectionIndex);
+          if (typeof index !== 'number') throw new Error('please provide an index for the collection to update.');
+
+          var collection = this.collection[index];
+
+          this._append(this.current.collection, this.current.element, newValues, replace);
+        }
+      }, {
+        key: 'appendCurrent',
+        value: function appendCurrent(newValues, replace) {
+          this._append(this.current.collection, this.current.element, newValues, replace);
         }
       }], [{
         key: 'defaultSelectTemplate',
@@ -434,7 +489,7 @@ if (!Array.prototype.find) {
             if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
           }
 
-          if (instance.tribute.current.trigger && instance.commandEvent === false) {
+          if (instance.tribute.current.trigger && instance.commandEvent === false || instance.tribute.isActive && event.keyCode === 8) {
             instance.tribute.showMenuFor(this, true);
           }
         }
@@ -546,6 +601,8 @@ if (!Array.prototype.find) {
             delete: function _delete(e, el) {
               if (_this6.tribute.isActive && _this6.tribute.current.mentionText.length < 1) {
                 _this6.tribute.hideMenu();
+              } else if (_this6.tribute.isActive) {
+                tribute.showMenuFor(el);
               }
             }
           };

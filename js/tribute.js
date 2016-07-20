@@ -42,7 +42,7 @@ if (!Array.prototype.find) {
     constructor({
         values=null, iframe=null, selectClass='highlight', trigger='@',
         selectTemplate=null, menuItemTemplate=null,lookup='key',
-        fillAttr='value', collection=null, menuContainer=null}) {
+        fillAttr='value', collection=null, menuContainer=null, noMatchTemplate=null}) {
 
       this.menuSelected = 0
       this.current = {}
@@ -62,7 +62,17 @@ if (!Array.prototype.find) {
           // function called on select that retuns the content to insert
           selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
 
+          // function called that returns content for an item
           menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
+
+          // function called when menu is empty, disables hiding of menu.
+          noMatchTemplate: ((t) => {
+            if (typeof t === 'function') {
+              return t.bind(this)
+            }
+
+            return null
+          })(noMatchTemplate),
 
           // column to search against in the object
           lookup: lookup,
@@ -81,6 +91,14 @@ if (!Array.prototype.find) {
             selectClass: item.selectClass || selectClass,
             selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(this),
             menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
+            // function called when menu is empty, disables hiding of menu.
+            noMatchTemplate: ((t) => {
+              if (typeof t === 'function') {
+                return t.bind(this)
+              }
+
+              return null
+            })(noMatchTemplate),
             lookup: item.lookup || lookup,
             fillAttr: item.fillAttr || fillAttr,
             values: item.values
@@ -194,12 +212,19 @@ if (!Array.prototype.find) {
 
       this.current.filteredItems = items
 
+      let ul = this.menu.querySelector('ul')
+
       if (!items.length) {
-        this.hideMenu()
+        let noMatchEvent = new CustomEvent('tribute-no-match', { detail: this.menu })
+        this.current.element.dispatchEvent(noMatchEvent)
+        if (!this.current.collection.noMatchTemplate) {
+          this.hideMenu()
+        } else {
+          ul.innerHTML = this.current.collection.noMatchTemplate()
+        }
+
         return
       }
-
-      let ul = this.menu.querySelector('ul')
 
       ul.innerHTML = ''
 
@@ -227,6 +252,8 @@ if (!Array.prototype.find) {
     }
 
     selectItemAtIndex(index) {
+      index = parseInt(index)
+      if (typeof index !== 'number') return
       let item = this.current.filteredItems[index]
       let content = this.current.collection.selectTemplate(item)
       this.replaceText(content)
@@ -235,6 +262,30 @@ if (!Array.prototype.find) {
     replaceText(content) {
       this.range.replaceTriggerText(content, true, true)
     }
+
+    _append(collection, element, newValues, replace) {
+      if (this.isActive) {
+        if (!replace) {
+          collection.values = collection.values.concat(newValues)
+        } else {
+          collection.values = newValues
+        }
+      }
+    }
+
+    append(collectionIndex, newValues, replace) {
+      let index = parseInt(collectionIndex)
+      if (typeof index !== 'number') throw new Error('please provide an index for the collection to update.')
+
+      let collection = this.collection[index]
+
+      this._append(this.current.collection, this.current.element, newValues, replace)
+    }
+
+    appendCurrent(newValues, replace) {
+      this._append(this.current.collection, this.current.element, newValues, replace)
+    }
+
   }
 
   class TributeMenuEvents {
@@ -374,7 +425,8 @@ if (!Array.prototype.find) {
         }
       }
 
-      if (instance.tribute.current.trigger && instance.commandEvent === false) {
+      if (instance.tribute.current.trigger && instance.commandEvent === false
+        || instance.tribute.isActive && event.keyCode === 8) {
         instance.tribute.showMenuFor(this, true)
       }
     }
@@ -480,6 +532,8 @@ if (!Array.prototype.find) {
         delete: (e, el) => {
           if (this.tribute.isActive && this.tribute.current.mentionText.length < 1) {
             this.tribute.hideMenu();
+          } else if (this.tribute.isActive) {
+            tribute.showMenuFor(el)
           }
         }
       }

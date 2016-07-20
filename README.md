@@ -106,6 +106,10 @@ Collection object shown with defaults:
     return item.string;
   },
 
+  // template for when no match is found (optional),
+  // If not template provided, menu is hidden.
+  noMatchTemplate: null,
+
   // specify an alternative parent container for the menu
   menuContainer: document.body,
 
@@ -139,6 +143,16 @@ If your element has an ID of `myElement`:
 ```js
 document.getElementById('myElement').addEventListener('tribute-replaced', function (e) {
   console.log('Text replaced!');
+});
+```
+
+### No Match Event
+You can bind to the `tribute-no-match` event to know when no match is found in your collection.
+
+If your element has an ID of `myElement`:
+```js
+document.getElementById('myElement').addEventListener('tribute-no-match', function (e) {
+  console.log('No match found!');
 });
 ```
 

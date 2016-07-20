@@ -78,6 +78,9 @@
           {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com'},
           {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com'}
         ],
+        noMatchTemplate: function (tribute) {
+          return '<li>No match!</li>';
+        },
         selectTemplate: function (item) {
           if (this.range.isContentEditable(this.current.element)) {
             return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
@@ -137,6 +140,11 @@
 
       document.getElementById('test').addEventListener('tribute-replaced', function (e) {
         console.log('Text replaced by Tribute!');
+      });
+
+      document.getElementById('test').addEventListener('tribute-no-match', function (e) {
+        var values = [{key: 'Cheese Tacos', value: 'Cheese Tacos', email: 'cheesetacos@zurb.com'}];
+        tribute.appendCurrent(values);
       });
     </script>
   </body>
