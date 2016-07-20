@@ -475,7 +475,7 @@ if (!Array.prototype.find) {
             if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
           }
 
-          if (instance.tribute.current.trigger && instance.commandEvent === false) {
+          if (instance.tribute.current.trigger && instance.commandEvent === false || instance.tribute.isActive && event.keyCode === 8) {
             instance.tribute.showMenuFor(this);
           }
         }
@@ -587,6 +587,8 @@ if (!Array.prototype.find) {
             delete: function _delete(e, el) {
               if (_this6.tribute.isActive && _this6.tribute.current.mentionText.length < 1) {
                 _this6.tribute.hideMenu();
+              } else if (_this6.tribute.isActive) {
+                tribute.showMenuFor(el);
               }
             }
           };
