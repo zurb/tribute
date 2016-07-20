@@ -252,7 +252,8 @@ if (!Array.prototype.find) {
     }
 
     selectItemAtIndex(index) {
-      if (!index) return
+      index = parseInt(index)
+      if (typeof index !== 'number') return
       let item = this.current.filteredItems[index]
       let content = this.current.collection.selectTemplate(item)
       this.replaceText(content)
