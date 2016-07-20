@@ -169,7 +169,7 @@ if (!Array.prototype.find) {
       return this.range.getDocument().body.appendChild(wrapper)
     }
 
-    showMenuFor(element, collectionItem) {
+    showMenuFor(element, scrollTo) {
       let items
       // create the menu if it doesn't exist.
       if (!this.menu) {
@@ -213,7 +213,7 @@ if (!Array.prototype.find) {
         ul.appendChild(li)
       })
 
-      this.range.positionMenuAtCaret()
+      this.range.positionMenuAtCaret(scrollTo)
 
     }
 
@@ -251,9 +251,24 @@ if (!Array.prototype.find) {
         this.tribute.events.click.bind(null, this), false)
       window.addEventListener('resize', this.debounce(() => {
         if (this.tribute.isActive) {
-          this.tribute.showMenuFor(this.tribute.current.element)
+          this.tribute.showMenuFor(this.tribute.current.element, true)
         }
       }, 300, false))
+
+      if (this.menuContainer) {
+        this.menuContainer.addEventListener('scroll', this.debounce(() => {
+          if (this.tribute.isActive) {
+            this.tribute.showMenuFor(this.tribute.current.element, false)
+          }
+        }, 300, false), false)
+      } else {
+        window.onscroll = this.debounce(() => {
+          if (this.tribute.isActive) {
+            this.tribute.showMenuFor(this.tribute.current.element, false)
+          }
+        }, 300, false)
+      }
+
     }
 
     debounce(func, wait, immediate) {
@@ -360,7 +375,7 @@ if (!Array.prototype.find) {
       }
 
       if (instance.tribute.current.trigger && instance.commandEvent === false) {
-        instance.tribute.showMenuFor(this)
+        instance.tribute.showMenuFor(this, true)
       }
     }
 
@@ -414,7 +429,7 @@ if (!Array.prototype.find) {
 
           tribute.current.collection = collectionItem
 
-          tribute.showMenuFor(el)
+          tribute.showMenuFor(el, true)
         },
         enter: (e, el) => {
           // choose selection
@@ -506,7 +521,7 @@ if (!Array.prototype.find) {
       return iframe.contentWindow.document
     }
 
-    positionMenuAtCaret() {
+    positionMenuAtCaret(scrollTo) {
       let context = this.tribute.current, coordinates
       let info = this.getTriggerInfo(false, false, true)
 
@@ -526,7 +541,7 @@ if (!Array.prototype.find) {
                                            display: block;`
 
         setTimeout(() => {
-          this.scrollIntoView(this.getDocument().activeElement)
+          if (scrollTo) this.scrollIntoView(this.getDocument().activeElement)
         }, 0)
       } else {
         this.tribute.menu.style.cssText = 'display: none'
@@ -836,9 +851,10 @@ if (!Array.prototype.find) {
       div.appendChild(span)
 
       let rect = element.getBoundingClientRect()
-      var doc = document.documentElement
-      var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
-      var windowTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0)
+      let doc = document.documentElement
+      let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
+      let windowTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0)
+
       let coordinates = {
         top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
         left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
@@ -871,9 +887,12 @@ if (!Array.prototype.find) {
       sel.addRange(prevRange)
 
       let rect = markerEl.getBoundingClientRect()
+      let doc = document.documentElement
+      let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
+      let windowTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0)
       let coordinates = {
-        left: rect.left,
-        top: rect.top + markerEl.offsetHeight
+        left: rect.left + windowLeft,
+        top: rect.top + markerEl.offsetHeight + windowTop
       }
 
       markerEl.parentNode.removeChild(markerEl)

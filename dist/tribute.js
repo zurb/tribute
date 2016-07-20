@@ -194,7 +194,7 @@ if (!Array.prototype.find) {
         }
       }, {
         key: 'showMenuFor',
-        value: function showMenuFor(element, collectionItem) {
+        value: function showMenuFor(element, scrollTo) {
           var _this2 = this;
 
           var items = void 0;
@@ -240,7 +240,7 @@ if (!Array.prototype.find) {
             ul.appendChild(li);
           });
 
-          this.range.positionMenuAtCaret();
+          this.range.positionMenuAtCaret(scrollTo);
         }
       }, {
         key: 'hideMenu',
@@ -302,9 +302,23 @@ if (!Array.prototype.find) {
           this.tribute.range.getDocument().addEventListener('click', this.tribute.events.click.bind(null, this), false);
           window.addEventListener('resize', this.debounce(function () {
             if (_this3.tribute.isActive) {
-              _this3.tribute.showMenuFor(_this3.tribute.current.element);
+              _this3.tribute.showMenuFor(_this3.tribute.current.element, true);
             }
           }, 300, false));
+
+          if (this.menuContainer) {
+            this.menuContainer.addEventListener('scroll', this.debounce(function () {
+              if (_this3.tribute.isActive) {
+                _this3.tribute.showMenuFor(_this3.tribute.current.element, false);
+              }
+            }, 300, false), false);
+          } else {
+            window.onscroll = this.debounce(function () {
+              if (_this3.tribute.isActive) {
+                _this3.tribute.showMenuFor(_this3.tribute.current.element, false);
+              }
+            }, 300, false);
+          }
         }
       }, {
         key: 'debounce',
@@ -421,7 +435,7 @@ if (!Array.prototype.find) {
           }
 
           if (instance.tribute.current.trigger && instance.commandEvent === false) {
-            instance.tribute.showMenuFor(this);
+            instance.tribute.showMenuFor(this, true);
           }
         }
       }, {
@@ -481,7 +495,7 @@ if (!Array.prototype.find) {
 
               tribute.current.collection = collectionItem;
 
-              tribute.showMenuFor(el);
+              tribute.showMenuFor(el, true);
             },
             enter: function enter(e, el) {
               // choose selection
@@ -588,7 +602,7 @@ if (!Array.prototype.find) {
         }
       }, {
         key: 'positionMenuAtCaret',
-        value: function positionMenuAtCaret() {
+        value: function positionMenuAtCaret(scrollTo) {
           var _this7 = this;
 
           var context = this.tribute.current,
@@ -606,7 +620,7 @@ if (!Array.prototype.find) {
             this.tribute.menu.style.cssText = 'top: ' + coordinates.top + 'px;\n                                           left: ' + coordinates.left + 'px;\n                                           position: absolute;\n                                           zIndex: 10000;\n                                           display: block;';
 
             setTimeout(function () {
-              _this7.scrollIntoView(_this7.getDocument().activeElement);
+              if (scrollTo) _this7.scrollIntoView(_this7.getDocument().activeElement);
             }, 0);
           } else {
             this.tribute.menu.style.cssText = 'display: none';
@@ -918,6 +932,7 @@ if (!Array.prototype.find) {
           var doc = document.documentElement;
           var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
           var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+
           var coordinates = {
             top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
             left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
@@ -952,9 +967,12 @@ if (!Array.prototype.find) {
           sel.addRange(prevRange);
 
           var rect = markerEl.getBoundingClientRect();
+          var doc = document.documentElement;
+          var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+          var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
           var coordinates = {
-            left: rect.left,
-            top: rect.top + markerEl.offsetHeight
+            left: rect.left + windowLeft,
+            top: rect.top + markerEl.offsetHeight + windowTop
           };
 
           markerEl.parentNode.removeChild(markerEl);
