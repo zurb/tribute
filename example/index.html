@@ -84,6 +84,9 @@
           }
 
           return '@' + item.original.value;
+        },
+        noMatchTemplate: function (tribute) {
+          return '<li>No match!</li>';
         }
       });
 
@@ -137,6 +140,11 @@
 
       document.getElementById('test').addEventListener('tribute-replaced', function (e) {
         console.log('Text replaced by Tribute!');
+      });
+
+      document.getElementById('test').addEventListener('tribute-no-match', function (e) {
+        var values = [{key: 'Cheese Tacos', value: 'Cheese Tacos', email: 'cheesetacos@zurb.com'}];
+        tribute.appendCurrent(values);
       });
     </script>
   </body>
