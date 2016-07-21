@@ -32,9 +32,9 @@ gulp.task('uglify', ['bundler'] ,function() {
     .pipe(gulp.dest('dist'))
 });
 
-// Basic usage 
+// Basic usage
 gulp.task('bundler', function() {
-    // Single entry point to browserify 
+    // Single entry point to browserify
     return browserify('src/Tribute.js', { debug: true })
       .transform(babelify)
       .bundle()
@@ -60,7 +60,7 @@ gulp.task('webserver', function() {
     }));
 });
 
-gulp.task('openbrowser', function() {
+gulp.task('openbrowser', ['build'], function() {
   opn( 'http://' + server.host + ':' + server.port + '/example/index.html' );
 });
 
