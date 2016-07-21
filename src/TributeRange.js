@@ -42,8 +42,7 @@ class TributeRange {
             setTimeout(() => {
                 if (scrollTo) this.scrollIntoView(this.getDocument().activeElement)
             }, 0)
-        }
-        else {
+        } else {
             this.tribute.menu.style.cssText = 'display: none'
         }
     }
@@ -76,8 +75,7 @@ class TributeRange {
 
         try {
             sel.removeAllRanges()
-        }
-        catch (error) {}
+        } catch (error) {}
 
         sel.addRange(range)
         targetElement.focus()
@@ -88,8 +86,7 @@ class TributeRange {
             if (targetElement !== this.getDocument().activeElement) {
                 targetElement.focus()
             }
-        }
-        else {
+        } else {
             this.selectElement(targetElement, path, offset)
         }
     }
@@ -115,8 +112,7 @@ class TributeRange {
                     myField.value.substring(endPos, myField.value.length)
                 myField.selectionStart = startPos + text.length
                 myField.selectionEnd = startPos + text.length
-            }
-            else {
+            } else {
                 // add a space to the end of the pasted text
                 text += '\xA0'
                 this.pasteHtml(text, info.mentionPosition,
@@ -216,8 +212,7 @@ class TributeRange {
             let startPos = textComponent.selectionStart
             text = textComponent.value.substring(0, startPos)
 
-        }
-        else {
+        } else {
             let selectedElem = this.getWindowSelection().anchorNode
 
             if (selectedElem != null) {
@@ -239,8 +234,7 @@ class TributeRange {
 
         if (!this.isContentEditable(ctx.element)) {
             selected = this.getDocument().activeElement
-        }
-        else {
+        } else {
             // content editable
             let selectionInfo = this.getContentEditableSelectedPath()
 
@@ -346,8 +340,7 @@ class TributeRange {
             style.width = `${(parseInt(computed.width) - 2)}px`
             if (element.scrollHeight > parseInt(computed.height))
                 style.overflowY = 'scroll'
-        }
-        else {
+        } else {
             style.overflow = 'hidden'
         }
 
@@ -432,8 +425,7 @@ class TributeRange {
 
         if (elemTop < 0) {
             window.scrollTo(0, window.pageYOffset + clientRect.top - reasonableBuffer)
-        }
-        else if (elemBottom > window.innerHeight) {
+        } else if (elemBottom > window.innerHeight) {
             let maxY = window.pageYOffset + clientRect.top - reasonableBuffer
 
             if (maxY - window.pageYOffset > maxScrollDisplacement) {

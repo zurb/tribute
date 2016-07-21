@@ -69,8 +69,7 @@ class TributeEvents {
             }
             tribute.selectItemAtIndex(li.getAttribute('data-index'))
             tribute.hideMenu()
-        }
-        else if (tribute.current.element) {
+        } else if (tribute.current.element) {
             tribute.hideMenu()
         }
     }
@@ -125,8 +124,7 @@ class TributeEvents {
 
         if (info) {
             return info.mentionTriggerChar.charCodeAt(0)
-        }
-        else {
+        } else {
             return false
         }
     }
@@ -204,7 +202,7 @@ class TributeEvents {
             },
             delete: (e, el) => {
                 if (this.tribute.isActive && this.tribute.current.mentionText.length < 1) {
-                    this.tribute.hideMenu();
+                    this.tribute.hideMenu()
                 } else if (this.tribute.isActive) {
                     tribute.showMenuFor(el)
                 }
@@ -220,8 +218,7 @@ class TributeEvents {
             let li = lis[i]
             if (i === this.tribute.menuSelected) {
                 li.className = this.tribute.current.collection.selectClass
-            }
-            else {
+            } else {
                 li.className = ''
             }
         }

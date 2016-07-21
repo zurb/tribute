@@ -85,10 +85,10 @@ class Tribute {
             throw new Error('[Tribute] No collection specified.')
         }
 
-        new TributeRange(this);
-        new TributeEvents(this);
-        new TributeMenuEvents(this);
-        new TributeSearch(this);
+        new TributeRange(this)
+        new TributeEvents(this)
+        new TributeMenuEvents(this)
+        new TributeSearch(this)
     }
 
     static defaultSelectTemplate(item) {

@@ -22,8 +22,7 @@ class TributeMenuEvents {
                     this.tribute.showMenuFor(this.tribute.current.element, false)
                 }
             }, 300, false), false)
-        }
-        else {
+        } else {
             window.onscroll = this.debounce(() => {
                 if (this.tribute.isActive) {
                     this.tribute.showMenuFor(this.tribute.current.element, false)
