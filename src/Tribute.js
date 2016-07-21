@@ -41,7 +41,7 @@ class Tribute {
                 menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
 
                 // function called when menu is empty, disables hiding of menu.
-                noMatchTemplate: ((t) => {
+                noMatchTemplate: (t => {
                     if (typeof t === 'function') {
                         return t.bind(this)
                     }
@@ -68,7 +68,7 @@ class Tribute {
                     selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(this),
                     menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
                     // function called when menu is empty, disables hiding of menu.
-                    noMatchTemplate: ((t) => {
+                    noMatchTemplate: (t => {
                         if (typeof t === 'function') {
                             return t.bind(this)
                         }
