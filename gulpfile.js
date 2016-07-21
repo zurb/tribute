@@ -1,13 +1,17 @@
-var gulp      = require('gulp');
-var plumber   = require('gulp-plumber');
-var sass      = require('gulp-sass');
-var webserver = require('gulp-webserver');
-var opn       = require('opn');
-var babel     = require('gulp-babel');
+var gulp       = require('gulp');
+var plumber    = require('gulp-plumber');
+var sass       = require('gulp-sass');
+var webserver  = require('gulp-webserver');
+var opn        = require('opn');
+var browserify = require('browserify');
+var source     = require('vinyl-source-stream');
+var babelify   = require('babelify');
+var uglify     = require('gulp-uglifyjs');
 
 var sourcePaths = {
   styles: ['scss/**/*.scss'],
-  es6: ['js/**/*.js']
+  es6: ['js/**/*.js'],
+  src: ['src/**/*.js']
 };
 
 var distPaths = {
@@ -19,6 +23,25 @@ var server = {
   host: 'localhost',
   port: '8001'
 }
+
+gulp.task('uglify', ['bundler'] ,function() {
+  gulp.src('dist/tribute.js')
+    .pipe(uglify('tribute.min.js', {
+      outSourceMap: true
+    }))
+    .pipe(gulp.dest('dist'))
+});
+
+// Basic usage 
+gulp.task('bundler', function() {
+    // Single entry point to browserify 
+    return browserify('src/Tribute.js', { debug: true })
+      .transform(babelify)
+      .bundle()
+      .on('error', function(err) { console.log('Error: ' + err.message); })
+      .pipe(source('tribute.js'))
+      .pipe(gulp.dest('dist'));
+});
 
 gulp.task('sass', function () {
   gulp.src( sourcePaths.styles )
@@ -37,23 +60,15 @@ gulp.task('webserver', function() {
     }));
 });
 
-gulp.task('es6', function () {
-  return gulp.src(sourcePaths.es6)
-    .pipe(babel({
-      presets: ['es2015']
-    }))
-    .pipe(gulp.dest(distPaths.js));
-});
-
 gulp.task('openbrowser', function() {
   opn( 'http://' + server.host + ':' + server.port + '/example/index.html' );
 });
 
 gulp.task('watch', function(){
   gulp.watch(sourcePaths.styles, ['sass']);
-  gulp.watch(sourcePaths.es6, ['es6']);
+  gulp.watch(sourcePaths.src, ['bundler']);
 });
 
-gulp.task('build', ['sass', 'es6']);
+gulp.task('build', ['sass', 'uglify']);
 
 gulp.task('default', ['build', 'webserver', 'watch', 'openbrowser']);
