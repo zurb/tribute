@@ -160,16 +160,27 @@ document.getElementById('myElement').addEventListener('tribute-no-match', functi
 Some useful approaches to common roadblocks when implementing @mentions.
 
 ### Updating a collection with new data
-You can update an instance of Tribute on the fly. If you have new data you want to insert into a collection you can access the collection values array directly:
+You can update an instance of Tribute on the fly. If you have new data you want to insert into the current active collection you can access the collection values array directly:
 
 ```js
-tribute.collection[0].values.push([
+tribute.appendCurrent([
   {name: 'Howard Johnson', occupation: 'Panda Wrangler', age: 27},
   {name: 'Fluffy Croutons', occupation: 'Crouton Fluffer', age: 32}
 ]);
 ```
 
 This would update the first configuration object in the collection array with new values. You can access and update any attribute on the collection in this way.
+
+You can also append new values to an arbitrary collection by passing an index to `append`.
+
+```js
+tribute.append(2, [
+  {name: 'Howard Johnson', occupation: 'Panda Wrangler', age: 27},
+  {name: 'Fluffy Croutons', occupation: 'Crouton Fluffer', age: 32}
+]);
+```
+This will append the new values to the third collection.
+
 
 ### Programmatically detecting an active Tribute dropdown
 If you need to know when Tribute is active you can access the `isActive` property of an instance.
@@ -249,5 +260,3 @@ The major focus that we could use your help with is creating wrappers for differ
 * Ember component
 * Compatability with WYSIWYG editors (TinyMCE, etc)
 * Testing
-
-
