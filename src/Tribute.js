@@ -15,7 +15,8 @@ class Tribute {
         lookup = 'key',
         fillAttr = 'value',
         collection = null,
-        menuContainer = null
+        menuContainer = null,
+        noMatchTemplate = null
     }) {
 
         this.menuSelected = 0
@@ -36,7 +37,17 @@ class Tribute {
                 // function called on select that retuns the content to insert
                 selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
 
+                // function called that returns content for an item
                 menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
+
+                // function called when menu is empty, disables hiding of menu.
+                noMatchTemplate: ((t) => {
+                    if (typeof t === 'function') {
+                        return t.bind(this)
+                    }
+
+                    return null
+                })(noMatchTemplate),
 
                 // column to search against in the object
                 lookup: lookup,
@@ -56,6 +67,14 @@ class Tribute {
                     selectClass: item.selectClass || selectClass,
                     selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(this),
                     menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
+                    // function called when menu is empty, disables hiding of menu.
+                    noMatchTemplate: ((t) => {
+                        if (typeof t === 'function') {
+                            return t.bind(this)
+                        }
+
+                        return null
+                    })(noMatchTemplate),
                     lookup: item.lookup || lookup,
                     fillAttr: item.fillAttr || fillAttr,
                     values: item.values
@@ -172,12 +191,19 @@ class Tribute {
 
         this.current.filteredItems = items
 
+        let ul = this.menu.querySelector('ul')
+
         if (!items.length) {
-            this.hideMenu()
+            let noMatchEvent = new CustomEvent('tribute-no-match', { detail: this.menu })
+            this.current.element.dispatchEvent(noMatchEvent)
+            if (!this.current.collection.noMatchTemplate) {
+                this.hideMenu()
+            } else {
+                ul.innerHTML = this.current.collection.noMatchTemplate()
+            }
+
             return
         }
-
-        let ul = this.menu.querySelector('ul')
 
         ul.innerHTML = ''
 
@@ -205,6 +231,8 @@ class Tribute {
     }
 
     selectItemAtIndex(index) {
+        index = parseInt(index)
+        if (typeof index !== 'number') return
         let item = this.current.filteredItems[index]
         let content = this.current.collection.selectTemplate(item)
         this.replaceText(content)
@@ -212,6 +240,29 @@ class Tribute {
 
     replaceText(content) {
         this.range.replaceTriggerText(content, true, true)
+    }
+
+    _append(collection, element, newValues, replace) {
+        if (this.isActive) {
+            if (!replace) {
+                collection.values = collection.values.concat(newValues)
+            } else {
+                collection.values = newValues
+            }
+        }
+    }
+
+    append(collectionIndex, newValues, replace) {
+        let index = parseInt(collectionIndex)
+        if (typeof index !== 'number') throw new Error('please provide an index for the collection to update.')
+
+        let collection = this.collection[index]
+
+        this._append(this.current.collection, this.current.element, newValues, replace)
+    }
+
+    appendCurrent(newValues, replace) {
+        this._append(this.current.collection, this.current.element, newValues, replace)
     }
 }
 

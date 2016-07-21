@@ -97,7 +97,8 @@ class TributeEvents {
             }
         }
 
-        if (instance.tribute.current.trigger && instance.commandEvent === false) {
+        if (instance.tribute.current.trigger && instance.commandEvent === false
+            || instance.tribute.isActive && event.keyCode === 8) {
             instance.tribute.showMenuFor(this, true)
         }
     }
@@ -204,6 +205,8 @@ class TributeEvents {
             delete: (e, el) => {
                 if (this.tribute.isActive && this.tribute.current.mentionText.length < 1) {
                     this.tribute.hideMenu();
+                } else if (this.tribute.isActive) {
+                    tribute.showMenuFor(el)
                 }
             }
         }
