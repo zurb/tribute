@@ -118,7 +118,7 @@ Collection object shown with defaults:
   // specify an alternative parent container for the menu
   menuContainer: document.body,
 
-  // column to search against in the object
+  // column to search against in the object (accepts function or string)
   lookup: 'key',
 
   // column that contains the content to insert by default
@@ -126,6 +126,16 @@ Collection object shown with defaults:
 
   // REQUIRED: array of objects to match
   values: []
+}
+```
+
+The `lookup` column can also be passed a function to construct a string to query against. This is useful if your payload has multiple attributes that you would like to query against but you can't modify the payload returned from the server to include a concatenated lookup column.
+
+```js
+{
+  lookup: function (person) {
+    return person.name + person.email;
+  }
 }
 ```
 
