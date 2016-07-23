@@ -112,7 +112,7 @@ Collection object shown with defaults:
   },
 
   // template for when no match is found (optional),
-  // If no template provided, menu is hidden.
+  // If no template is provided, menu is hidden.
   noMatchTemplate: null,
 
   // specify an alternative parent container for the menu
