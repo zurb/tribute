@@ -27,6 +27,11 @@ npm install tributejs
 
 Or by adding Tribute to your `package.json` file.
 
+Import into your ES6 code.
+```js
+import Tribute from "tributejs";
+```
+
 ### Download or Clone
 Or you can [download the repo](https://github.com/zurb/tribute/archive/master.zip) or clone it localy with this command:
 
@@ -245,7 +250,7 @@ Run gulp:
 gulp
 ```
 
-That's it! Now you can use the `example/index.html` to test out changes to the code base. All changes to `js` and `scss` will recompile on the fly.
+That's it! Now you can use the `example/index.html` to test out changes to the code base. All changes to `src` and `scss` will recompile on the fly.
 
 Once you have made your changes, feel free to submit a pull request.
 

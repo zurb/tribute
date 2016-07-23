@@ -266,4 +266,4 @@ class Tribute {
     }
 }
 
-global.Tribute = Tribute;
+export default Tribute;
