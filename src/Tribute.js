@@ -248,7 +248,7 @@ class Tribute {
         this.range.replaceTriggerText(content, true, true)
     }
 
-    _append(collection, element, newValues, replace) {
+    _append(collection, newValues, replace) {
         if (!replace) {
             collection.values = collection.values.concat(newValues)
         } else {
@@ -262,12 +262,12 @@ class Tribute {
 
         let collection = this.collection[index]
 
-        this._append(collection, this.current.element, newValues, replace)
+        this._append(collection, newValues, replace)
     }
 
     appendCurrent(newValues, replace) {
         if (this.isActive) {
-            this._append(this.current.collection, this.current.element, newValues, replace)
+            this._append(this.current.collection, newValues, replace)
         } else {
             throw new Error('No active state. Please use append instead and pass an index.')
         }
