@@ -1,8 +1,8 @@
 {
   "name": "tributejs",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Native ES6 @mentions",
-  "main": "dist/tribute.js",
+  "main": "src/index.js",
   "devDependencies": {
     "babel-cli": "~6.0.0",
     "babel-plugin-add-module-exports": "^0.2.1",
