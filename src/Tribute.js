@@ -249,12 +249,10 @@ class Tribute {
     }
 
     _append(collection, element, newValues, replace) {
-        if (this.isActive) {
-            if (!replace) {
-                collection.values = collection.values.concat(newValues)
-            } else {
-                collection.values = newValues
-            }
+        if (!replace) {
+            collection.values = collection.values.concat(newValues)
+        } else {
+            collection.values = newValues
         }
     }
 
@@ -264,11 +262,15 @@ class Tribute {
 
         let collection = this.collection[index]
 
-        this._append(this.current.collection, this.current.element, newValues, replace)
+        this._append(collection, this.current.element, newValues, replace)
     }
 
     appendCurrent(newValues, replace) {
-        this._append(this.current.collection, this.current.element, newValues, replace)
+        if (this.isActive) {
+            this._append(this.current.collection, this.current.element, newValues, replace)
+        } else {
+            throw new Error('No active state. Please use append instead and pass an index.')
+        }
     }
 }
 
