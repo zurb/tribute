@@ -204,7 +204,7 @@ class TributeEvents {
                 if (this.tribute.isActive && this.tribute.current.mentionText.length < 1) {
                     this.tribute.hideMenu()
                 } else if (this.tribute.isActive) {
-                    tribute.showMenuFor(el)
+                    this.tribute.showMenuFor(el)
                 }
             }
         }
