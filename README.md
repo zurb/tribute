@@ -268,14 +268,13 @@ Once you have made your changes, feel free to submit a pull request.
 
 Vue.js — [vue-tribute](https://github.com/syropian/vue-tribute) by **@syropian**
 
-**What's next**
+## Contribution Ideas
 
 The major focus that we could use your help with is creating wrappers for different JavaScript frameworks. Some of the ones we are interested in are outlined below. We also see a couple of areas for improving compatability with different rendering situations, such as in iframes inside of rich text editors.
 
 **Some ideas that are for grabs**
 * Angular 1 wrapper
 * Angular 2 wrapper
-* React wrapper
 * Ember component
 * Compatability with WYSIWYG editors (TinyMCE, etc)
 * Testing
