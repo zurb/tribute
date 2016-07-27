@@ -267,6 +267,7 @@ Once you have made your changes, feel free to submit a pull request.
 ## Framework Support
 
 Vue.js — [vue-tribute](https://github.com/syropian/vue-tribute) by **@syropian**
+
 AngularJS 1.3+ — [angular-tribute](https://github.com/zurb/angular-tribute) by **ZURB**
 
 ## Contribution Ideas
