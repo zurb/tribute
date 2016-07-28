@@ -146,6 +146,8 @@ Collection object shown with defaults:
 }
 ```
 
+### Dynamic lookup column
+
 The `lookup` column can also be passed a function to construct a string to query against. This is useful if your payload has multiple attributes that you would like to query against but you can't modify the payload returned from the server to include a concatenated lookup column.
 
 ```js
