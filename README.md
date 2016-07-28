@@ -32,6 +32,23 @@ Import into your ES6 code.
 import Tribute from "tributejs";
 ```
 
+### Ruby Gem
+To use Tribute within a Rails project, you can add the following to the app's Gemfile:
+
+    gem 'tribute'
+
+Then, add the following to `app/assets/javascripts/application.js`:
+
+```js
+*= require tribute
+```
+
+And in `app/assets/stylesheets/application.css`:
+
+```css
+//= require tribute
+```
+
 ### Download or Clone
 Or you can [download the repo](https://github.com/zurb/tribute/archive/master.zip) or clone it localy with this command:
 
