@@ -1,6 +1,15 @@
 # Tribute
 A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Firefox, Chrome, iOS Safari, Safari, IE 9+, Edge 12+, Android 4+, and Windows Phone.
 
+- [Installing](#installing)
+- [Initializing](#initializing)
+- [A Collection](#a-collection)
+- [Events](#events)
+- [Tips](#tips)
+- [Contributing](#contributing)
+- [Framework Support](#framework-support)
+- [Contribution Ideas](#contribution-ideas)
+
 ## Installing
 There are a few ways to install Tribute; [Bower](http://bower.io/), as an [NPM Module](https://npmjs.com/package/tributejs), or by [downloading](https://github.com/zurb/tribute/archive/master.zip) from the `dist` folder in this repo.
 
