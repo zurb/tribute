@@ -151,7 +151,9 @@ Both the `selectTemplate` and the `menuItemTemplate` have access to the `item` o
 }
 ```
 
-### Replace Event
+## Events
+
+### Replaced
 You can bind to the `tribute-replaced` event to know when we have updated your targeted Tribute element.
 
 If your element has an ID of `myElement`:
@@ -161,7 +163,7 @@ document.getElementById('myElement').addEventListener('tribute-replaced', functi
 });
 ```
 
-### No Match Event
+### No Match
 You can bind to the `tribute-no-match` event to know when no match is found in your collection.
 
 If your element has an ID of `myElement`:
