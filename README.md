@@ -313,7 +313,7 @@ Vue.js — [vue-tribute](https://github.com/syropian/vue-tribute) by **@syropian
 
 AngularJS 1.5+ — [angular-tribute](https://github.com/zurb/angular-tribute) by **ZURB**
 
-Ruby - [tribute-rb](https://github.com/zurb/tribute-rb) by **ZURB**
+Ruby — [tribute-rb](https://github.com/zurb/tribute-rb) by **ZURB**
 
 ## Contribution Ideas
 
