@@ -58,6 +58,19 @@ And in `app/assets/stylesheets/application.css`:
 //= require tribute
 ```
 
+### Webpack
+To add Tribute to your webpack build process, start by adding it to your package.json and running `npm install`.
+
+After installing, you need to update your Babel module loader to not exclude Tribute from being compiled by Webpack:
+
+```js
+{
+    test: /\.js$/,
+    loader: 'babel',
+    exclude: /node_modules\/(?!tributejs)/
+}
+```
+
 ### Download or Clone
 Or you can [download the repo](https://github.com/zurb/tribute/archive/master.zip) or clone it localy with this command:
 
@@ -299,6 +312,8 @@ Once you have made your changes, feel free to submit a pull request.
 Vue.js — [vue-tribute](https://github.com/syropian/vue-tribute) by **@syropian**
 
 AngularJS 1.5+ — [angular-tribute](https://github.com/zurb/angular-tribute) by **ZURB**
+
+Ruby - [tribute-rb](https://github.com/zurb/tribute-rb) by **ZURB**
 
 ## Contribution Ideas
 
