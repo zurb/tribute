@@ -125,8 +125,7 @@ class Tribute {
             for (var i = 0; i < length; ++i) {
                 this._attach(el[i])
             }
-        }
-        else {
+        } else {
             this._attach(el)
         }
     }
@@ -145,8 +144,7 @@ class Tribute {
         if (Tribute.inputTypes().indexOf(element.nodeName) === -1) {
             if (element.contentEditable) {
                 element.contentEditable = true
-            }
-            else {
+            } else {
                 throw new Error('[Tribute] Cannot bind to ' + element.nodeName)
             }
         }
