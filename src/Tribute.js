@@ -214,6 +214,11 @@ class Tribute {
         items.forEach((item, index) => {
             let li = this.range.getDocument().createElement('li')
             li.setAttribute('data-index', index)
+            li.addEventListener('mouseenter', (e) => {
+              let li = e.target;
+              let index = li.getAttribute('data-index');
+              this.events.setActiveLi(index);
+            });
             if (this.menuSelected === index) {
                 li.className = this.current.collection.selectClass
             }

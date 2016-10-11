@@ -214,6 +214,8 @@ class TributeEvents {
         let lis = this.tribute.menu.querySelectorAll('li'),
             length = lis.length >>> 0
 
+        if (index) this.tribute.menuSelected = index;
+
         for (let i = 0; i < length; i++) {
             let li = lis[i]
             if (i === this.tribute.menuSelected) {
