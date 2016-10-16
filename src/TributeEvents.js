@@ -151,8 +151,7 @@ class TributeEvents {
                 })
 
                 tribute.current.collection = collectionItem
-
-                tribute.showMenuFor(el, true)
+                if (tribute.inputEvent) tribute.showMenuFor(el, true)
             },
             enter: (e, el) => {
                 // choose selection
@@ -227,6 +226,5 @@ class TributeEvents {
     }
 
 }
-
 
 export default TributeEvents;
