@@ -95,7 +95,7 @@ class TributeRange {
         let context = this.tribute.current
         this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
 
-        let info = this.getTriggerInfo(requireLeadingSpace, true, hasTrailingSpace)
+        let info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace)
 
         // Create the event
         let replaceEvent = new CustomEvent('tribute-replaced', {
@@ -251,12 +251,14 @@ class TributeRange {
             let mostRecentTriggerCharPos = -1
             let triggerChar
 
-            this.tribute.triggers().forEach(c => {
+            this.tribute.collection.forEach(config => {
+                let c = config.trigger
                 let idx = effectiveRange.lastIndexOf(c)
 
                 if (idx > mostRecentTriggerCharPos) {
                     mostRecentTriggerCharPos = idx
                     triggerChar = c
+                    requireLeadingSpace = config.requireLeadingSpace
                 }
             })
 

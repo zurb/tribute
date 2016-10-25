@@ -164,7 +164,10 @@ Collection object shown with defaults:
   fillAttr: 'value',
 
   // REQUIRED: array of objects to match
-  values: []
+  values: [],
+
+  // specify whether a space is required before the trigger character
+  requireLeadingSpace: true
 }
 ```
 
