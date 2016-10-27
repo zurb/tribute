@@ -16,7 +16,8 @@ class Tribute {
         fillAttr = 'value',
         collection = null,
         menuContainer = null,
-        noMatchTemplate = null
+        noMatchTemplate = null,
+        requireLeadingSpace = true
     }) {
 
         this.menuSelected = 0
@@ -56,7 +57,9 @@ class Tribute {
                 fillAttr: fillAttr,
 
                 // array of objects
-                values: values
+                values: values,
+
+                requireLeadingSpace: requireLeadingSpace
             }]
         }
         else if (collection) {
@@ -77,7 +80,8 @@ class Tribute {
                     })(noMatchTemplate),
                     lookup: item.lookup || lookup,
                     fillAttr: item.fillAttr || fillAttr,
-                    values: item.values
+                    values: item.values,
+                    requireLeadingSpace: item.requireLeadingSpace
                 }
             })
         }
