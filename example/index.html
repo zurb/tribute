@@ -42,7 +42,7 @@
           <h5>Tribute on <code>contenteditable</code> element:</h5>
           <p id="test" class="tribute-demo-input" placeholder="Enter some text here"></p>
 
-          <h5>Tribute with multiple collections, try <code>@</code> and <code>#</code>:</h5>
+          <h5>Tribute with a local collection (on <code>@</code>) and a remote one (on <code>#</code>):</h5>
           <p id="testMultiple" class="tribute-demo-input" placeholder="Enter some text here"></p>
         </div>
       </div>
@@ -124,15 +124,20 @@
             return '#' + item.original.value;
           },
 
-          // the array of objects
-          values: [
-            {key: 'Lobster Barbaric', value: 'Lobster Barbaric', url: 'example.com/project/url'},
-            {key: 'Wild Sapphire', value: 'Wild Sapphire', url: 'example.com/project/url'},
-            {key: 'Pure Test', value: 'Pure Test', url: 'example.com/project/url'},
-            {key: 'Flying Donut', value: 'Flying Donut', url: 'example.com/project/url'},
-            {key: 'Harsh Scarecrow', value: 'Harsh Scarecrow', url: 'example.com/project/url'},
-            {key: 'Rich Serpent', value: 'Rich Serpent', url: 'example.com/project/url'}
-          ]
+          // function retrieving an array of objects
+          values: function (text, cb) {
+            if (text.length) {
+                searchGithub(text, function (response) {
+                    cb(response.items);
+                })
+            } else {
+                cb([]);
+            }
+          },
+
+          lookup: 'login',
+
+          fillAttr: 'login'
         }]
       })
 
@@ -146,6 +151,24 @@
         var values = [{key: 'Cheese Tacos', value: 'Cheese Tacos', email: 'cheesetacos@zurb.com'}];
         tribute.appendCurrent(values);
       });
+
+      function searchGithub(text, cb) {
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function()
+        {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    cb(JSON.parse(xhr.responseText));
+                } else if (xhr.status === 403) {
+                    var message = 'Search for \'' + text + '\' failed due to API rate limit.' +
+                      'Try again in 1min';
+                    cb({items: [{login: message}]});
+                }
+            }
+        }
+        xhr.open("GET", 'https://api.github.com/search/users?q=' + text, true);
+        xhr.send();
+      }
     </script>
   </body>
 </html>
