@@ -96,7 +96,7 @@ class Tribute {
     }
 
     static defaultSelectTemplate(item) {
-        return `@${item.original[this.current.collection.fillAttr]}`
+        return this.current.collection.trigger + item.original[this.current.collection.fillAttr];
     }
 
     static defaultMenuItemTemplate(matchItem) {
