@@ -21,7 +21,7 @@ class TributeRange {
     positionMenuAtCaret(scrollTo) {
         let context = this.tribute.current,
             coordinates
-        let info = this.getTriggerInfo(false, false, true)
+        let info = this.getTriggerInfo(false, false, true, this.tribute.allowSpaces)
 
         if (info !== undefined) {
             if (!this.isContentEditable(context.element)) {
@@ -95,7 +95,7 @@ class TributeRange {
         let context = this.tribute.current
         this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
 
-        let info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace)
+        let info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace, this.tribute.allowSpaces)
 
         // Create the event
         let replaceEvent = new CustomEvent('tribute-replaced', {
@@ -228,7 +228,7 @@ class TributeRange {
         return text
     }
 
-    getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace) {
+    getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces) {
         let ctx = this.tribute.current
         let selected, path, offset
 
@@ -286,7 +286,10 @@ class TributeRange {
                 if (hasTrailingSpace) {
                     currentTriggerSnippet = currentTriggerSnippet.trim()
                 }
-                if (!leadingSpace && (menuAlreadyActive || !(/[\xA0\s]/g.test(currentTriggerSnippet)))) {
+
+                let regex = allowSpaces ? /[^\S ]/g : /[\xA0\s]/g;
+
+                if (!leadingSpace && (menuAlreadyActive || !(regex.test(currentTriggerSnippet)))) {
                     return {
                         mentionPosition: mostRecentTriggerCharPos,
                         mentionText: currentTriggerSnippet,

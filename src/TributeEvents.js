@@ -120,7 +120,7 @@ class TributeEvents {
     getKeyCode(instance, el, event) {
         let char
         let tribute = instance.tribute
-        let info = tribute.range.getTriggerInfo(false, false, true)
+        let info = tribute.range.getTriggerInfo(false, false, true, tribute.allowSpaces)
 
         if (info) {
             return info.mentionTriggerChar.charCodeAt(0)
@@ -131,7 +131,7 @@ class TributeEvents {
 
     updateSelection(el) {
         this.tribute.current.element = el
-        let info = this.tribute.range.getTriggerInfo(false, false, true)
+        let info = this.tribute.range.getTriggerInfo(false, false, true, this.tribute.allowSpaces)
 
         if (info) {
             this.tribute.current.selectedPath = info.mentionSelectedPath
