@@ -362,7 +362,7 @@ class TributeRange {
         let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
 
         let coordinates = {
-            top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize),
+            top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
             left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
         }
 
