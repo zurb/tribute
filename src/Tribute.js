@@ -17,7 +17,8 @@ class Tribute {
         collection = null,
         menuContainer = null,
         noMatchTemplate = null,
-        requireLeadingSpace = true
+        requireLeadingSpace = true,
+        allowSpaces = false,
     }) {
 
         this.menuSelected = 0
@@ -25,6 +26,7 @@ class Tribute {
         this.inputEvent = false
         this.isActive = false
         this.menuContainer = menuContainer
+        this.allowSpaces = allowSpaces
 
         if (values) {
             this.collection = [{
@@ -59,7 +61,7 @@ class Tribute {
                 // array of objects
                 values: values,
 
-                requireLeadingSpace: requireLeadingSpace
+                requireLeadingSpace: requireLeadingSpace,
             }]
         }
         else if (collection) {

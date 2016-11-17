@@ -167,7 +167,10 @@ Collection object shown with defaults:
   values: [],
 
   // specify whether a space is required before the trigger character
-  requireLeadingSpace: true
+  requireLeadingSpace: true,
+
+  // specify whether a space is allowed in the middle of mentions
+  allowSpaces: false
 }
 ```
 
