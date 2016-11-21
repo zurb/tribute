@@ -118,28 +118,24 @@
           // The function that gets call on select that retuns the content to insert
           selectTemplate: function (item) {
             if (this.range.isContentEditable(this.current.element)) {
-              return '<a href="'+item.original.url+'" title="' + item.original.key + '">#' + item.original.value + '</a>';
+              return '<a href="mailto:'+item.original.email+'">#' + item.original.name.replace() + '</a>';
             }
 
-            return '#' + item.original.value;
+            return '#' + item.original.name;
           },
 
           // function retrieving an array of objects
           values: function (text, cb) {
-            if (text.length) {
-                searchGithub(text, function (response) {
-                    cb(response.items);
-                })
-            } else {
-                cb([]);
-            }
+            remoteSearch(text, function (users) {
+              cb(users);
+            });
           },
 
-          lookup: 'login',
+          lookup: 'name',
 
-          fillAttr: 'login'
+          fillAttr: 'name'
         }]
-      })
+      });
 
       tributeMultipleTriggers.attach(document.getElementById('testMultiple'));
 
@@ -152,21 +148,29 @@
         tribute.appendCurrent(values);
       });
 
-      function searchGithub(text, cb) {
+
+      function remoteSearch(text, cb) {
+        var URL = 'http://mockbin.org/bin/7de4a9db-5599-4634-be1c-03b2489226e6';
         xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function()
+        xhr.onreadystatechange = function ()
         {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    cb(JSON.parse(xhr.responseText));
-                } else if (xhr.status === 403) {
-                    var message = 'Search for \'' + text + '\' failed due to API rate limit.' +
-                      'Try again in 1min';
-                    cb({items: [{login: message}]});
-                }
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              var data = JSON.parse(xhr.responseText);
+              // Filter data now, as that isn't implemented on mockbin.org yet.
+              // Mock data: http://mockbin.org/bin/7de4a9db-5599-4634-be1c-03b2489226e6
+              if (text.length) {
+                data = data.filter(function (item) {
+                  return item.name.toLowerCase().indexOf(text.toLowerCase()) !== -1;
+                });
+              }
+              cb(data);
+            } else if (xhr.status === 403) {
+              cb([]);
             }
-        }
-        xhr.open("GET", 'https://api.github.com/search/users?q=' + text, true);
+          }
+        };
+        xhr.open("GET", URL + '?q=' + text, true);
         xhr.send();
       }
     </script>
