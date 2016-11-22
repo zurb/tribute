@@ -171,6 +171,12 @@ class Tribute {
     }
 
     showMenuFor(element, scrollTo) {
+        // Only proceed if menu isn't already shown for the current element & mentionText
+        if (this.isActive && this.current.element === element && this.current.mentionText === this.currentMentionTextSnapshot) {
+          return
+        }
+        this.currentMentionTextSnapshot = this.current.mentionText
+
         // create the menu if it doesn't exist.
         if (!this.menu) {
             this.menu = this.createMenu()
