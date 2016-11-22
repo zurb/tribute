@@ -99,7 +99,7 @@
           // The function that gets call on select that retuns the content to insert
           selectTemplate: function (item) {
             if (this.range.isContentEditable(this.current.element)) {
-              return '<a href="http://zurb.com" title="' + item.original.email + '">' + item.original.value + '</a>';
+              return '<a href="http://zurb.com" title="' + item.original.email + '">@' + item.original.value + '</a>';
             }
 
             return '@' + item.original.value;
