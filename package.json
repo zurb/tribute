@@ -1,6 +1,6 @@
 {
   "name": "tributejs",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Native ES6 @mentions",
   "main": "dist/tribute.js",
   "devDependencies": {
