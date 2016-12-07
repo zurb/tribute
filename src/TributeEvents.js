@@ -98,7 +98,7 @@ class TributeEvents {
 
         if (instance.tribute.current.trigger && instance.commandEvent === false
             || instance.tribute.isActive && event.keyCode === 8) {
-            instance.tribute.showMenuFor(this, true)
+          instance.tribute.showMenuFor(this, true)
         }
     }
 

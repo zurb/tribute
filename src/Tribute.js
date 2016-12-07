@@ -58,7 +58,7 @@ class Tribute {
                 // column that contains the content to insert by default
                 fillAttr: fillAttr,
 
-                // array of objects
+                // array of objects or a function returning an array of objects
                 values: values,
 
                 requireLeadingSpace: requireLeadingSpace,
@@ -171,8 +171,13 @@ class Tribute {
     }
 
     showMenuFor(element, scrollTo) {
-        let items
-            // create the menu if it doesn't exist.
+        // Only proceed if menu isn't already shown for the current element & mentionText
+        if (this.isActive && this.current.element === element && this.current.mentionText === this.currentMentionTextSnapshot) {
+          return
+        }
+        this.currentMentionTextSnapshot = this.current.mentionText
+
+        // create the menu if it doesn't exist.
         if (!this.menu) {
             this.menu = this.createMenu()
             this.menuEvents.bind(this.menu)
@@ -185,55 +190,66 @@ class Tribute {
             this.current.mentionText = ''
         }
 
-        items = this.search.filter(this.current.mentionText, this.current.collection.values, {
-            pre: '<span>',
-            post: '</span>',
-            extract: (el) => {
-                if (typeof this.current.collection.lookup === 'string') {
-                    return el[this.current.collection.lookup]
-                } else if (typeof this.current.collection.lookup === 'function') {
-                    return this.current.collection.lookup(el)
-                } else {
-                    throw new Error('Invalid lookup attribute, lookup must be string or function.')
+        const processValues = (values) => {
+            // Tribute may not be active any more by the time the value callback returns
+            if (!this.isActive) {
+                return
+            }
+            let items = this.search.filter(this.current.mentionText, values, {
+                pre: '<span>',
+                post: '</span>',
+                extract: (el) => {
+                    if (typeof this.current.collection.lookup === 'string') {
+                        return el[this.current.collection.lookup]
+                    } else if (typeof this.current.collection.lookup === 'function') {
+                        return this.current.collection.lookup(el)
+                    } else {
+                        throw new Error('Invalid lookup attribute, lookup must be string or function.')
+                    }
                 }
+            })
+
+            this.current.filteredItems = items
+
+            let ul = this.menu.querySelector('ul')
+
+            if (!items.length) {
+                let noMatchEvent = new CustomEvent('tribute-no-match', { detail: this.menu })
+                this.current.element.dispatchEvent(noMatchEvent)
+                if (!this.current.collection.noMatchTemplate) {
+                    this.hideMenu()
+                } else {
+                    ul.innerHTML = this.current.collection.noMatchTemplate()
+                }
+
+                return
             }
-        })
 
-        this.current.filteredItems = items
+            ul.innerHTML = ''
 
-        let ul = this.menu.querySelector('ul')
+            items.forEach((item, index) => {
+                let li = this.range.getDocument().createElement('li')
+                li.setAttribute('data-index', index)
+                li.addEventListener('mouseenter', (e) => {
+                  let li = e.target;
+                  let index = li.getAttribute('data-index')
+                  this.events.setActiveLi(index)
+                })
+                if (this.menuSelected === index) {
+                    li.className = this.current.collection.selectClass
+                }
+                li.innerHTML = this.current.collection.menuItemTemplate(item)
+                ul.appendChild(li)
+            })
 
-        if (!items.length) {
-            let noMatchEvent = new CustomEvent('tribute-no-match', { detail: this.menu })
-            this.current.element.dispatchEvent(noMatchEvent)
-            if (!this.current.collection.noMatchTemplate) {
-                this.hideMenu()
-            } else {
-                ul.innerHTML = this.current.collection.noMatchTemplate()
-            }
-
-            return
+            this.range.positionMenuAtCaret(scrollTo)
         }
 
-        ul.innerHTML = ''
-
-        items.forEach((item, index) => {
-            let li = this.range.getDocument().createElement('li')
-            li.setAttribute('data-index', index)
-            li.addEventListener('mouseenter', (e) => {
-              let li = e.target;
-              let index = li.getAttribute('data-index')
-              this.events.setActiveLi(index)
-            })
-            if (this.menuSelected === index) {
-                li.className = this.current.collection.selectClass
-            }
-            li.innerHTML = this.current.collection.menuItemTemplate(item)
-            ul.appendChild(li)
-        })
-
-        this.range.positionMenuAtCaret(scrollTo)
-
+        if (typeof this.current.collection.values === 'function') {
+            this.current.collection.values(this.current.mentionText, processValues)
+        } else {
+            processValues(this.current.collection.values)
+        }
     }
 
     hideMenu() {
@@ -258,7 +274,9 @@ class Tribute {
     }
 
     _append(collection, newValues, replace) {
-        if (!replace) {
+        if (typeof collection.values === 'function') {
+            throw new Error('Unable to append to values, as it is a function.')
+        } else if (!replace) {
             collection.values = collection.values.concat(newValues)
         } else {
             collection.values = newValues
