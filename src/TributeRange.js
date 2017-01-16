@@ -253,7 +253,9 @@ class TributeRange {
 
             this.tribute.collection.forEach(config => {
                 let c = config.trigger
-                let idx = effectiveRange.lastIndexOf(c)
+                let idx = config.requireLeadingSpace ?
+                    this.lastIndexWithLeadingSpace(effectiveRange, c) :
+                    effectiveRange.lastIndexOf(c)
 
                 if (idx > mostRecentTriggerCharPos) {
                     mostRecentTriggerCharPos = idx
@@ -301,6 +303,24 @@ class TributeRange {
                 }
             }
         }
+    }
+
+    lastIndexWithLeadingSpace (str, char) {
+        let reversedStr = str.split('').reverse().join('')
+        let index = -1
+
+        for (let cidx = 0, len = str.length; cidx < len; cidx++) {
+            let firstChar = cidx === str.length - 1
+            let leadingSpace = /\s/.test(reversedStr[cidx + 1])
+            let match = char === reversedStr[cidx]
+
+            if (match && (firstChar || leadingSpace)) {
+                index = str.length - 1 - cidx
+                break
+            }
+        }
+
+        return index
     }
 
     isContentEditable(element) {
