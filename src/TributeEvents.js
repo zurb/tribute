@@ -213,16 +213,41 @@ class TributeEvents {
         let lis = this.tribute.menu.querySelectorAll('li'),
             length = lis.length >>> 0
 
+        // get heights
+        let menuFullHeight = this.getFullHeight(this.tribute.menu),
+            liHeight = this.getFullHeight(lis[0])
+
         if (index) this.tribute.menuSelected = index;
 
         for (let i = 0; i < length; i++) {
             let li = lis[i]
             if (i === this.tribute.menuSelected) {
+                let offset = liHeight * (i+1)
+                let scrollTop = this.tribute.menu.scrollTop
+                let totalScroll = scrollTop + menuFullHeight
+
+                if (offset > totalScroll) {
+                  this.tribute.menu.scrollTop += liHeight
+                } else if (offset < totalScroll) {
+                  this.tribute.menu.scrollTop -= liHeight
+                }
+
                 li.className = this.tribute.current.collection.selectClass
             } else {
                 li.className = ''
             }
         }
+    }
+
+    getFullHeight(elem, includeMargin) {
+      let height = elem.getBoundingClientRect().height
+
+      if (includeMargin) {
+        let style = elem.currentStyle || window.getComputedStyle(elem)
+        return height + parseFloat(style.marginTop) + parseFloat(style.marginBottom)
+      }
+
+      return height
     }
 
 }
