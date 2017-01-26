@@ -199,6 +199,7 @@ class Tribute {
             if (!this.isActive) {
                 return
             }
+
             let items = this.search.filter(this.current.mentionText, values, {
                 pre: '<span>',
                 post: '</span>',
@@ -254,6 +255,15 @@ class Tribute {
         } else {
             processValues(this.current.collection.values)
         }
+    }
+
+    showMenuForCollection(element, collectionIndex) {
+      if (element !== document.activeElement) {
+        element.focus()
+      }
+      this.current.collection = this.collection[collectionIndex || 0]
+      this.current.element = element
+      this.showMenuFor(element, 0)
     }
 
     hideMenu() {

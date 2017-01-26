@@ -23,6 +23,8 @@ class TributeRange {
             coordinates
         let info = this.getTriggerInfo(false, false, true, this.tribute.allowSpaces)
 
+        console.log('info:', info)
+
         if (info !== undefined) {
             if (!this.isContentEditable(context.element)) {
                 coordinates = this.getTextAreaOrInputUnderlinePosition(this.getDocument().activeElement,
@@ -301,6 +303,15 @@ class TributeRange {
                         mentionTriggerChar: triggerChar
                     }
                 }
+            } else {
+              return {
+                  mentionPosition: 0,
+                  mentionText: '',
+                  mentionSelectedElement: selected,
+                  mentionSelectedPath: path,
+                  mentionSelectedOffset: offset,
+                  mentionTriggerChar: triggerChar
+              }
             }
         }
     }
