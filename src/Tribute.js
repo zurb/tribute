@@ -19,6 +19,7 @@ class Tribute {
         noMatchTemplate = null,
         requireLeadingSpace = true,
         allowSpaces = false,
+        replaceTextSuffix = null,
     }) {
 
         this.menuSelected = 0
@@ -27,6 +28,7 @@ class Tribute {
         this.isActive = false
         this.menuContainer = menuContainer
         this.allowSpaces = allowSpaces
+        this.replaceTextSuffix = replaceTextSuffix
 
         if (values) {
             this.collection = [{

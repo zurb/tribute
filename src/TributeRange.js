@@ -105,16 +105,22 @@ class TributeRange {
         if (info !== undefined) {
             if (!this.isContentEditable(context.element)) {
                 let myField = this.getDocument().activeElement
-                text += ' '
+                let textSuffix = typeof this.tribute.replaceTextSuffix == 'string'
+                    ? this.tribute.replaceTextSuffix
+                    : ' '
+                text += textSuffix
                 let startPos = info.mentionPosition
-                let endPos = info.mentionPosition + info.mentionText.length + 1
+                let endPos = info.mentionPosition + info.mentionText.length + textSuffix.length
                 myField.value = myField.value.substring(0, startPos) + text +
                     myField.value.substring(endPos, myField.value.length)
                 myField.selectionStart = startPos + text.length
                 myField.selectionEnd = startPos + text.length
             } else {
                 // add a space to the end of the pasted text
-                text += '\xA0'
+                let textSuffix = typeof this.tribute.replaceTextSuffix == 'string'
+                    ? this.tribute.replaceTextSuffix
+                    : '\xA0'
+                text += textSuffix
                 this.pasteHtml(text, info.mentionPosition,
                     info.mentionPosition + info.mentionText.length + 1)
             }
