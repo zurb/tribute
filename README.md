@@ -170,7 +170,11 @@ Collection object shown with defaults:
   requireLeadingSpace: true,
 
   // specify whether a space is allowed in the middle of mentions
-  allowSpaces: false
+  allowSpaces: false,
+
+  // optionally specify a custom suffix for the replace text
+  // (defaults to empty space if undefined)
+  replaceTextSuffix: '\n',
 }
 ```
 
