@@ -216,6 +216,7 @@ class Tribute {
 
             this.current.filteredItems = items
 
+
             let ul = this.menu.querySelector('ul')
 
             if (!items.length) {
@@ -259,9 +260,11 @@ class Tribute {
 
     showMenuForCollection(element, collectionIndex) {
       if (element !== document.activeElement) {
+        console.log('not active', document.activeElement, element)
         element.focus()
       }
       this.current.collection = this.collection[collectionIndex || 0]
+      this.current.externalTrigger = true;
       this.current.element = element
       this.showMenuFor(element, 0)
     }

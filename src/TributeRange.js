@@ -23,9 +23,7 @@ class TributeRange {
             coordinates
         let info = this.getTriggerInfo(false, false, true, this.tribute.allowSpaces)
 
-        console.log('info:', info)
-
-        if (info !== undefined) {
+        if (typeof info !== 'undefined') {
             if (!this.isContentEditable(context.element)) {
                 coordinates = this.getTextAreaOrInputUnderlinePosition(this.getDocument().activeElement,
                     info.mentionPosition)
@@ -34,14 +32,13 @@ class TributeRange {
                 coordinates = this.getContentEditableCaretPosition(info.mentionPosition)
             }
 
-            // Move the button into place.
-            this.tribute.menu.style.cssText = `top: ${coordinates.top}px;
-                                       left: ${coordinates.left}px;
-                                       position: absolute;
-                                       zIndex: 10000;
-                                       display: block;`
-
             setTimeout(() => {
+                this.tribute.menu.style.cssText = `top: ${coordinates.top}px;
+                                         left: ${coordinates.left}px;
+                                         position: absolute;
+                                         zIndex: 10000;
+                                         display: block;`
+
                 if (scrollTo) this.scrollIntoView(this.getDocument().activeElement)
             }, 0)
         } else {
@@ -303,14 +300,15 @@ class TributeRange {
                         mentionTriggerChar: triggerChar
                     }
                 }
-            } else {
+            } else if (ctx.externalTrigger) {
+              delete ctx.externalTrigger;
               return {
                   mentionPosition: 0,
                   mentionText: '',
                   mentionSelectedElement: selected,
-                  mentionSelectedPath: path,
-                  mentionSelectedOffset: offset,
-                  mentionTriggerChar: triggerChar
+                  mentionSelectedPath: {0: 1},
+                  mentionSelectedOffset: 1,
+                  mentionTriggerChar: ctx.trigger
               }
             }
         }
