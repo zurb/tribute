@@ -45,7 +45,7 @@ export interface TributeOptions {
   replaceTextSuffix?: string,
 
   // pass an array of config objects
-  collection?: [],
+  collection?: array<Object>,
 }
 
 export default class Tribute {
