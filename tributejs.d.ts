@@ -51,6 +51,8 @@ export interface TributeOptions {
 export default class Tribute {
   constructor(options: TributeOptions);
 
+  isActive: boolean;
+
   append(index: number, values: array<Object>, replace?: boolean): void;
 
   appendCurrent(values: array<Object>, replace?: boolean): void;
