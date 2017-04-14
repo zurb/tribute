@@ -21,7 +21,10 @@ class TributeRange {
     positionMenuAtCaret(scrollTo) {
         let context = this.tribute.current,
             coordinates
+
+            console.log('context', context)
         let info = this.getTriggerInfo(false, false, true, this.tribute.allowSpaces)
+        console.log('info:', info)
 
         if (typeof info !== 'undefined') {
             if (!this.isContentEditable(context.element)) {
@@ -171,12 +174,17 @@ class TributeRange {
         }
     }
 
-    getContentEditableSelectedPath() {
+    getContentEditableSelectedPath(ctx) {
+        if (ctx.externalTrigger) {
+           sel = ctx.element
+        }
         // content editable
         let sel = this.getWindowSelection()
         let selected = sel.anchorNode
         let path = []
         let offset
+
+        console.log('sel:', sel)
 
         if (selected != null) {
             let i
@@ -234,8 +242,7 @@ class TributeRange {
         if (!this.isContentEditable(ctx.element)) {
             selected = this.getDocument().activeElement
         } else {
-            // content editable
-            let selectionInfo = this.getContentEditableSelectedPath()
+            let selectionInfo = this.getContentEditableSelectedPath(ctx)
 
             if (selectionInfo) {
                 selected = selectionInfo.selected
@@ -301,7 +308,7 @@ class TributeRange {
                     }
                 }
             } else if (ctx.externalTrigger) {
-              delete ctx.externalTrigger;
+            //   delete ctx.externalTrigger;
               return {
                   mentionPosition: 0,
                   mentionText: '',

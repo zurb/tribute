@@ -189,7 +189,7 @@ class Tribute {
 
         this.isActive = true
         this.menuSelected = 0
-
+        
         if (!this.current.mentionText) {
             this.current.mentionText = ''
         }
@@ -263,13 +263,22 @@ class Tribute {
         console.log('not active', document.activeElement, element)
         element.focus()
       }
-      this.current.collection = this.collection[collectionIndex || 0]
-      this.current.externalTrigger = true;
-      this.current.element = element
-      this.showMenuFor(element, 0)
+
+      // make sure focus is set.
+      setTimeout(() => {
+        this.current.collection = this.collection[collectionIndex || 0]
+        this.current.externalTrigger = true
+        this.current.element = element
+        this.current.mentionText = ""
+        this.current.selectedOffset = 1
+        this.current.selectedPath = [1]
+        this.current.trigger = this.current.collection.trigger
+        this.showMenuFor(element, 0)
+      }, 50)
     }
 
     hideMenu() {
+        console.log('hideMenu()')
         if (this.menu) {
             this.menu.style.cssText = 'display: none;'
             this.isActive = false
