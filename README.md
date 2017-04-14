@@ -1,4 +1,6 @@
 # Tribute
+[![CDNJS version](https://img.shields.io/cdnjs/v/tributejs.svg)](https://cdnjs.com/libraries/tributejs)
+
 A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Firefox, Chrome, iOS Safari, Safari, IE 9+, Edge 12+, Android 4+, and Windows Phone.
 
 - [Installing](#installing)
