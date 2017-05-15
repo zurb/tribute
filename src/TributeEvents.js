@@ -85,7 +85,7 @@ class TributeEvents {
         if (!instance.tribute.isActive) {
             let keyCode = instance.getKeyCode(instance, this, event)
 
-            if (isNaN(keyCode)) return
+            if (isNaN(keyCode) || !keyCode) return
 
             let trigger = instance.tribute.triggers().find(trigger => {
                 return trigger.charCodeAt(0) === keyCode
