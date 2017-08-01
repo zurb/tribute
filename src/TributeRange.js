@@ -216,7 +216,9 @@ class TributeRange {
         if (!this.isContentEditable(context.element)) {
             let textComponent = this.getDocument().activeElement
             let startPos = textComponent.selectionStart
-            text = textComponent.value.substring(0, startPos)
+            if (textComponent.value) {
+                text = textComponent.value.substring(0, startPos)
+            }
 
         } else {
             let selectedElem = this.getWindowSelection().anchorNode
