@@ -211,7 +211,7 @@ class TributeRange {
 
     getTextPrecedingCurrentSelection() {
         let context = this.tribute.current,
-            text
+            text = ''
 
         if (!this.isContentEditable(context.element)) {
             let textComponent = this.getDocument().activeElement
@@ -225,7 +225,7 @@ class TributeRange {
                 let workingNodeContent = selectedElem.textContent
                 let selectStartOffset = this.getWindowSelection().getRangeAt(0).startOffset
 
-                if (selectStartOffset >= 0) {
+                if (workingNodeContent && selectStartOffset >= 0) {
                     text = workingNodeContent.substring(0, selectStartOffset)
                 }
             }
