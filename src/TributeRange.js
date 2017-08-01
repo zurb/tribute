@@ -216,7 +216,7 @@ class TributeRange {
         if (!this.isContentEditable(context.element)) {
             let textComponent = this.getDocument().activeElement
             let startPos = textComponent.selectionStart
-            if (textComponent.value) {
+            if (textComponent.value && startPos >= 0) {
                 text = textComponent.value.substring(0, startPos)
             }
 
