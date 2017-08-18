@@ -367,6 +367,37 @@ class Tribute {
             throw new Error('No active state. Please use append instead and pass an index.')
         }
     }
+
+    detach(el) {
+        if (!el) {
+            throw new Error('[Tribute] Must pass in a DOM node or NodeList.')
+        }
+
+        // Check if it is a jQuery collection
+        if (typeof jQuery !== 'undefined' && el instanceof jQuery) {
+            el = el.get()
+        }
+
+        // Is el an Array/Array-like object?
+        if (el.constructor === NodeList || el.constructor === HTMLCollection || el.constructor === Array) {
+            let length = el.length
+            for (var i = 0; i < length; ++i) {
+                this._detach(el[i])
+            }
+        } else {
+            this._detach(el)
+        }
+    }
+
+    _detach(el) {
+        this.events.unbind(el)
+        el.removeAttribute('data-tribute')
+        this.isActive = false
+        this.menu.remove()
+        delete this.menu
+    }
+
+
 }
 
 export default Tribute;
