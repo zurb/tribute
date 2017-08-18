@@ -5,17 +5,28 @@ class TributeRange {
         this.tribute.range = this
     }
 
-    getDocument() {
-        let iframe
-        if (this.tribute.current.collection) {
-            iframe = this.tribute.current.collection.iframe
+    getWindow(ctx) {
+        if (ctx.element) {
+            var doc = ctx.element.ownerDocument;
+            var win = doc.defaultView || doc.parentWindow;
+
+            // the element is not in the same window
+            if (win !== window.self) {
+                return win
+            } else {
+                return window
+            }
         }
 
-        if (!iframe) {
-            return document
-        }
+        return window
+    }
 
-        return iframe.contentWindow.document
+    getDocument(ctx) {
+        return this.getWindow(ctx).document;
+    }
+
+    getWindowSelection(ctx) {
+        return this.getWindow(ctx).getSelection();
     }
 
     positionMenuAtCaret(scrollTo) {
@@ -26,7 +37,7 @@ class TributeRange {
 
         if (typeof info !== 'undefined') {
             if (!this.isContentEditable(context.element)) {
-                coordinates = this.getTextAreaOrInputUnderlinePosition(this.getDocument().activeElement,
+                coordinates = this.getTextAreaOrInputUnderlinePosition(this.getDocument(context).activeElement,
                     info.mentionPosition)
             }
             else {
@@ -40,7 +51,7 @@ class TributeRange {
                                          zIndex: 10000;
                                          display: block;`
 
-                if (scrollTo) this.scrollIntoView(this.getDocument().activeElement)
+                if (scrollTo) this.scrollIntoView(this.getDocument(context).activeElement)
             }, 0)
         } else {
             this.tribute.menu.style.cssText = 'display: none'
@@ -66,9 +77,9 @@ class TributeRange {
                 }
             }
         }
-        let sel = this.getWindowSelection()
+        let sel = this.getWindowSelection(this.tribute.current)
 
-        range = this.getDocument().createRange()
+        range = this.getDocument(this.tribute.current).createRange()
         range.setStart(elem, offset)
         range.setEnd(elem, offset)
         range.collapse(true)
@@ -84,7 +95,7 @@ class TributeRange {
     // TODO: this may not be necessary anymore as we are using mouseup instead of click
     resetSelection(targetElement, path, offset) {
         if (!this.isContentEditable(targetElement)) {
-            if (targetElement !== this.getDocument().activeElement) {
+            if (targetElement !== this.getDocument(this.tribute.current).activeElement) {
                 targetElement.focus()
             }
         } else {
@@ -109,7 +120,7 @@ class TributeRange {
 
         if (info !== undefined) {
             if (!this.isContentEditable(context.element)) {
-                let myField = this.getDocument().activeElement
+                let myField = this.getDocument(context).activeElement
                 let textSuffix = typeof this.tribute.replaceTextSuffix == 'string'
                     ? this.tribute.replaceTextSuffix
                     : ' '
@@ -136,15 +147,16 @@ class TributeRange {
 
     pasteHtml(html, startPos, endPos) {
         let range, sel
-        sel = this.getWindowSelection()
-        range = this.getDocument().createRange()
+        let context = this.tribute.current
+        sel = this.getWindowSelection(context)
+        range = this.getDocument(context).createRange()
         range.setStart(sel.anchorNode, startPos)
         range.setEnd(sel.anchorNode, endPos)
         range.deleteContents()
 
-        let el = this.getDocument().createElement('div')
+        let el = this.getDocument(context).createElement('div')
         el.innerHTML = html
-        let frag = this.getDocument().createDocumentFragment(),
+        let frag = this.getDocument(context).createDocumentFragment(),
             node, lastNode
         while ((node = el.firstChild)) {
             lastNode = frag.appendChild(node)
@@ -159,14 +171,6 @@ class TributeRange {
             sel.removeAllRanges()
             sel.addRange(range)
         }
-    }
-
-    getWindowSelection() {
-        if (this.tribute.collection.iframe) {
-            return this.tribute.collection.iframe.contentWindow.getSelection()
-        }
-
-        return window.getSelection()
     }
 
     getNodePositionInParent(element) {
@@ -184,7 +188,7 @@ class TributeRange {
     }
 
     getContentEditableSelectedPath(ctx) {
-        let sel = this.getWindowSelection()
+        let sel = this.getWindowSelection(ctx)
         let selected = sel.anchorNode
         let path = []
         let offset
@@ -218,16 +222,16 @@ class TributeRange {
             text
 
         if (!this.isContentEditable(context.element)) {
-            let textComponent = this.getDocument().activeElement
+            let textComponent = this.getDocument(context).activeElement
             let startPos = textComponent.selectionStart
             text = textComponent.value.substring(0, startPos)
 
         } else {
-            let selectedElem = this.getWindowSelection().anchorNode
+            let selectedElem = this.getWindowSelection(context).anchorNode
 
             if (selectedElem != null) {
                 let workingNodeContent = selectedElem.textContent
-                let selectStartOffset = this.getWindowSelection().getRangeAt(0).startOffset
+                let selectStartOffset = this.getWindowSelection(context).getRangeAt(0).startOffset
 
                 if (selectStartOffset >= 0) {
                     text = workingNodeContent.substring(0, selectStartOffset)
@@ -243,7 +247,7 @@ class TributeRange {
         let selected, path, offset
 
         if (!this.isContentEditable(ctx.element)) {
-            selected = this.getDocument().activeElement
+            selected = this.getDocument(ctx).activeElement
         } else {
             let selectionInfo = this.getContentEditableSelectedPath(ctx)
 
@@ -337,6 +341,9 @@ class TributeRange {
     }
 
     getTextAreaOrInputUnderlinePosition(element, position) {
+        let win = this.getWindow(this.tribute.current),
+            doc = this.getDocument(this.tribute.current)
+
         let properties = ['direction', 'boxSizing', 'width', 'height', 'overflowX',
             'overflowY', 'borderTopWidth', 'borderRightWidth',
             'borderBottomWidth', 'borderLeftWidth', 'paddingTop',
@@ -347,14 +354,14 @@ class TributeRange {
             'textDecoration', 'letterSpacing', 'wordSpacing'
         ]
 
-        let isFirefox = (window.mozInnerScreenX !== null)
+        let isFirefox = (win.mozInnerScreenX !== null)
 
-        let div = this.getDocument().createElement('div')
+        let div = doc.createElement('div')
         div.id = 'input-textarea-caret-position-mirror-div'
-        this.getDocument().body.appendChild(div)
+        doc.body.appendChild(div)
 
         let style = div.style
-        let computed = window.getComputedStyle ? getComputedStyle(element) : element.currentStyle
+        let computed = win.getComputedStyle ? getComputedStyle(element) : element.currentStyle
 
         style.whiteSpace = 'pre-wrap'
         if (element.nodeName !== 'INPUT') {
@@ -384,50 +391,54 @@ class TributeRange {
             div.textContent = div.textContent.replace(/\s/g, ' ')
         }
 
-        let span = this.getDocument().createElement('span')
+        let span = doc.createElement('span')
         span.textContent = element.value.substring(position) || '.'
         div.appendChild(span)
 
         let rect = element.getBoundingClientRect()
-        let doc = document.documentElement
-        let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
-        let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+        let docEl = doc.documentElement
+        let windowLeft = (win.pageXOffset || docEl.scrollLeft) - (docEl.clientLeft || 0)
+        let windowTop = (win.pageYOffset || docEl.scrollTop) - (docEl.clientTop || 0)
 
         let coordinates = {
             top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
             left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
         }
 
-        this.getDocument().body.removeChild(div)
+        doc.body.removeChild(div)
 
         return coordinates
     }
 
     getContentEditableCaretPosition(selectedNodePosition) {
+        let win = this.getWindow(this.tribute.current),
+            doc = this.getDocument(this.tribute.current)
+
         let markerTextChar = '﻿'
         let markerEl, markerId = `sel_${new Date().getTime()}_${Math.random().toString().substr(2)}`
         let range
-        let sel = this.getWindowSelection()
+        let sel = this.getWindowSelection(this.tribute.current)
         let prevRange = sel.getRangeAt(0)
 
-        range = this.getDocument().createRange()
+
+        range = doc.createRange()
         range.setStart(sel.anchorNode, selectedNodePosition)
         range.setEnd(sel.anchorNode, selectedNodePosition)
 
         range.collapse(false)
 
         // Create the marker element containing a single invisible character using DOM methods and insert it
-        markerEl = this.getDocument().createElement('span')
+        markerEl = doc.createElement('span')
         markerEl.id = markerId
-        markerEl.appendChild(this.getDocument().createTextNode(markerTextChar))
+        markerEl.appendChild(doc.createTextNode(markerTextChar))
         range.insertNode(markerEl)
         sel.removeAllRanges()
         sel.addRange(prevRange)
 
         let rect = markerEl.getBoundingClientRect()
-        let doc = document.documentElement
-        let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
-        let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+        let docEl = doc.documentElement
+        let windowLeft = (win.pageXOffset || docEl.scrollLeft) - (docEl.clientLeft || 0)
+        let windowTop = (win.pageYOffset || docEl.scrollTop) - (docEl.clientTop || 0)
         let coordinates = {
             left: rect.left + windowLeft,
             top: rect.top + markerEl.offsetHeight + windowTop
@@ -438,6 +449,8 @@ class TributeRange {
     }
 
     scrollIntoView(elem) {
+        let win = this.getWindow(this.tribute.current),
+            doc = this.getDocument(this.tribute.current)
         let reasonableBuffer = 20,
             clientRect
         let maxScrollDisplacement = 100
@@ -458,21 +471,21 @@ class TributeRange {
         let elemBottom = elemTop + clientRect.height
 
         if (elemTop < 0) {
-            window.scrollTo(0, window.pageYOffset + clientRect.top - reasonableBuffer)
-        } else if (elemBottom > window.innerHeight) {
-            let maxY = window.pageYOffset + clientRect.top - reasonableBuffer
+            win.scrollTo(0, win.pageYOffset + clientRect.top - reasonableBuffer)
+        } else if (elemBottom > win.innerHeight) {
+            let maxY = win.pageYOffset + clientRect.top - reasonableBuffer
 
-            if (maxY - window.pageYOffset > maxScrollDisplacement) {
-                maxY = window.pageYOffset + maxScrollDisplacement
+            if (maxY - win.pageYOffset > maxScrollDisplacement) {
+                maxY = win.pageYOffset + maxScrollDisplacement
             }
 
-            let targetY = window.pageYOffset - (window.innerHeight - elemBottom)
+            let targetY = win.pageYOffset - (win.innerHeight - elemBottom)
 
             if (targetY > maxY) {
                 targetY = maxY
             }
 
-            window.scrollTo(0, targetY)
+            win.scrollTo(0, targetY)
         }
     }
 }

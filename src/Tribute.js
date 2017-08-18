@@ -163,17 +163,20 @@ class Tribute {
     }
 
     createMenu() {
-        let wrapper = this.range.getDocument().createElement('div'),
-            ul = this.range.getDocument().createElement('ul')
+        let wrapper = this.range.getDocument(this.current).createElement('div'),
+            ul = this.range.getDocument(this.current).createElement('ul')
 
         wrapper.className = 'tribute-container'
+        // if the wrapper is injected into a WYSIWYG editor,
+        // make sure the menu is not editable as well
+        wrapper.setAttribute('contenteditable', false)
         wrapper.appendChild(ul)
 
         if (this.menuContainer) {
             return this.menuContainer.appendChild(wrapper)
         }
 
-        return this.range.getDocument().body.appendChild(wrapper)
+        return this.range.getDocument(this.current).body.appendChild(wrapper)
     }
 
     showMenuFor(element, scrollTo) {
@@ -236,7 +239,7 @@ class Tribute {
             ul.innerHTML = ''
 
             items.forEach((item, index) => {
-                let li = this.range.getDocument().createElement('li')
+                let li = this.range.getDocument(this.current).createElement('li')
                 li.setAttribute('data-index', index)
                 li.addEventListener('mouseenter', (e) => {
                   let li = e.target;
@@ -274,17 +277,21 @@ class Tribute {
 
     // TODO: make sure this works for inputs/textareas
     placeCaretAtEnd(el) {
+        let win = this.range.getWindow(this.current),
+            doc = this.range.getDocument(this.current)
+
         el.focus();
-        if (typeof window.getSelection != "undefined"
-                && typeof document.createRange != "undefined") {
-            var range = document.createRange();
+
+        if (typeof win.getSelection != "undefined"
+                && typeof doc.createRange != "undefined") {
+            var range = doc.createRange();
             range.selectNodeContents(el);
             range.collapse(false);
-            var sel = window.getSelection();
+            var sel = this.range.getWindowSelection(this.current);
             sel.removeAllRanges();
             sel.addRange(range);
-        } else if (typeof document.body.createTextRange != "undefined") {
-            var textRange = document.body.createTextRange();
+        } else if (typeof doc.body.createTextRange != "undefined") {
+            var textRange = doc.body.createTextRange();
             textRange.moveToElementText(el);
             textRange.collapse(false);
             textRange.select();
@@ -293,11 +300,14 @@ class Tribute {
 
     // for contenteditable
     insertTextAtCursor(text) {
+        let win = this.range.getWindow(this.current),
+            doc = this.range.getDocument(this.current)
+
         var sel, range, html;
-        sel = window.getSelection();
+        sel = win.getSelection();
         range = sel.getRangeAt(0);
         range.deleteContents();
-        var textNode = document.createTextNode(text);
+        var textNode = doc.createTextNode(text);
         range.insertNode(textNode);
         range.selectNodeContents(textNode)
         range.collapse(false)

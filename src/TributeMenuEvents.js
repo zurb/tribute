@@ -3,14 +3,16 @@ class TributeMenuEvents {
         this.tribute = tribute
         this.tribute.menuEvents = this
         this.menu = this.tribute.menu
+        this.doc = this.tribute.range.getDocument(tribute.current)
+        this.win = this.tribute.range.getWindow(tribute.current)
     }
 
     bind(menu) {
         menu.addEventListener('keydown',
-            this.tribute.events.keydown.bind(this.menu, this), false)
-        this.tribute.range.getDocument().addEventListener('mousedown',
+            this.tribute.events.keydown.bind(menu, this), false)
+        this.doc.addEventListener('mousedown',
             this.tribute.events.click.bind(null, this), false)
-        window.addEventListener('resize', this.debounce(() => {
+        this.win.addEventListener('resize', this.debounce(() => {
             if (this.tribute.isActive) {
                 this.tribute.range.positionMenuAtCaret(true)
             }
@@ -23,7 +25,7 @@ class TributeMenuEvents {
                 }
             }, 300, false), false)
         } else {
-            window.onscroll = this.debounce(() => {
+            this.tribute.range.getWindow(this.tribute.current).onscroll = this.debounce(() => {
                 if (this.tribute.isActive) {
                     this.tribute.showMenuFor(this.tribute.current.element, false)
                 }

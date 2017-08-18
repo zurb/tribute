@@ -12,7 +12,8 @@
     margin: 0;
     margin-top: 2px;
     list-style: none;
-    background: #efefef; }
+    background: #efefef;
+    padding: 0; }
   .tribute-container li {
     padding: 5px 5px;
     cursor: pointer; }

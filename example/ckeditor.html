@@ -1,0 +1,68 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZURB Tribute | Demo</title>
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="../dist/tribute.css" />
+  </head>
+  <body>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>Tribute Demo</h1>
+      </div>
+    </div>
+
+    <div class="row" id="content">
+      <div class="large-8 medium-8 columns">
+        <h5>Tribute on WYSIWYG editor!</h5>
+        <form>
+          <div class="row">
+            <div class="large-12 columns">
+              <textarea name="editor1"></textarea>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+    <script src="../dist/tribute.js?2983982"></script>
+    <script src="https://cdn.ckeditor.com/4.7.2/standard/ckeditor.js"></script>
+    <script>
+      var editor = CKEDITOR.replace('editor1', {
+        contentsCss: [
+          'css/foundation.min.css',
+          '../dist/tribute.css',
+          'css/ckeditor.css'
+        ]
+      });
+
+      editor.on('instanceReady', function(event) {
+        var editorBody = editor.document.getDocumentElement('body');
+        var tribute = new Tribute({
+          menuContainer: editor.document.$.body,
+          iframe: editor.window.$,
+          values: [
+            {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com'},
+            {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com'}
+          ],
+          selectTemplate: function (item) {
+            if (this.range.isContentEditable(this.current.element)) {
+              return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
+            }
+
+            return '@' + item.original.value;
+          },
+          noMatchTemplate: function (tribute) {
+            return '<li>No match!</li>';
+          }
+        });
+        tribute.attach(editorBody.$)
+      });
+    </script>
+  </body>
+</html>

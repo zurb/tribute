@@ -83,7 +83,6 @@ class TributeEvents {
 
         if (!instance.tribute.isActive) {
             let keyCode = instance.getKeyCode(instance, this, event)
-
             if (isNaN(keyCode) || !keyCode) return
 
             let trigger = instance.tribute.triggers().find(trigger => {
@@ -154,7 +153,9 @@ class TributeEvents {
             },
             enter: (e, el) => {
                 // choose selection
+                console.log('enter!')
                 if (this.tribute.isActive) {
+                    console.log('tribute is active!')
                     e.preventDefault()
                     e.stopPropagation()
                     setTimeout(() => {
@@ -254,7 +255,7 @@ class TributeEvents {
       let height = elem.getBoundingClientRect().height
 
       if (includeMargin) {
-        let style = elem.currentStyle || window.getComputedStyle(elem)
+        let style = elem.currentStyle || this.tribute.range.getWindow(this.tribute.current).getComputedStyle(elem)
         return height + parseFloat(style.marginTop) + parseFloat(style.marginBottom)
       }
 
