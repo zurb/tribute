@@ -334,11 +334,11 @@ class Tribute {
         if (typeof index !== 'number') return
         let item = this.current.filteredItems[index]
         let content = this.current.collection.selectTemplate(item)
-        this.replaceText(content, originalEvent)
+        this.replaceText(content, originalEvent, item)
     }
 
-    replaceText(content, originalEvent) {
-        this.range.replaceTriggerText(content, true, true, originalEvent)
+    replaceText(content, originalEvent, item) {
+        this.range.replaceTriggerText(content, true, true, originalEvent, item)
     }
 
     _append(collection, newValues, replace) {
