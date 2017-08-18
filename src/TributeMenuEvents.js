@@ -8,7 +8,7 @@ class TributeMenuEvents {
     bind(menu) {
         menu.addEventListener('keydown',
             this.tribute.events.keydown.bind(this.menu, this), false)
-        this.tribute.range.getDocument().addEventListener('click',
+        this.tribute.range.getDocument().addEventListener('mousedown',
             this.tribute.events.click.bind(null, this), false)
         window.addEventListener('resize', this.debounce(() => {
             if (this.tribute.isActive) {
