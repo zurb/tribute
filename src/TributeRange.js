@@ -21,9 +21,10 @@ class TributeRange {
     positionMenuAtCaret(scrollTo) {
         let context = this.tribute.current,
             coordinates
+
         let info = this.getTriggerInfo(false, false, true, this.tribute.allowSpaces)
 
-        if (info !== undefined) {
+        if (typeof info !== 'undefined') {
             if (!this.isContentEditable(context.element)) {
                 coordinates = this.getTextAreaOrInputUnderlinePosition(this.getDocument().activeElement,
                     info.mentionPosition)
@@ -32,14 +33,13 @@ class TributeRange {
                 coordinates = this.getContentEditableCaretPosition(info.mentionPosition)
             }
 
-            // Move the button into place.
-            this.tribute.menu.style.cssText = `top: ${coordinates.top}px;
-                                       left: ${coordinates.left}px;
-                                       position: absolute;
-                                       zIndex: 10000;
-                                       display: block;`
-
             setTimeout(() => {
+                this.tribute.menu.style.cssText = `top: ${coordinates.top}px;
+                                         left: ${coordinates.left}px;
+                                         position: absolute;
+                                         zIndex: 10000;
+                                         display: block;`
+
                 if (scrollTo) this.scrollIntoView(this.getDocument().activeElement)
             }, 0)
         } else {
@@ -81,6 +81,7 @@ class TributeRange {
         targetElement.focus()
     }
 
+    // TODO: this may not be necessary anymore as we are using mouseup instead of click
     resetSelection(targetElement, path, offset) {
         if (!this.isContentEditable(targetElement)) {
             if (targetElement !== this.getDocument().activeElement) {
@@ -91,15 +92,19 @@ class TributeRange {
         }
     }
 
-    replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace) {
+    replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace, originalEvent, item) {
         let context = this.tribute.current
-        this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
+        // TODO: this may not be necessary anymore as we are using mouseup instead of click
+        // this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
 
         let info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace, this.tribute.allowSpaces)
 
         // Create the event
         let replaceEvent = new CustomEvent('tribute-replaced', {
-            detail: text
+            detail: {
+                item: item,
+                event: originalEvent
+            }
         })
 
         if (info !== undefined) {
@@ -178,8 +183,7 @@ class TributeRange {
         }
     }
 
-    getContentEditableSelectedPath() {
-        // content editable
+    getContentEditableSelectedPath(ctx) {
         let sel = this.getWindowSelection()
         let selected = sel.anchorNode
         let path = []
@@ -241,8 +245,7 @@ class TributeRange {
         if (!this.isContentEditable(ctx.element)) {
             selected = this.getDocument().activeElement
         } else {
-            // content editable
-            let selectionInfo = this.getContentEditableSelectedPath()
+            let selectionInfo = this.getContentEditableSelectedPath(ctx)
 
             if (selectionInfo) {
                 selected = selectionInfo.selected

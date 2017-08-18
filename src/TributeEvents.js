@@ -58,18 +58,17 @@ class TributeEvents {
 
     click(instance, event) {
         let tribute = instance.tribute
-
         if (tribute.menu && tribute.menu.contains(event.target)) {
             let li = event.target
+            event.preventDefault()
+            event.stopPropagation()
             while (li.nodeName.toLowerCase() !== 'li') {
                 li = li.parentNode
                 if (!li || li === tribute.menu) {
                     throw new Error('cannot find the <li> container for the click')
                 }
             }
-            tribute.selectItemAtIndex(li.getAttribute('data-index'))
-            tribute.hideMenu()
-        } else if (tribute.current.element) {
+            tribute.selectItemAtIndex(li.getAttribute('data-index'), event)
             tribute.hideMenu()
         }
     }
@@ -157,8 +156,9 @@ class TributeEvents {
                 // choose selection
                 if (this.tribute.isActive) {
                     e.preventDefault()
+                    e.stopPropagation()
                     setTimeout(() => {
-                        this.tribute.selectItemAtIndex(this.tribute.menuSelected)
+                        this.tribute.selectItemAtIndex(this.tribute.menuSelected, e)
                         this.tribute.hideMenu()
                     }, 0)
                 }
@@ -166,6 +166,7 @@ class TributeEvents {
             escape: (e, el) => {
                 if (this.tribute.isActive) {
                     e.preventDefault()
+                    e.stopPropagation()
                     this.tribute.hideMenu()
                 }
             },
@@ -177,6 +178,7 @@ class TributeEvents {
                 // navigate up ul
                 if (this.tribute.isActive) {
                     e.preventDefault()
+                    e.stopPropagation()
                     let count = this.tribute.current.filteredItems.length,
                         selected = this.tribute.menuSelected
 
@@ -194,6 +196,7 @@ class TributeEvents {
                 // navigate down ul
                 if (this.tribute.isActive) {
                     e.preventDefault()
+                    e.stopPropagation()
                     let count = this.tribute.current.filteredItems.length - 1,
                         selected = this.tribute.menuSelected
 
