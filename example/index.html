@@ -140,8 +140,8 @@
       tributeMultipleTriggers.attach(document.getElementById('testMultiple'));
 
       document.getElementById('test').addEventListener('tribute-replaced', function (e) {
-        console.log('Text replaced by Tribute!', e.detail.text);
         console.log('Original Event:', e.detail.event);
+        console.log('Matched item:', e.detail.item);
       });
 
       document.getElementById('test').addEventListener('tribute-no-match', function (e) {
