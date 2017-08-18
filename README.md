@@ -1,4 +1,6 @@
 # Tribute
+[![CDNJS version](https://img.shields.io/cdnjs/v/tributejs.svg)](https://cdnjs.com/libraries/tributejs)
+
 A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Firefox, Chrome, iOS Safari, Safari, IE 9+, Edge 12+, Android 4+, and Windows Phone.
 
 - [Installing](#installing)
@@ -170,7 +172,11 @@ Collection object shown with defaults:
   requireLeadingSpace: true,
 
   // specify whether a space is allowed in the middle of mentions
-  allowSpaces: false
+  allowSpaces: false,
+
+  // optionally specify a custom suffix for the replace text
+  // (defaults to empty space if undefined)
+  replaceTextSuffix: '\n',
 }
 ```
 
@@ -206,7 +212,8 @@ You can bind to the `tribute-replaced` event to know when we have updated your t
 If your element has an ID of `myElement`:
 ```js
 document.getElementById('myElement').addEventListener('tribute-replaced', function (e) {
-  console.log('Text replaced!');
+  console.log('Text replaced with:', e.detail.text);
+  console.log('Original event that triggered text replacement:', e.detail.event);
 });
 ```
 

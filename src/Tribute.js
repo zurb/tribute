@@ -1,4 +1,4 @@
-import "./utils";
+import TributeUtils from "./utils";
 import TributeEvents from "./TributeEvents";
 import TributeMenuEvents from "./TributeMenuEvents";
 import TributeRange from "./TributeRange";
@@ -19,6 +19,7 @@ class Tribute {
         noMatchTemplate = null,
         requireLeadingSpace = true,
         allowSpaces = false,
+        replaceTextSuffix = null,
     }) {
 
         this.menuSelected = 0
@@ -27,6 +28,7 @@ class Tribute {
         this.isActive = false
         this.menuContainer = menuContainer
         this.allowSpaces = allowSpaces
+        this.replaceTextSuffix = replaceTextSuffix
 
         if (values) {
             this.collection = [{
@@ -287,16 +289,16 @@ class Tribute {
         }
     }
 
-    selectItemAtIndex(index) {
+    selectItemAtIndex(index, originalEvent) {
         index = parseInt(index)
         if (typeof index !== 'number') return
         let item = this.current.filteredItems[index]
         let content = this.current.collection.selectTemplate(item)
-        this.replaceText(content)
+        this.replaceText(content, originalEvent)
     }
 
-    replaceText(content) {
-        this.range.replaceTriggerText(content, true, true)
+    replaceText(content, originalEvent) {
+        this.range.replaceTriggerText(content, true, true, originalEvent)
     }
 
     _append(collection, newValues, replace) {

@@ -93,7 +93,7 @@ class TributeRange {
         }
     }
 
-    replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace) {
+    replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace, originalEvent) {
         let context = this.tribute.current
         this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
 
@@ -101,22 +101,31 @@ class TributeRange {
 
         // Create the event
         let replaceEvent = new CustomEvent('tribute-replaced', {
-            detail: text
+            detail: {
+                text: text,
+                event: originalEvent
+            }
         })
 
         if (info !== undefined) {
             if (!this.isContentEditable(context.element)) {
                 let myField = this.getDocument().activeElement
-                text += ' '
+                let textSuffix = typeof this.tribute.replaceTextSuffix == 'string'
+                    ? this.tribute.replaceTextSuffix
+                    : ' '
+                text += textSuffix
                 let startPos = info.mentionPosition
-                let endPos = info.mentionPosition + info.mentionText.length + 1
+                let endPos = info.mentionPosition + info.mentionText.length + textSuffix.length
                 myField.value = myField.value.substring(0, startPos) + text +
                     myField.value.substring(endPos, myField.value.length)
                 myField.selectionStart = startPos + text.length
                 myField.selectionEnd = startPos + text.length
             } else {
                 // add a space to the end of the pasted text
-                text += '\xA0'
+                let textSuffix = typeof this.tribute.replaceTextSuffix == 'string'
+                    ? this.tribute.replaceTextSuffix
+                    : '\xA0'
+                text += textSuffix
                 this.pasteHtml(text, info.mentionPosition,
                     info.mentionPosition + info.mentionText.length + 1)
             }
