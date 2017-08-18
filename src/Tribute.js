@@ -267,16 +267,16 @@ class Tribute {
         }
     }
 
-    selectItemAtIndex(index) {
+    selectItemAtIndex(index, originalEvent) {
         index = parseInt(index)
         if (typeof index !== 'number') return
         let item = this.current.filteredItems[index]
         let content = this.current.collection.selectTemplate(item)
-        this.replaceText(content)
+        this.replaceText(content, originalEvent)
     }
 
-    replaceText(content) {
-        this.range.replaceTriggerText(content, true, true)
+    replaceText(content, originalEvent) {
+        this.range.replaceTriggerText(content, true, true, originalEvent)
     }
 
     _append(collection, newValues, replace) {

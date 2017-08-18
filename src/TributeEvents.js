@@ -69,7 +69,7 @@ class TributeEvents {
                     throw new Error('cannot find the <li> container for the click')
                 }
             }
-            tribute.selectItemAtIndex(li.getAttribute('data-index'))
+            tribute.selectItemAtIndex(li.getAttribute('data-index'), event)
             tribute.hideMenu()
         } else if (tribute.current.element) {
             tribute.hideMenu()
@@ -161,7 +161,7 @@ class TributeEvents {
                     e.preventDefault()
                     e.stopPropagation()
                     setTimeout(() => {
-                        this.tribute.selectItemAtIndex(this.tribute.menuSelected)
+                        this.tribute.selectItemAtIndex(this.tribute.menuSelected, e)
                         this.tribute.hideMenu()
                     }, 0)
                 }

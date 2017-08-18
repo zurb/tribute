@@ -212,7 +212,8 @@ You can bind to the `tribute-replaced` event to know when we have updated your t
 If your element has an ID of `myElement`:
 ```js
 document.getElementById('myElement').addEventListener('tribute-replaced', function (e) {
-  console.log('Text replaced!');
+  console.log('Text replaced with:', e.detail.text);
+  console.log('Original event that triggered text replacement:', e.detail.event);
 });
 ```
 

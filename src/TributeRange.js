@@ -91,7 +91,7 @@ class TributeRange {
         }
     }
 
-    replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace) {
+    replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace, originalEvent) {
         let context = this.tribute.current
         this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
 
@@ -99,7 +99,10 @@ class TributeRange {
 
         // Create the event
         let replaceEvent = new CustomEvent('tribute-replaced', {
-            detail: text
+            detail: {
+                text: text,
+                event: originalEvent
+            }
         })
 
         if (info !== undefined) {
