@@ -58,7 +58,6 @@ class TributeEvents {
 
     click(instance, event) {
         let tribute = instance.tribute
-        console.log('tribute.current', tribute.current)
         if (tribute.menu && tribute.menu.contains(event.target)) {
             let li = event.target
             event.preventDefault()
@@ -70,8 +69,6 @@ class TributeEvents {
                 }
             }
             tribute.selectItemAtIndex(li.getAttribute('data-index'), event)
-            tribute.hideMenu()
-        } else if (tribute.current.element && !tribute.current.externalTrigger) {
             tribute.hideMenu()
         }
     }

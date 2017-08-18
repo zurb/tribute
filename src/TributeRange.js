@@ -22,9 +22,7 @@ class TributeRange {
         let context = this.tribute.current,
             coordinates
 
-            console.log('context', context)
         let info = this.getTriggerInfo(false, false, true, this.tribute.allowSpaces)
-        console.log('info:', info)
 
         if (typeof info !== 'undefined') {
             if (!this.isContentEditable(context.element)) {
@@ -83,6 +81,7 @@ class TributeRange {
         targetElement.focus()
     }
 
+    // TODO: this may not be necessary anymore as we are using mouseup instead of click
     resetSelection(targetElement, path, offset) {
         if (!this.isContentEditable(targetElement)) {
             if (targetElement !== this.getDocument().activeElement) {
@@ -95,7 +94,8 @@ class TributeRange {
 
     replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace, originalEvent) {
         let context = this.tribute.current
-        this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
+        // TODO: this may not be necessary anymore as we are using mouseup instead of click
+        // this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
 
         let info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace, this.tribute.allowSpaces)
 
@@ -184,16 +184,10 @@ class TributeRange {
     }
 
     getContentEditableSelectedPath(ctx) {
-        if (ctx.externalTrigger) {
-           sel = ctx.element
-        }
-        // content editable
         let sel = this.getWindowSelection()
         let selected = sel.anchorNode
         let path = []
         let offset
-
-        console.log('sel:', sel)
 
         if (selected != null) {
             let i
@@ -316,16 +310,6 @@ class TributeRange {
                         mentionTriggerChar: triggerChar
                     }
                 }
-            } else if (ctx.externalTrigger) {
-            //   delete ctx.externalTrigger;
-              return {
-                  mentionPosition: 0,
-                  mentionText: '',
-                  mentionSelectedElement: selected,
-                  mentionSelectedPath: {0: 1},
-                  mentionSelectedOffset: 1,
-                  mentionTriggerChar: ctx.trigger
-              }
             }
         }
     }

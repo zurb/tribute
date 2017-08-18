@@ -40,7 +40,7 @@
       <div class="large-8 columns">
         <div class="callout large">
           <h5>Tribute on <code>contenteditable</code> element:</h5>
-          <a id="activateInput">Activate!</a>
+          <a id="activateInput">@mention</a>
           <p id="test" class="tribute-demo-input" placeholder="Enter some text here"></p>
 
           <h5>Tribute with a local collection (on <code>@</code>) and a remote one (on <code>#</code>):</h5>
@@ -126,11 +126,10 @@
           },
 
           // function retrieving an array of objects
-          values: function (text, cb) {
-            remoteSearch(text, function (users) {
-              cb(users);
-            });
-          },
+          values: [
+            {name: 'Bob Bill', email: 'bobbill@example.com'},
+            {name: 'Steve Stevenston', email: 'steve@example.com'}
+          ],
 
           lookup: 'name',
 
@@ -150,36 +149,10 @@
         tribute.appendCurrent(values);
       });
 
-
-      function remoteSearch(text, cb) {
-        var URL = 'http://mockbin.org/bin/7de4a9db-5599-4634-be1c-03b2489226e6';
-        xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function ()
-        {
-          if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-              var data = JSON.parse(xhr.responseText);
-              // Filter data now, as that isn't implemented on mockbin.org yet.
-              // Mock data: http://mockbin.org/bin/7de4a9db-5599-4634-be1c-03b2489226e6
-              if (text.length) {
-                data = data.filter(function (item) {
-                  return item.name.toLowerCase().indexOf(text.toLowerCase()) !== -1;
-                });
-              }
-              cb(data);
-            } else if (xhr.status === 403) {
-              cb([]);
-            }
-          }
-        };
-        xhr.open("GET", URL + '?q=' + text, true);
-        xhr.send();
-      }
-
       var activateLink = document.getElementById('activateInput');
 
       if (activateLink) {
-        activateLink.addEventListener('click', function (e) {
+        activateLink.addEventListener('mousedown', function (e) {
           e.preventDefault();
           var input = document.getElementById('test');
 
