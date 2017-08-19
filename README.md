@@ -204,6 +204,24 @@ Both the `selectTemplate` and the `menuItemTemplate` have access to the `item` o
 }
 ```
 
+### Trigger tribute programmatically
+Tribute can be manually triggered by calling an instances `showMenuForCollection` method. This is great for trigging tribute on an input by clicking an anchor or button element.
+
+```
+<a id="activateInput">@mention</a>
+```
+
+Then you can bind a `mousedown` event to the anchor and call `showMenuForCollection`.
+
+```js
+activateLink.addEventListener('mousedown', function (e) {
+  e.preventDefault();
+  var input = document.getElementById('test');
+
+  tribute.showMenuForCollection(input);
+});
+```
+
 ## Events
 
 ### Replaced
@@ -212,7 +230,8 @@ You can bind to the `tribute-replaced` event to know when we have updated your t
 If your element has an ID of `myElement`:
 ```js
 document.getElementById('myElement').addEventListener('tribute-replaced', function (e) {
-  console.log('Text replaced!');
+  console.log('Original event that triggered text replacement:', e.detail.event);
+  console.log('Matched item:', e.detail.item);
 });
 ```
 

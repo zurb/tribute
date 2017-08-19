@@ -201,6 +201,7 @@ class Tribute {
             if (!this.isActive) {
                 return
             }
+
             let items = this.search.filter(this.current.mentionText, values, {
                 pre: '<span>',
                 post: '</span>',
@@ -216,6 +217,7 @@ class Tribute {
             })
 
             this.current.filteredItems = items
+
 
             let ul = this.menu.querySelector('ul')
 
@@ -258,6 +260,66 @@ class Tribute {
         }
     }
 
+    showMenuForCollection(element, collectionIndex) {
+        if (element !== document.activeElement) {
+            this.placeCaretAtEnd(element)
+        }
+
+        this.current.collection = this.collection[collectionIndex || 0]
+        this.current.element = element
+
+        this.insertTextAtCursor(this.current.collection.trigger)
+        this.showMenuFor(element)
+    }
+
+    // TODO: make sure this works for inputs/textareas
+    placeCaretAtEnd(el) {
+        el.focus();
+        if (typeof window.getSelection != "undefined"
+                && typeof document.createRange != "undefined") {
+            var range = document.createRange();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        } else if (typeof document.body.createTextRange != "undefined") {
+            var textRange = document.body.createTextRange();
+            textRange.moveToElementText(el);
+            textRange.collapse(false);
+            textRange.select();
+        }
+    }
+
+    // for contenteditable
+    insertTextAtCursor(text) {
+        var sel, range, html;
+        sel = window.getSelection();
+        range = sel.getRangeAt(0);
+        range.deleteContents();
+        var textNode = document.createTextNode(text);
+        range.insertNode(textNode);
+        range.selectNodeContents(textNode)
+        range.collapse(false)
+        sel.removeAllRanges()
+        sel.addRange(range)
+    }
+
+    // for regular inputs
+    insertAtCaret(textarea, text) {
+        var scrollPos = txtarea.scrollTop;
+        var caretPos = txtarea.selectionStart;
+
+        var front = (txtarea.value).substring(0, caretPos);
+        var back = (txtarea.value).substring(txtarea.selectionEnd, txtarea.value.length);
+        txtarea.value = front + text + back;
+        caretPos = caretPos + text.length;
+        txtarea.selectionStart = caretPos;
+        txtarea.selectionEnd = caretPos;
+        txtarea.focus();
+        txtarea.scrollTop = scrollPos;
+    }
+
     hideMenu() {
         if (this.menu) {
             this.menu.style.cssText = 'display: none;'
@@ -267,16 +329,16 @@ class Tribute {
         }
     }
 
-    selectItemAtIndex(index) {
+    selectItemAtIndex(index, originalEvent) {
         index = parseInt(index)
         if (typeof index !== 'number') return
         let item = this.current.filteredItems[index]
         let content = this.current.collection.selectTemplate(item)
-        this.replaceText(content)
+        this.replaceText(content, originalEvent, item)
     }
 
-    replaceText(content) {
-        this.range.replaceTriggerText(content, true, true)
+    replaceText(content, originalEvent, item) {
+        this.range.replaceTriggerText(content, true, true, originalEvent, item)
     }
 
     _append(collection, newValues, replace) {
