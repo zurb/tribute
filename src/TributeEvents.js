@@ -157,6 +157,7 @@ class TributeEvents {
             triggerChar: (e, el, trigger) => {
                 let tribute = this.tribute
                 tribute.current.trigger = trigger
+                console.log('trigger:', trigger, e)
 
                 let collectionItem = tribute.collection.find(item => {
                     return item.trigger === trigger

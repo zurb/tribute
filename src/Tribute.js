@@ -391,10 +391,13 @@ class Tribute {
 
     _detach(el) {
         this.events.unbind(el)
-        el.removeAttribute('data-tribute')
-        this.isActive = false
-        this.menu.remove()
-        delete this.menu
+        this.menuEvents.unbind(this.menu)
+
+        setTimeout(() => {
+            el.removeAttribute('data-tribute')
+            this.isActive = false
+            this.menu.remove()
+        })
     }
 
 
