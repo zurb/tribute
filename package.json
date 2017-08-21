@@ -32,8 +32,5 @@
     "test": "karma start test/karma.conf.js"
   },
   "author": "Jordan Humphreys <jordan@zurb.com>",
-  "license": "MIT",
-  "dependencies": {
-    "gulp": "^3.9.1"
-  }
+  "license": "MIT"
 }
