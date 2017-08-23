@@ -37,7 +37,6 @@ class TributeEvents {
 
     keydown(instance, event) {
         if (instance.shouldDeactivate(event)) {
-            console.log('shouldDeactivate')
             instance.tribute.isActive = false
             instance.tribute.hideMenu()
         }
