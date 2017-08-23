@@ -443,6 +443,8 @@ class TributeRange {
         let maxScrollDisplacement = 100
         let e = this.menu
 
+        if (typeof e === 'undefined') return;
+
         while (clientRect === undefined || clientRect.height === 0) {
             clientRect = e.getBoundingClientRect()
 
