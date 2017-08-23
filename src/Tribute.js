@@ -266,6 +266,7 @@ class Tribute {
         }
 
         this.current.collection = this.collection[collectionIndex || 0]
+        this.current.externalTrigger = true
         this.current.element = element
 
         this.insertTextAtCursor(this.current.collection.trigger)
