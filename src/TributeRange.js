@@ -40,7 +40,7 @@ class TributeRange {
                                          zIndex: 10000;
                                          display: block;`
 
-                if (scrollTo) this.scrollIntoView(this.getDocument().activeElement)
+                if (scrollTo) this.scrollIntoView()
             }, 0)
         } else {
             this.tribute.menu.style.cssText = 'display: none'
@@ -445,7 +445,9 @@ class TributeRange {
         let reasonableBuffer = 20,
             clientRect
         let maxScrollDisplacement = 100
-        let e = elem
+        let e = this.menu
+
+        if (typeof e === 'undefined') return;
 
         while (clientRect === undefined || clientRect.height === 0) {
             clientRect = e.getBoundingClientRect()
