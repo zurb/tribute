@@ -215,12 +215,16 @@ class TributeRange {
 
     getTextPrecedingCurrentSelection() {
         let context = this.tribute.current,
-            text
+            text = ''
 
         if (!this.isContentEditable(context.element)) {
             let textComponent = this.getDocument().activeElement
-            let startPos = textComponent.selectionStart
-            text = textComponent.value.substring(0, startPos)
+            if (textComponent) {
+                let startPos = textComponent.selectionStart
+                if (textComponent.value && startPos >= 0) {
+                    text = textComponent.value.substring(0, startPos)
+                }
+            }
 
         } else {
             let selectedElem = this.getWindowSelection().anchorNode
@@ -229,7 +233,7 @@ class TributeRange {
                 let workingNodeContent = selectedElem.textContent
                 let selectStartOffset = this.getWindowSelection().getRangeAt(0).startOffset
 
-                if (selectStartOffset >= 0) {
+                if (workingNodeContent && selectStartOffset >= 0) {
                     text = workingNodeContent.substring(0, selectStartOffset)
                 }
             }
