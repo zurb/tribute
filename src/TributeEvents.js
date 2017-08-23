@@ -51,6 +51,7 @@ class TributeEvents {
     keydown(instance, event) {
         if (instance.shouldDeactivate(event)) {
             instance.tribute.isActive = false
+            instance.tribute.hideMenu()
         }
 
         let element = this
@@ -83,6 +84,8 @@ class TributeEvents {
             }
             tribute.selectItemAtIndex(li.getAttribute('data-index'), event)
             tribute.hideMenu()
+        } else if (tribute.current.element) {
+            setTimeout(() => tribute.hideMenu())
         }
     }
 
@@ -181,6 +184,7 @@ class TributeEvents {
                 if (this.tribute.isActive) {
                     e.preventDefault()
                     e.stopPropagation()
+                    this.tribute.isActive = false
                     this.tribute.hideMenu()
                 }
             },
