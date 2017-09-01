@@ -262,15 +262,19 @@ class Tribute {
 
     showMenuForCollection(element, collectionIndex) {
         if (element !== document.activeElement) {
-            this.placeCaretAtEnd(element)
+            this.placeCaretAtEnd(element);
         }
 
-        this.current.collection = this.collection[collectionIndex || 0]
-        this.current.externalTrigger = true
-        this.current.element = element
+        this.current.collection = this.collection[collectionIndex || 0];
+        this.current.externalTrigger = true;
+        this.current.element = element;
 
-        this.insertTextAtCursor(this.current.collection.trigger)
-        this.showMenuFor(element)
+        if (element.isContentEditable)
+            this.insertTextAtCursor(this.current.collection.trigger);
+        else
+            this.insertAtCaret(element, this.current.collection.trigger);
+
+        this.showMenuFor(element);
     }
 
     // TODO: make sure this works for inputs/textareas
@@ -308,17 +312,17 @@ class Tribute {
 
     // for regular inputs
     insertAtCaret(textarea, text) {
-        var scrollPos = txtarea.scrollTop;
-        var caretPos = txtarea.selectionStart;
+        var scrollPos = textarea.scrollTop;
+        var caretPos = textarea.selectionStart;
 
-        var front = (txtarea.value).substring(0, caretPos);
-        var back = (txtarea.value).substring(txtarea.selectionEnd, txtarea.value.length);
-        txtarea.value = front + text + back;
+        var front = (textarea.value).substring(0, caretPos);
+        var back = (textarea.value).substring(textarea.selectionEnd, textarea.value.length);
+        textarea.value = front + text + back;
         caretPos = caretPos + text.length;
-        txtarea.selectionStart = caretPos;
-        txtarea.selectionEnd = caretPos;
-        txtarea.focus();
-        txtarea.scrollTop = scrollPos;
+        textarea.selectionStart = caretPos;
+        textarea.selectionEnd = caretPos;
+        textarea.focus();
+        textarea.scrollTop = scrollPos;
     }
 
     hideMenu() {
