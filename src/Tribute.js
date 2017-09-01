@@ -262,19 +262,19 @@ class Tribute {
 
     showMenuForCollection(element, collectionIndex) {
         if (element !== document.activeElement) {
-            this.placeCaretAtEnd(element);
+            this.placeCaretAtEnd(element)
         }
 
-        this.current.collection = this.collection[collectionIndex || 0];
-        this.current.externalTrigger = true;
-        this.current.element = element;
+        this.current.collection = this.collection[collectionIndex || 0]
+        this.current.externalTrigger = true
+        this.current.element = element
 
         if (element.isContentEditable)
-            this.insertTextAtCursor(this.current.collection.trigger);
+            this.insertTextAtCursor(this.current.collection.trigger)
         else
-            this.insertAtCaret(element, this.current.collection.trigger);
+            this.insertAtCaret(element, this.current.collection.trigger)
 
-        this.showMenuFor(element);
+        this.showMenuFor(element)
     }
 
     // TODO: make sure this works for inputs/textareas
