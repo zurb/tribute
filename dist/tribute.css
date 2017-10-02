@@ -20,5 +20,7 @@
       background: #ddd; }
     .tribute-container li span {
       font-weight: bold; }
+    .tribute-container li.no-match {
+      cursor: default; }
   .tribute-container .menu-highlighted {
     font-weight: bold; }

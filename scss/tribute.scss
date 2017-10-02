@@ -27,6 +27,10 @@
     span {
       font-weight: bold;
     }
+
+    &.no-match {
+      cursor: default;
+    }
   }
 
   .menu-highlighted {

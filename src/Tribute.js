@@ -51,7 +51,7 @@ class Tribute {
                         return t.bind(this)
                     }
 
-                    return function () {return '<li>No match!</li>'}.bind(this)
+                    return function () {return '<li class="no-match">No match!</li>'}.bind(this)
                 })(noMatchTemplate),
 
                 // column to search against in the object
@@ -100,6 +100,7 @@ class Tribute {
     }
 
     static defaultSelectTemplate(item) {
+      if (typeof item === 'undefined') return null;
       if (this.range.isContentEditable(this.current.element)) {
           return '<span class="tribute-mention">' + (this.current.collection.trigger + item.original[this.current.collection.fillAttr]) + '</span>';
       }
@@ -339,7 +340,7 @@ class Tribute {
         if (typeof index !== 'number') return
         let item = this.current.filteredItems[index]
         let content = this.current.collection.selectTemplate(item)
-        this.replaceText(content, originalEvent, item)
+        if (content !== null) this.replaceText(content, originalEvent, item)
     }
 
     replaceText(content, originalEvent, item) {

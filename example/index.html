@@ -80,6 +80,7 @@
           {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com'}
         ],
         selectTemplate: function (item) {
+          if (typeof item === 'undefined') return null;
           if (this.range.isContentEditable(this.current.element)) {
             return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
           }
@@ -103,6 +104,8 @@
             return '@' + item.original.value;
           },
 
+          noMatchTemplate: function() { return null; },
+
           // the array of objects
           values: [
             {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'jordan@zurb.com'},
@@ -121,6 +124,8 @@
 
             return '#' + item.original.name;
           },
+
+          noMatchTemplate: function() { return null; },
 
           // function retrieving an array of objects
           values: [
