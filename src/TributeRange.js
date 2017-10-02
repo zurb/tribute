@@ -34,6 +34,24 @@ class TributeRange {
             }
 
             setTimeout(() => {
+                if (this.tribute.menu.offsetWidth > 0) {
+                    // Not sure why but offsetWidth is 0 when the tribute menu gets loaded the 2nd time -> because somehow it gets attached to the DOM
+                    // later than the first time. that is why this new property is introduced and set here.
+                    this.tribute.menuWidth = this.tribute.menu.offsetWidth
+                }
+                if (this.tribute.menuWidth) {
+                    const rightBorderPosition = this.tribute.menuWidth + coordinates.left;
+                    if (rightBorderPosition > this.tribute.current.element.offsetWidth){
+                        var numberOfPixelMenuIsTooWide = rightBorderPosition - this.tribute.current.element.offsetWidth;
+                        var newLeft = coordinates.left - numberOfPixelMenuIsTooWide;
+                        if (newLeft > 0) {
+                            coordinates.left = newLeft;
+                        } else {
+                            coordinates.left = 0; // The left property should never be negative. That is why this check is made
+                        }
+                    }
+                }
+                
                 this.tribute.menu.style.cssText = `top: ${coordinates.top}px;
                                          left: ${coordinates.left}px;
                                          position: absolute;
