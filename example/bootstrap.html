@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="https://production-assets.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico">
+  <link rel="mask-icon" type="" href="https://production-assets.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg" color="#111">
+  <title>CodePen - Tribute Debug Template</title>
+
+  <link rel="stylesheet prefetch" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../dist/tribute.css" />
+
+  <style>
+    .tribute-demo-input {
+      outline: none;
+      border: 1px solid #eee;
+      padding: 3px 5px;
+      border-radius: 2px;
+      font-size: 15px;
+      min-height: 32px;
+      cursor: text;
+    }
+    .tribute-demo-input:focus {
+      border-color: #d1d1d1;
+      background-color: #fbfbfb;
+    }
+    [contenteditable="true"]:empty:before {
+      content: attr(placeholder);
+      display: block;
+      color: #ccc;
+    }
+  </style>
+</head>
+
+<body translate="no">
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="row">
+          <div class="col-lg-12">
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active">
+            <div class="panel panel-info">
+              <div class="panel-body">
+                <div class="form-group">
+                  <textarea id="editComment" name="comment" class="form-control" maxlength="20000" style="resize:vertical;max-height:200px;" data-tribute="true">Testing123</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script src="../dist/tribute.js?2973982"></script>
+
+    <script>
+      // example of alternative callback
+      var tribute = new Tribute({
+        values: [
+          {
+            key: "Jordan Humphreys",
+            value: "Jordan Humphreys",
+            email: "getstarted@zurb.com"
+          },
+          {
+            key: "Sir Walter Riley",
+            value: "Sir Walter Riley",
+            email: "getstarted+riley@zurb.com"
+          }
+        ],
+        selectTemplate: function(item) {
+          if (typeof item === "undefined") return null;
+          if (this.range.isContentEditable(this.current.element)) {
+            return (
+              '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' +
+              item.original.email +
+              '">' +
+              item.original.value +
+              "</a></span>"
+            );
+          }
+
+          return "@" + item.original.value;
+        }
+      });
+
+      tribute.attach(document.getElementById("editComment"));
+    </script>
+  </body>
+</html>

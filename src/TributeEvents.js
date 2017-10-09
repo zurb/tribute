@@ -58,6 +58,7 @@ class TributeEvents {
     }
 
     click(instance, event) {
+        console.log('click!')
         let tribute = instance.tribute
         if (tribute.menu && tribute.menu.contains(event.target)) {
             let li = event.target
