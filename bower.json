@@ -1,7 +1,7 @@
 {
   "name": "tribute",
   "description": "Native ES6 @mentions",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "main": [
     "dist/tribute.js",
     "dist/tribute.css"
