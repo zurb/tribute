@@ -177,6 +177,10 @@ Collection object shown with defaults:
   // optionally specify a custom suffix for the replace text
   // (defaults to empty space if undefined)
   replaceTextSuffix: '\n',
+  
+  // specify whether the menu should be positioned.  Set to false and use in conjuction with menuContainer to create an inline menu
+  // (defaults to true)
+  positionMenu: true,
 }
 ```
 
