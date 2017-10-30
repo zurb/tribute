@@ -25,6 +25,12 @@ class TributeRange {
         let info = this.getTriggerInfo(false, false, true, this.tribute.allowSpaces)
 
         if (typeof info !== 'undefined') {
+
+            if(!this.tribute.positionMenu){
+                this.tribute.menu.style.cssText = `display: block;`
+                return
+            }
+
             if (!this.isContentEditable(context.element)) {
                 coordinates = this.getTextAreaOrInputUnderlinePosition(this.getDocument().activeElement,
                     info.mentionPosition)
