@@ -224,6 +224,8 @@ class Tribute {
 
             let ul = this.menu.querySelector('ul')
 
+            this.range.positionMenuAtCaret(scrollTo)
+
             if (!items.length) {
                 let noMatchEvent = new CustomEvent('tribute-no-match', { detail: this.menu })
                 this.current.element.dispatchEvent(noMatchEvent)
@@ -252,8 +254,6 @@ class Tribute {
                 li.innerHTML = this.current.collection.menuItemTemplate(item)
                 ul.appendChild(li)
             })
-
-            this.range.positionMenuAtCaret(scrollTo)
         }
 
         if (typeof this.current.collection.values === 'function') {
