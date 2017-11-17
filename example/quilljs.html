@@ -1,0 +1,80 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZURB Tribute | Demo</title>
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="../dist/tribute.css" />
+    <link href="https://cdn.quilljs.com/1.0.0/quill.snow.css" rel="stylesheet">
+    <style>
+      .tribute-demo-input {
+        outline: none;
+        border: 1px solid #eee;
+        padding: 3px 5px;
+        border-radius: 2px;
+        font-size: 15px;
+        min-height: 32px;
+        cursor: text;
+      }
+      .tribute-demo-input:focus {
+        border-color: #d1d1d1;
+        background-color: #fbfbfb;
+      }
+      [contenteditable=true]:empty:before{
+        content: attr(placeholder);
+        display: block;
+        color: #ccc;
+      }
+
+      .float-right {
+        float: right;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Create the editor container -->
+    <div id="editor">
+      <p>Hello World!</p>
+    </div>
+
+    <!-- Include the Quill library -->
+    <script src="https://cdn.quilljs.com/1.0.0/quill.js"></script>
+    <script src="../dist/tribute.js"></script>
+
+    <!-- Initialize Quill editor -->
+    <script>
+      var editor = new Quill('#editor', {
+        // modules: { toolbar: '#toolbar' },
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, 3, false] }],
+            [{ 'font': ['roboto'] }],
+            [{ 'align': [] }],
+            ['bold', 'italic', 'underline'],
+            [{ 'color': [] }, { 'background': [] }],
+            ['link'],
+          ]
+        },
+        placeholder: '',
+        theme: 'snow'
+      });
+      var tribute = new Tribute({
+        selectionContext: editor,
+        values: [
+          {key: 'Phil Heartman', value: 'pheartman'},
+          {key: 'Gordon Ramsey', value: 'gramsey'}
+        ]
+      });
+
+      var editor = document.getElementById('editor').querySelector('.ql-editor');
+      tribute.attach(editor);
+      editor.addEventListener('tribute-replaced', function (e) {
+        console.log('Original Event:', e.detail.event);
+        console.log('Matched item:', e.detail.item);
+      });
+
+    </script>
+  </body>
+</html>

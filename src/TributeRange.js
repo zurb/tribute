@@ -214,7 +214,7 @@ class TributeRange {
         let selected = sel.anchorNode
         let path = []
         let offset
-
+        console.log('sel:', sel)
         if (selected != null) {
             let i
             let ce = selected.contentEditable
@@ -230,7 +230,7 @@ class TributeRange {
 
             // getRangeAt may not exist, need alternative
             offset = sel.getRangeAt(0).startOffset
-
+            console.log('offset: ', offset)
             return {
                 selected: selected,
                 path: path,

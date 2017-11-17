@@ -21,6 +21,7 @@ class Tribute {
         allowSpaces = false,
         replaceTextSuffix = null,
         positionMenu = true,
+        selectionContext = null,
     }) {
 
         this.menuSelected = 0
@@ -31,6 +32,7 @@ class Tribute {
         this.allowSpaces = allowSpaces
         this.replaceTextSuffix = replaceTextSuffix
         this.positionMenu = positionMenu
+        this.selectionContext = selectionContext;
 
         if (values) {
             this.collection = [{
@@ -66,6 +68,14 @@ class Tribute {
                 values: values,
 
                 requireLeadingSpace: requireLeadingSpace,
+
+                allowSpaces: allowSpaces,
+
+                replaceTextSuffix: replaceTextSuffix,
+
+                positionMenu: positionMenu,
+
+                selectionContext: selectionContext
             }]
         }
         else if (collection) {
@@ -87,7 +97,11 @@ class Tribute {
                     lookup: item.lookup || lookup,
                     fillAttr: item.fillAttr || fillAttr,
                     values: item.values,
-                    requireLeadingSpace: item.requireLeadingSpace
+                    requireLeadingSpace: item.requireLeadingSpace,
+                    allowSpaces: item.allowSpaces,
+                    replaceTextSuffix: item.replaceTextSuffix,
+                    positionMenu: item.positionMenu,
+                    selectionContext: item.selectionContext
                 }
             })
         }
