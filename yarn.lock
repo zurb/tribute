@@ -1244,9 +1244,17 @@ cliui@^3.2.0:
     strip-ansi "^3.0.1"
     wrap-ansi "^2.0.0"
 
+clone-buffer@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/clone-buffer/-/clone-buffer-1.0.0.tgz#e3e25b207ac4e701af721e2cb5a16792cac3dc58"
+
 clone-stats@^0.0.1, clone-stats@~0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/clone-stats/-/clone-stats-0.0.1.tgz#b88f94a82cf38b8791d58046ea4029ad88ca99d1"
+
+clone-stats@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/clone-stats/-/clone-stats-1.0.0.tgz#b3782dff8bb5474e18b9b6bf0fdfe782f8777680"
 
 clone@^0.2.0:
   version "0.2.0"
@@ -1259,6 +1267,18 @@ clone@^1.0.0:
 clone@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.3.tgz#298d7e2231660f40c003c2ed3140decf3f53085f"
+
+clone@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.1.tgz#d217d1e961118e3ac9a4b8bba3285553bf647cdb"
+
+cloneable-readable@^1.0.0:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/cloneable-readable/-/cloneable-readable-1.1.2.tgz#d591dee4a8f8bc15da43ce97dceeba13d43e2a65"
+  dependencies:
+    inherits "^2.0.1"
+    process-nextick-args "^2.0.0"
+    readable-stream "^2.3.5"
 
 code-point-at@^1.0.0:
   version "1.1.0"
@@ -2592,7 +2612,7 @@ inherits@1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-1.0.2.tgz#ca4309dadee6b54cc0b8d247e8d7c7a0975bdc9b"
 
-inherits@2, inherits@^2.0.1, inherits@~2.0.0, inherits@~2.0.1:
+inherits@2, inherits@^2.0.1, inherits@~2.0.0, inherits@~2.0.1, inherits@~2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.3.tgz#633c2c83e3da42a502f52466022480f4208261de"
 
@@ -4021,6 +4041,10 @@ private@^0.1.6:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/private/-/private-0.1.6.tgz#55c6a976d0f9bafb9924851350fe47b9b5fbb7c1"
 
+process-nextick-args@^2.0.0, process-nextick-args@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.0.tgz#a37d732f4271b4ab1ad070d35508e8290788ffaa"
+
 process-nextick-args@~1.0.6:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-1.0.7.tgz#150e20b756590ad3f91093f25a4f2ad8bff30ba3"
@@ -4164,6 +4188,18 @@ read-pkg@^1.0.0:
     string_decoder "~0.10.x"
     util-deprecate "~1.0.1"
 
+readable-stream@^2.1.5, readable-stream@^2.3.5:
+  version "2.3.6"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.6.tgz#b11c27d88b8ff1fbe070643cf94b0c79ae1b0aaf"
+  dependencies:
+    core-util-is "~1.0.0"
+    inherits "~2.0.3"
+    isarray "~1.0.0"
+    process-nextick-args "~2.0.0"
+    safe-buffer "~5.1.1"
+    string_decoder "~1.1.1"
+    util-deprecate "~1.0.1"
+
 readable-stream@~1.1.9:
   version "1.1.14"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-1.1.14.tgz#7cf4c54ef648e3813084c636dd2079e166c081d9"
@@ -4269,6 +4305,10 @@ regjsparser@^0.1.4:
   dependencies:
     jsesc "~0.5.0"
 
+remove-trailing-separator@^1.0.1:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/remove-trailing-separator/-/remove-trailing-separator-1.1.0.tgz#c24bce2a283adad5bc3f58e0d48249b92379d8ef"
+
 repeat-element@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/repeat-element/-/repeat-element-1.1.2.tgz#ef089a178d1483baae4d93eb98b4f9e4e11d990a"
@@ -4290,6 +4330,10 @@ repeating@^2.0.0:
 replace-ext@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/replace-ext/-/replace-ext-0.0.1.tgz#29bbd92078a739f0bcce2b4ee41e837953522924"
+
+replace-ext@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/replace-ext/-/replace-ext-1.0.0.tgz#de63128373fcbf7c3ccfa4de5a480c45a67958eb"
 
 request@2, request@^2.55.0, request@^2.61.0, request@^2.65.0, request@^2.75.0:
   version "2.78.0"
@@ -4364,6 +4408,10 @@ rimraf@2, rimraf@^2.3.3, rimraf@~2.5.1, rimraf@~2.5.4:
 ripemd160@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ripemd160/-/ripemd160-1.0.1.tgz#93a4bbd4942bc574b69a8fa57c71de10ecca7d6e"
+
+safe-buffer@~5.1.0, safe-buffer@~5.1.1:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
 
 sass-graph@^2.1.1:
   version "2.1.2"
@@ -4715,6 +4763,12 @@ string_decoder@~0.10.0, string_decoder@~0.10.x:
   version "0.10.31"
   resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-0.10.31.tgz#62e203bc41766c6c28c9fc84301dab1c5310fa94"
 
+string_decoder@~1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/string_decoder/-/string_decoder-1.1.1.tgz#9cf1611ba62685d7030ae9e4ba34149c3af03fc8"
+  dependencies:
+    safe-buffer "~5.1.0"
+
 stringstream@~0.0.4:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/stringstream/-/stringstream-0.0.5.tgz#4e484cd4de5a0bbbee18e46307710a8a81621878"
@@ -4815,6 +4869,13 @@ through2@^2, through2@^2.0.0:
   dependencies:
     readable-stream "~2.0.0"
     xtend "~4.0.0"
+
+through2@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/through2/-/through2-2.0.3.tgz#0004569b37c7c74ba39c43f3ced78d1ad94140be"
+  dependencies:
+    readable-stream "^2.1.5"
+    xtend "~4.0.1"
 
 "through@>=2.2.7 <3", through@^2.3.4:
   version "2.3.8"
@@ -5076,12 +5137,12 @@ vinyl-fs@^0.3.0:
     through2 "^0.6.1"
     vinyl "^0.4.0"
 
-vinyl-source-stream@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vinyl-source-stream/-/vinyl-source-stream-1.1.0.tgz#44cbe5108205279deb0c5653c094a2887938b1ab"
+vinyl-source-stream@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/vinyl-source-stream/-/vinyl-source-stream-2.0.0.tgz#f38a5afb9dd1e93b65d550469ac6182ac4f54b8e"
   dependencies:
-    through2 "^0.6.1"
-    vinyl "^0.4.3"
+    through2 "^2.0.3"
+    vinyl "^2.1.0"
 
 vinyl-sourcemaps-apply@^0.2.0:
   version "0.2.1"
@@ -5095,7 +5156,7 @@ vinyl@^0.2.1:
   dependencies:
     clone-stats "~0.0.1"
 
-vinyl@^0.4.0, vinyl@^0.4.3:
+vinyl@^0.4.0:
   version "0.4.6"
   resolved "https://registry.yarnpkg.com/vinyl/-/vinyl-0.4.6.tgz#2f356c87a550a255461f36bbeb2a5ba8bf784847"
   dependencies:
@@ -5109,6 +5170,17 @@ vinyl@^0.5.0:
     clone "^1.0.0"
     clone-stats "^0.0.1"
     replace-ext "0.0.1"
+
+vinyl@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vinyl/-/vinyl-2.1.0.tgz#021f9c2cf951d6b939943c89eb5ee5add4fd924c"
+  dependencies:
+    clone "^2.1.1"
+    clone-buffer "^1.0.0"
+    clone-stats "^1.0.0"
+    cloneable-readable "^1.0.0"
+    remove-trailing-separator "^1.0.1"
+    replace-ext "^1.0.0"
 
 vm-browserify@~0.0.1:
   version "0.0.4"
@@ -5221,7 +5293,7 @@ xmlhttprequest-ssl@1.5.1:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/xmlhttprequest/-/xmlhttprequest-1.8.0.tgz#67fe075c5c24fef39f9d65f5f7b7fe75171968fc"
 
-"xtend@>=4.0.0 <4.1.0-0", xtend@^4.0.0, xtend@~4.0.0:
+"xtend@>=4.0.0 <4.1.0-0", xtend@^4.0.0, xtend@~4.0.0, xtend@~4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"
 
