@@ -3378,9 +3378,9 @@ karma-chrome-launcher@^0.2.2:
     fs-access "^1.0.0"
     which "^1.2.1"
 
-karma-jasmine@^0.3.7:
-  version "0.3.8"
-  resolved "https://registry.yarnpkg.com/karma-jasmine/-/karma-jasmine-0.3.8.tgz#5b6457791ad9b89aa173f079e3ebe1b8c805236c"
+karma-jasmine@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/karma-jasmine/-/karma-jasmine-1.1.2.tgz#394f2b25ffb4a644b9ada6f22d443e2fd08886c3"
 
 karma@^2.0.2:
   version "2.0.2"
