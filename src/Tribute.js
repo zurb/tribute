@@ -53,7 +53,7 @@ class Tribute {
                         return t.bind(this)
                     }
 
-                    return function () {return '<li class="no-match">No match!</li>'}.bind(this)
+                    return noMatchTemplate
                 })(noMatchTemplate),
 
                 // column to search against in the object
