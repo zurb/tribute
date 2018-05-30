@@ -1,6 +1,6 @@
 {
   "name": "tributejs",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Native ES6 @mentions",
   "main": "dist/tribute.js",
   "devDependencies": {
@@ -9,6 +9,7 @@
     "babel-preset-env": "^1.6.1",
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
+    "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-plumber": "^1.1.0",
     "gulp-sass": "^2.2.0",
@@ -33,7 +34,5 @@
   },
   "author": "Jordan Humphreys <jordan@zurb.com>",
   "license": "MIT",
-  "dependencies": {
-    "gulp": "^3.9.1"
-  }
+  "dependencies": {}
 }
