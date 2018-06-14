@@ -52,13 +52,13 @@ export type TributeCollection<T extends {}> = {
   replaceTextSuffix?: string
 }
 
-export type TributeOptions = TributeCollection | {
+export type TributeOptions<T> = TributeCollection<T> | {
   // pass an array of config objects
-  collection: Array<TributeCollection>
+  collection: Array<TributeCollection<{ [key: string]: any }>>
 }
 
 export default class Tribute {
-  constructor(options: TributeOptions)
+  constructor<T extends {}>(options: TributeOptions<T>)
 
   isActive: boolean
 
