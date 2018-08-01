@@ -1,4 +1,4 @@
-// Type definitions for TributeJS v2.3.7
+// Type definitions for TributeJS v3.3.0
 // Project: https://github.com/zurb/tribute
 // Definitions by: Jordan Humphreys <https://github.com/mrsweaters/>
 

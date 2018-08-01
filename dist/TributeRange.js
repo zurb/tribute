@@ -34,6 +34,8 @@ var TributeRange = function () {
     }, {
         key: 'positionMenuAtCaret',
         value: function positionMenuAtCaret(scrollTo) {
+            var _this = this;
+
             var context = this.tribute.current,
                 coordinates = void 0;
 
@@ -52,31 +54,30 @@ var TributeRange = function () {
                     coordinates = this.getContentEditableCaretPosition(info.mentionPosition);
                 }
 
-                // TODO: flip the dropdown if rendered off of screen edge.
-                // let contentWidth = this.tribute.menu.offsetWidth + coordinates.left
-                // let parentWidth;
+                this.tribute.menu.style.cssText = 'top: ' + coordinates.top + 'px;\n                                     left: ' + coordinates.left + 'px;\n                                     right: ' + coordinates.right + 'px;\n                                     bottom: ' + coordinates.bottom + 'px;\n                                     position: absolute;\n                                     zIndex: 10000;\n                                     display: block;';
 
-                // if (this.tribute.menuContainer) {
-                //     parentWidth = this.tribute.menuContainer.offsetWidth
-                // } else {
-                //     parentWidth = this.getDocument().body.offsetWidth
-                // }
+                if (coordinates.left === 'auto') {
+                    this.tribute.menu.style.left = 'auto';
+                }
 
-                // if (contentWidth > parentWidth) {
-                //     let diff = contentWidth - parentWidth
-                //     let removeFromLeft = this.tribute.menu.offsetWidth - diff
-                //     let newLeft = coordinates.left - removeFromLeft
-
-                //     if (newLeft > 0) {
-                //         coordinates.left = newLeft
-                //     } else {
-                //         coordinates.left = 0
-                //     }
-                // }
-
-                this.tribute.menu.style.cssText = 'top: ' + coordinates.top + 'px;\n                                     left: ' + coordinates.left + 'px;\n                                     position: absolute;\n                                     zIndex: 10000;\n                                     display: block;';
+                if (coordinates.top === 'auto') {
+                    this.tribute.menu.style.top = 'auto';
+                }
 
                 if (scrollTo) this.scrollIntoView();
+
+                window.setTimeout(function () {
+                    var menuDimensions = {
+                        width: _this.tribute.menu.offsetWidth,
+                        height: _this.tribute.menu.offsetHeight
+                    };
+                    var menuIsOffScreen = _this.isMenuOffScreen(coordinates, menuDimensions);
+
+                    if (menuIsOffScreen.horizontally || menuIsOffScreen.vertically) {
+                        _this.tribute.menu.style.cssText = 'display: none';
+                        _this.positionMenuAtCaret(scrollTo);
+                    }
+                }, 0);
             } else {
                 this.tribute.menu.style.cssText = 'display: none';
             }
@@ -284,7 +285,7 @@ var TributeRange = function () {
     }, {
         key: 'getTriggerInfo',
         value: function getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces) {
-            var _this = this;
+            var _this2 = this;
 
             var ctx = this.tribute.current;
             var selected = void 0,
@@ -311,7 +312,7 @@ var TributeRange = function () {
 
                 this.tribute.collection.forEach(function (config) {
                     var c = config.trigger;
-                    var idx = config.requireLeadingSpace ? _this.lastIndexWithLeadingSpace(effectiveRange, c) : effectiveRange.lastIndexOf(c);
+                    var idx = config.requireLeadingSpace ? _this2.lastIndexWithLeadingSpace(effectiveRange, c) : effectiveRange.lastIndexOf(c);
 
                     if (idx > mostRecentTriggerCharPos) {
                         mostRecentTriggerCharPos = idx;
@@ -370,8 +371,44 @@ var TributeRange = function () {
             return element.nodeName !== 'INPUT' && element.nodeName !== 'TEXTAREA';
         }
     }, {
+        key: 'isMenuOffScreen',
+        value: function isMenuOffScreen(coordinates, menuDimensions) {
+            var contentWidth = menuDimensions.width + coordinates.left;
+            var contentHeight = menuDimensions.height + coordinates.top;
+
+            var windowWidth = window.innerWidth;
+            var windowHeight = window.innerHeight;
+            var doc = document.documentElement;
+            var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+            var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+
+            return {
+                horizontally: Math.ceil(contentWidth - windowLeft) >= windowWidth,
+                vertically: Math.ceil(contentHeight - windowTop) >= windowHeight
+            };
+        }
+    }, {
+        key: 'getMenuDimensions',
+        value: function getMenuDimensions() {
+            // Width of the menu depends of its contents and position
+            // We must check what its width would be without any obstruction
+            // This way, we can achieve good positioning for flipping the menu
+            var dimensions = {
+                width: null,
+                height: null
+            };
+
+            this.tribute.menu.style.cssText = 'top: 0px;\n                                 left: 0px;\n                                 position: fixed;\n                                 zIndex: 10000;\n                                 display: block;\n                                 visibility; hidden;';
+            dimensions.width = this.tribute.menu.offsetWidth;
+            dimensions.height = this.tribute.menu.offsetHeight;
+
+            this.tribute.menu.style.cssText = 'display: none;';
+
+            return dimensions;
+        }
+    }, {
         key: 'getTextAreaOrInputUnderlinePosition',
-        value: function getTextAreaOrInputUnderlinePosition(element, position) {
+        value: function getTextAreaOrInputUnderlinePosition(element, position, flipped) {
             var properties = ['direction', 'boxSizing', 'width', 'height', 'overflowX', 'overflowY', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'fontStyle', 'fontVariant', 'fontWeight', 'fontStretch', 'fontSize', 'fontSizeAdjust', 'lineHeight', 'fontFamily', 'textAlign', 'textTransform', 'textIndent', 'textDecoration', 'letterSpacing', 'wordSpacing'];
 
             var isFirefox = window.mozInnerScreenX !== null;
@@ -424,6 +461,27 @@ var TributeRange = function () {
                 left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
             };
 
+            var windowWidth = window.innerWidth;
+            var windowHeight = window.innerHeight;
+
+            var menuDimensions = this.getMenuDimensions();
+            var menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
+
+            if (menuIsOffScreen.horizontally) {
+                coordinates.right = windowWidth - coordinates.left;
+                coordinates.left = 'auto';
+            }
+
+            var parentHeight = this.tribute.menuContainer ? this.tribute.menuContainer.offsetHeight : this.getDocument().body.offsetHeight;
+
+            if (menuIsOffScreen.vertically) {
+                var parentRect = this.tribute.menuContainer ? this.tribute.menuContainer.getBoundingClientRect() : this.getDocument().body.getBoundingClientRect();
+                var scrollStillAvailable = parentHeight - (windowHeight - parentRect.top);
+
+                coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top - span.offsetTop);
+                coordinates.top = 'auto';
+            }
+
             this.getDocument().body.removeChild(div);
 
             return coordinates;
@@ -447,6 +505,7 @@ var TributeRange = function () {
             // Create the marker element containing a single invisible character using DOM methods and insert it
             markerEl = this.getDocument().createElement('span');
             markerEl.id = markerId;
+
             markerEl.appendChild(this.getDocument().createTextNode(markerTextChar));
             range.insertNode(markerEl);
             sel.removeAllRanges();
@@ -460,6 +519,28 @@ var TributeRange = function () {
                 left: rect.left + windowLeft,
                 top: rect.top + markerEl.offsetHeight + windowTop
             };
+            var windowWidth = window.innerWidth;
+            var windowHeight = window.innerHeight;
+
+            var menuDimensions = this.getMenuDimensions();
+            var menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
+
+            if (menuIsOffScreen.horizontally) {
+                coordinates.left = 'auto';
+                coordinates.right = windowWidth - rect.left - windowLeft;
+            }
+
+            var parentHeight = this.tribute.menuContainer ? this.tribute.menuContainer.offsetHeight : this.getDocument().body.offsetHeight;
+
+            if (menuIsOffScreen.vertically) {
+                var parentRect = this.tribute.menuContainer ? this.tribute.menuContainer.getBoundingClientRect() : this.getDocument().body.getBoundingClientRect();
+                var scrollStillAvailable = parentHeight - (windowHeight - parentRect.top);
+
+                windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+                windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+                coordinates.top = 'auto';
+                coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top);
+            }
 
             markerEl.parentNode.removeChild(markerEl);
             return coordinates;
