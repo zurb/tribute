@@ -225,6 +225,7 @@ var Tribute = function () {
             // create the menu if it doesn't exist.
             if (!this.menu) {
                 this.menu = this.createMenu();
+                element.tributeMenu = this.menu;
                 this.menuEvents.bind(this.menu);
             }
 
@@ -421,6 +422,42 @@ var Tribute = function () {
             } else {
                 throw new Error('No active state. Please use append instead and pass an index.');
             }
+        }
+    }, {
+        key: "detach",
+        value: function detach(el) {
+            if (!el) {
+                throw new Error('[Tribute] Must pass in a DOM node or NodeList.');
+            }
+
+            // Check if it is a jQuery collection
+            if (typeof jQuery !== 'undefined' && el instanceof jQuery) {
+                el = el.get();
+            }
+
+            // Is el an Array/Array-like object?
+            if (el.constructor === NodeList || el.constructor === HTMLCollection || el.constructor === Array) {
+                var length = el.length;
+                for (var i = 0; i < length; ++i) {
+                    this._detach(el[i]);
+                }
+            } else {
+                this._detach(el);
+            }
+        }
+    }, {
+        key: "_detach",
+        value: function _detach(el) {
+            var _this3 = this;
+
+            this.events.unbind(el);
+            this.menuEvents.unbind(el.tributeMenu);
+
+            setTimeout(function () {
+                el.removeAttribute('data-tribute');
+                _this3.isActive = false;
+                el.tributeMenu.remove();
+            });
         }
     }], [{
         key: "defaultSelectTemplate",
