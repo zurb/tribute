@@ -1,4 +1,4 @@
-// Type definitions for TributeJS v3.3.1
+// Type definitions for TributeJS v3.3.2
 // Project: https://github.com/zurb/tribute
 // Definitions by: Jordan Humphreys <https://github.com/mrsweaters/>
 
@@ -67,4 +67,6 @@ export default class Tribute {
   appendCurrent<T extends {}>(values: Array<T>, replace?: boolean): void
 
   attach(to: Element): void
+
+  detach(to: Element): void
 }
