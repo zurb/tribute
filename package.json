@@ -23,7 +23,7 @@
     "opn": "^5.3.0",
     "vinyl-source-stream": "^2.0.0",
     "watchify": "^3.7.0",
-    "zombie": "^4.2.1",
+    "zombie": "^6.1.2",
     "lodash": "4.17.10"
   },
   "repository": {
