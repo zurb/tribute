@@ -22,30 +22,44 @@ var TributeMenuEvents = function () {
         value: function bind(menu) {
             var _this = this;
 
-            menu.addEventListener('keydown', this.tribute.events.keydown.bind(this.menu, this), false);
-            this.tribute.range.getDocument().addEventListener('mousedown', this.tribute.events.click.bind(null, this), false);
-
-            // fixes IE11 issues with mousedown
-            this.tribute.range.getDocument().addEventListener('MSPointerDown', this.tribute.events.click.bind(null, this), false);
-
-            window.addEventListener('resize', this.debounce(function () {
+            menu.menuKeydownEvent = this.tribute.events.keydown.bind(this.menu, this);
+            this.menuClickEvent = this.tribute.events.click.bind(null, this);
+            this.menuContainerScrollEvent = this.debounce(function () {
+                if (_this.tribute.isActive) {
+                    _this.tribute.showMenuFor(_this.tribute.current.element, false);
+                }
+            }, 300, false);
+            this.windowResizeEvent = this.debounce(function () {
                 if (_this.tribute.isActive) {
                     _this.tribute.range.positionMenuAtCaret(true);
                 }
-            }, 300, false));
+            }, 300, false);
+
+            // fixes IE11 issues with mousedown
+            this.tribute.range.getDocument().addEventListener('MSPointerDown', this.menuKeydownEvent, false);
+            menu.addEventListener('keydown', this.menuKeydownEvent, false);
+            this.tribute.range.getDocument().addEventListener('mousedown', this.menuClickEvent, false);
+            window.addEventListener('resize', this.windowResizeEvent);
 
             if (this.menuContainer) {
-                this.menuContainer.addEventListener('scroll', this.debounce(function () {
-                    if (_this.tribute.isActive) {
-                        _this.tribute.showMenuFor(_this.tribute.current.element, false);
-                    }
-                }, 300, false), false);
+                this.menuContainer.addEventListener('scroll', this.menuContainerScrollEvent, false);
             } else {
-                window.onscroll = this.debounce(function () {
-                    if (_this.tribute.isActive) {
-                        _this.tribute.showMenuFor(_this.tribute.current.element, false);
-                    }
-                }, 300, false);
+                window.addEventListener('scroll', this.menuContainerScrollEvent);
+            }
+        }
+    }, {
+        key: 'unbind',
+        value: function unbind(menu) {
+            menu.removeEventListener('keydown', menu.menuKeydownEvent, false);
+            delete menu.menuKeydownEvent;
+            this.tribute.range.getDocument().removeEventListener('mousedown', this.menuClickEvent, false);
+            this.tribute.range.getDocument().removeEventListener('MSPointerDown', this.menuClickEvent, false);
+            window.removeEventListener('resize', this.windowResizeEvent);
+
+            if (this.menuContainer) {
+                this.menuContainer.removeEventListener('scroll', this.menuContainerScrollEvent, false);
+            } else {
+                window.removeEventListener('scroll', this.menuContainerScrollEvent);
             }
         }
     }, {

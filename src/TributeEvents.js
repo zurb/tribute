@@ -27,12 +27,29 @@ class TributeEvents {
     }
 
     bind(element) {
+        element.boundKeydown = this.keydown.bind(element, this);
+        element.boundKeyup = this.keyup.bind(element, this);
+        element.boundInput = this.input.bind(element, this);
+
         element.addEventListener('keydown',
-            this.keydown.bind(element, this), false)
+            element.boundKeydown, false)
         element.addEventListener('keyup',
-            this.keyup.bind(element, this), false)
+            element.boundKeyup, false)
         element.addEventListener('input',
-            this.input.bind(element, this), false)
+            element.boundInput, false)
+    }
+
+    unbind(element) {
+        element.removeEventListener('keydown',
+            element.boundKeydown, false)
+        element.removeEventListener('keyup',
+            element.boundKeyup, false)
+        element.removeEventListener('input',
+            element.boundInput, false)
+
+        delete element.boundKeydown
+        delete element.boundKeyup
+        delete element.boundInput
     }
 
     keydown(instance, event) {

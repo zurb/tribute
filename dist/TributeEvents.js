@@ -19,9 +19,24 @@ var TributeEvents = function () {
     _createClass(TributeEvents, [{
         key: 'bind',
         value: function bind(element) {
-            element.addEventListener('keydown', this.keydown.bind(element, this), false);
-            element.addEventListener('keyup', this.keyup.bind(element, this), false);
-            element.addEventListener('input', this.input.bind(element, this), false);
+            element.boundKeydown = this.keydown.bind(element, this);
+            element.boundKeyup = this.keyup.bind(element, this);
+            element.boundInput = this.input.bind(element, this);
+
+            element.addEventListener('keydown', element.boundKeydown, false);
+            element.addEventListener('keyup', element.boundKeyup, false);
+            element.addEventListener('input', element.boundInput, false);
+        }
+    }, {
+        key: 'unbind',
+        value: function unbind(element) {
+            element.removeEventListener('keydown', element.boundKeydown, false);
+            element.removeEventListener('keyup', element.boundKeyup, false);
+            element.removeEventListener('input', element.boundInput, false);
+
+            delete element.boundKeydown;
+            delete element.boundKeyup;
+            delete element.boundInput;
         }
     }, {
         key: 'keydown',
