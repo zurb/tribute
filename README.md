@@ -362,6 +362,15 @@ function remoteSearch(text, cb) {
 }
 ```
 
+### Detaching Tribute instances
+When you want to remove Tribute from an element you can call `detact`.
+
+```js
+tribute.detach(document.getElementById('caaanDo'));
+```
+
+This will remove all event listeners from the DOM that are associated with that element.
+
 ## Contributing
 We welcome contributions to Tribute. There are many areas where we would love to see community contributions that we have outlined below, but first, let's go over how to develop in Tribute. We use [Yarn](https://yarnpkg.com/en/docs/install) to manage our NPM packages.
 
