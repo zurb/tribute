@@ -1,60 +1,70 @@
-// Type definitions for TributeJS v2.3.7
+// Type definitions for TributeJS v3.3.1
 // Project: https://github.com/zurb/tribute
 // Definitions by: Jordan Humphreys <https://github.com/mrsweaters/>
 
-export interface TributeOptions {
+export type TributeItem<T extends {}> = {
+  index: number
+  original: T
+  score: number
+  string: string
+}
+
+export type TributeCollection<T extends {}> = {
   // symbol that starts the lookup
-  trigger?: string,
+  trigger?: string
 
   // element to target for @mentions
-  iframe?: any,
+  iframe?: any
 
   // class added in the flyout menu for active item
-  selectClass?: string,
+  selectClass?: string
 
   // function called on select that returns the content to insert
-  selectTemplate?: () => string,
+  selectTemplate?: (item: TributeItem<T>) => string
 
   // template for displaying item in menu
-  menuItemTemplate?: () => string,
+  menuItemTemplate?: (item: TributeItem<T>) => string
 
   // template for when no match is found (optional),
   // If no template is provided, menu is hidden.
-  noMatchTemplate?: any,
+  noMatchTemplate?: () => string
 
   // specify an alternative parent container for the menu
-  menuContainer?: any,
+  menuContainer?: Element
 
   // column to search against in the object (accepts function or string)
-  lookup?: string | () => void,
+  lookup?: string | ((item: T) => string)
 
   // column that contains the content to insert by default
-  fillAttr?: string,
+  fillAttr?: string
 
   // array of objects to match
-  values?: array<any>,
+  values?: Array<T> | ((text: string, cb: (result: Array<T>) => void) => void)
 
   // specify whether a space is required before the trigger character
-  requireLeadingSpace?: boolean,
+  requireLeadingSpace?: boolean
 
   // specify whether a space is allowed in the middle of mentions
-  allowSpaces?: boolean,
+  allowSpaces?: boolean
 
   // optionally specify a custom suffix for the replace text
   // (defaults to empty space if undefined)
-  replaceTextSuffix?: string,
+  replaceTextSuffix?: string
+}
 
+export type TributeOptions<T> = TributeCollection<T> | {
   // pass an array of config objects
-  collection?: array<Object>,
+  collection: Array<TributeCollection<{ [key: string]: any }>>
 }
 
 export default class Tribute {
-  constructor(options: TributeOptions);
+  constructor<T extends {}>(options: TributeOptions<T>)
 
-  isActive: boolean;
+  isActive: boolean
 
-  append(index: number, values: array<Object>, replace?: boolean): void;
+  append<T extends {}>(index: number, values: Array<T>, replace?: boolean): void
 
-  appendCurrent(values: array<Object>, replace?: boolean): void;
+  appendCurrent<T extends {}>(values: Array<T>, replace?: boolean): void
 
+  attach(to: Element): void
 }

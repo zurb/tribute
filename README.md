@@ -177,6 +177,10 @@ Collection object shown with defaults:
   // optionally specify a custom suffix for the replace text
   // (defaults to empty space if undefined)
   replaceTextSuffix: '\n',
+
+  // specify whether the menu should be positioned.  Set to false and use in conjuction with menuContainer to create an inline menu
+  // (defaults to true)
+  positionMenu: true,
 }
 ```
 
@@ -318,6 +322,43 @@ Sometimes you may need to have the Tribute menu attach to a scrollable parent el
 {
   //..other config options
   menuContainer: document.getElementById('wrapper')
+}
+```
+
+### Loading remote data
+If your data set is large or would like to pre filter your data you can load dynamically by setting the `values` to a function.
+
+```js
+{
+  //..other config options
+  // function retrieving an array of objects
+  values: function (text, cb) {
+    remoteSearch(text, users => cb(users));
+  },
+  lookup: 'name',
+  fillAttr: 'name'
+}
+```
+
+You would then define a function, in this case `remoteSearch`, that returns your data from the backend.
+
+```js
+function remoteSearch(text, cb) {
+  var URL = 'YOUR DATA ENDPOINT';
+  xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function ()
+  {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var data = JSON.parse(xhr.responseText);
+        cb(data);
+      } else if (xhr.status === 403) {
+        cb([]);
+      }
+    }
+  };
+  xhr.open("GET", URL + '?q=' + text, true);
+  xhr.send();
 }
 ```
 

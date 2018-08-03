@@ -27,25 +27,29 @@ class TributeEvents {
     }
 
     bind(element) {
-        this.boundKeydown = this.keydown.bind(element, this);
-        this.boundKeyup = this.keyup.bind(element, this);
-        this.boundInput = this.input.bind(element, this);
+        element.boundKeydown = this.keydown.bind(element, this);
+        element.boundKeyup = this.keyup.bind(element, this);
+        element.boundInput = this.input.bind(element, this);
 
         element.addEventListener('keydown',
-            this.boundKeydown, false)
+            element.boundKeydown, false)
         element.addEventListener('keyup',
-            this.boundKeyup, false)
+            element.boundKeyup, false)
         element.addEventListener('input',
-            this.boundInput, false)
+            element.boundInput, false)
     }
 
     unbind(element) {
         element.removeEventListener('keydown',
-            this.boundKeydown, false)
+            element.boundKeydown, false)
         element.removeEventListener('keyup',
-            this.boundKeyup, false)
+            element.boundKeyup, false)
         element.removeEventListener('input',
-            this.boundInput, false)
+            element.boundInput, false)
+
+        delete element.boundKeydown
+        delete element.boundKeyup
+        delete element.boundInput
     }
 
     keydown(instance, event) {
@@ -84,7 +88,10 @@ class TributeEvents {
             }
             tribute.selectItemAtIndex(li.getAttribute('data-index'), event)
             tribute.hideMenu()
-        } else if (tribute.current.element) {
+
+        // TODO: should fire with externalTrigger and target is outside of menu
+        } else if (tribute.current.element && !tribute.current.externalTrigger) {
+            tribute.current.externalTrigger = false
             setTimeout(() => tribute.hideMenu())
         }
     }
@@ -160,7 +167,6 @@ class TributeEvents {
             triggerChar: (e, el, trigger) => {
                 let tribute = this.tribute
                 tribute.current.trigger = trigger
-                console.log('trigger:', trigger, e)
 
                 let collectionItem = tribute.collection.find(item => {
                     return item.trigger === trigger

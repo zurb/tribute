@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="css/foundation.min.css" />
     <link rel="stylesheet" href="../dist/tribute.css" />
     <style>
+      body {
+        position: relative;
+      }
       .tribute-demo-input {
         outline: none;
         border: 1px solid #eee;
@@ -25,6 +28,10 @@
         content: attr(placeholder);
         display: block;
         color: #ccc;
+      }
+
+      .float-right {
+        float: right;
       }
     </style>
   </head>
@@ -49,7 +56,7 @@
       </div>
     </div>
 
-    <div class="row" id="content">
+    <div class="row float-right" id="content">
       <div class="large-8 medium-8 columns">
         <h5>Tribute on traditional form elements!</h5>
         <form>
@@ -80,6 +87,7 @@
           {key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com'}
         ],
         selectTemplate: function (item) {
+          if (typeof item === 'undefined') return null;
           if (this.range.isContentEditable(this.current.element)) {
             return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
           }

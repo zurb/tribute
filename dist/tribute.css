@@ -11,6 +11,7 @@
   .tribute-container ul {
     margin: 0;
     margin-top: 2px;
+    padding: 0;
     list-style: none;
     background: #efefef; }
   .tribute-container li {
@@ -20,5 +21,7 @@
       background: #ddd; }
     .tribute-container li span {
       font-weight: bold; }
+    .tribute-container li.no-match {
+      cursor: default; }
   .tribute-container .menu-highlighted {
     font-weight: bold; }

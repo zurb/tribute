@@ -25,6 +25,12 @@ class TributeRange {
         let info = this.getTriggerInfo(false, false, true, this.tribute.allowSpaces)
 
         if (typeof info !== 'undefined') {
+
+            if(!this.tribute.positionMenu){
+                this.tribute.menu.style.cssText = `display: block;`
+                return
+            }
+
             if (!this.isContentEditable(context.element)) {
                 coordinates = this.getTextAreaOrInputUnderlinePosition(this.getDocument().activeElement,
                     info.mentionPosition)
@@ -33,15 +39,38 @@ class TributeRange {
                 coordinates = this.getContentEditableCaretPosition(info.mentionPosition)
             }
 
-            setTimeout(() => {
-                this.tribute.menu.style.cssText = `top: ${coordinates.top}px;
-                                         left: ${coordinates.left}px;
-                                         position: absolute;
-                                         zIndex: 10000;
-                                         display: block;`
 
-                if (scrollTo) this.scrollIntoView()
+            this.tribute.menu.style.cssText = `top: ${coordinates.top}px;
+                                     left: ${coordinates.left}px;
+                                     right: ${coordinates.right}px;
+                                     bottom: ${coordinates.bottom}px;
+                                     position: absolute;
+                                     zIndex: 10000;
+                                     display: block;`
+
+            if (coordinates.left === 'auto') {
+                this.tribute.menu.style.left = 'auto'
+            }
+
+            if (coordinates.top === 'auto') {
+                this.tribute.menu.style.top = 'auto'
+            }
+
+            if (scrollTo) this.scrollIntoView()
+
+            window.setTimeout(() => {
+                let menuDimensions = {
+                   width: this.tribute.menu.offsetWidth,
+                   height: this.tribute.menu.offsetHeight
+                }
+                let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
+
+                if (menuIsOffScreen.horizontally || menuIsOffScreen.vertically) {
+                    this.tribute.menu.style.cssText = 'display: none'
+                    this.positionMenuAtCaret(scrollTo)
+                }
             }, 0)
+
         } else {
             this.tribute.menu.style.cssText = 'display: none'
         }
@@ -218,7 +247,7 @@ class TributeRange {
             text = ''
 
         if (!this.isContentEditable(context.element)) {
-            let textComponent = this.getDocument().activeElement
+            let textComponent = this.tribute.current.element;
             if (textComponent) {
                 let startPos = textComponent.selectionStart
                 if (textComponent.value && startPos >= 0) {
@@ -340,7 +369,46 @@ class TributeRange {
         return element.nodeName !== 'INPUT' && element.nodeName !== 'TEXTAREA'
     }
 
-    getTextAreaOrInputUnderlinePosition(element, position) {
+    isMenuOffScreen(coordinates, menuDimensions) {
+        let contentWidth = menuDimensions.width + coordinates.left
+        let contentHeight = menuDimensions.height + coordinates.top
+
+        let windowWidth = window.innerWidth
+        let windowHeight = window.innerHeight
+        let doc = document.documentElement
+        let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
+        let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+
+        return {
+            horizontally: Math.ceil(contentWidth - windowLeft) >= windowWidth,
+            vertically: Math.ceil(contentHeight - windowTop) >= windowHeight
+        }
+    }
+
+    getMenuDimensions() {
+        // Width of the menu depends of its contents and position
+        // We must check what its width would be without any obstruction
+        // This way, we can achieve good positioning for flipping the menu
+        let dimensions = {
+            width: null,
+            height: null
+        }
+
+        this.tribute.menu.style.cssText = `top: 0px;
+                                 left: 0px;
+                                 position: fixed;
+                                 zIndex: 10000;
+                                 display: block;
+                                 visibility; hidden;`
+       dimensions.width = this.tribute.menu.offsetWidth
+       dimensions.height = this.tribute.menu.offsetHeight
+
+       this.tribute.menu.style.cssText = `display: none;`
+
+       return dimensions
+    }
+
+    getTextAreaOrInputUnderlinePosition(element, position, flipped) {
         let properties = ['direction', 'boxSizing', 'width', 'height', 'overflowX',
             'overflowY', 'borderTopWidth', 'borderRightWidth',
             'borderBottomWidth', 'borderLeftWidth', 'paddingTop',
@@ -402,6 +470,31 @@ class TributeRange {
             left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
         }
 
+        let windowWidth = window.innerWidth
+        let windowHeight = window.innerHeight
+
+        let menuDimensions = this.getMenuDimensions()
+        let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
+
+        if (menuIsOffScreen.horizontally) {
+            coordinates.right = windowWidth - coordinates.left
+            coordinates.left = 'auto'
+        }
+
+        let parentHeight = this.tribute.menuContainer
+            ? this.tribute.menuContainer.offsetHeight
+            : this.getDocument().body.offsetHeight
+
+        if (menuIsOffScreen.vertically) {
+            let parentRect = this.tribute.menuContainer
+                ? this.tribute.menuContainer.getBoundingClientRect()
+                : this.getDocument().body.getBoundingClientRect()
+            let scrollStillAvailable = parentHeight - (windowHeight - parentRect.top)
+
+            coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top - span.offsetTop)
+            coordinates.top = 'auto'
+        }
+
         this.getDocument().body.removeChild(div)
 
         return coordinates
@@ -423,6 +516,7 @@ class TributeRange {
         // Create the marker element containing a single invisible character using DOM methods and insert it
         markerEl = this.getDocument().createElement('span')
         markerEl.id = markerId
+
         markerEl.appendChild(this.getDocument().createTextNode(markerTextChar))
         range.insertNode(markerEl)
         sel.removeAllRanges()
@@ -435,6 +529,32 @@ class TributeRange {
         let coordinates = {
             left: rect.left + windowLeft,
             top: rect.top + markerEl.offsetHeight + windowTop
+        }
+        let windowWidth = window.innerWidth
+        let windowHeight = window.innerHeight
+
+        let menuDimensions = this.getMenuDimensions()
+        let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
+
+        if (menuIsOffScreen.horizontally) {
+            coordinates.left = 'auto'
+            coordinates.right = windowWidth - rect.left - windowLeft
+        }
+
+        let parentHeight = this.tribute.menuContainer
+            ? this.tribute.menuContainer.offsetHeight
+            : this.getDocument().body.offsetHeight
+
+        if (menuIsOffScreen.vertically) {
+            let parentRect = this.tribute.menuContainer
+                ? this.tribute.menuContainer.getBoundingClientRect()
+                : this.getDocument().body.getBoundingClientRect()
+            let scrollStillAvailable = parentHeight - (windowHeight - parentRect.top)
+
+            windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
+            windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+            coordinates.top = 'auto'
+            coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top)
         }
 
         markerEl.parentNode.removeChild(markerEl)

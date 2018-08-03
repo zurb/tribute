@@ -6,7 +6,7 @@ class TributeMenuEvents {
     }
 
     bind(menu) {
-        this.menuKeydownEvent = this.tribute.events.keydown.bind(this.menu, this)
+        menu.menuKeydownEvent = this.tribute.events.keydown.bind(this.menu, this)
         this.menuClickEvent = this.tribute.events.click.bind(null, this)
         this.menuContainerScrollEvent = this.debounce(() => {
             if (this.tribute.isActive) {
@@ -19,6 +19,9 @@ class TributeMenuEvents {
             }
         }, 300, false)
 
+        // fixes IE11 issues with mousedown
+        this.tribute.range.getDocument().addEventListener('MSPointerDown',
+            this.menuKeydownEvent, false)
         menu.addEventListener('keydown',
             this.menuKeydownEvent, false)
         this.tribute.range.getDocument().addEventListener('mousedown',
@@ -35,8 +38,11 @@ class TributeMenuEvents {
 
     unbind(menu) {
         menu.removeEventListener('keydown',
-            this.menuKeydownEvent, false)
+            menu.menuKeydownEvent, false)
+        delete menu.menuKeydownEvent
         this.tribute.range.getDocument().removeEventListener('mousedown',
+            this.menuClickEvent, false)
+        this.tribute.range.getDocument().removeEventListener('MSPointerDown',
             this.menuClickEvent, false)
         window.removeEventListener('resize', this.windowResizeEvent)
 
