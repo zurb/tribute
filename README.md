@@ -363,7 +363,7 @@ function remoteSearch(text, cb) {
 ```
 
 ### Detaching Tribute instances
-When you want to remove Tribute from an element you can call `detact`.
+When you want to remove Tribute from an element you can call `detach`.
 
 ```js
 tribute.detach(document.getElementById('caaanDo'));
