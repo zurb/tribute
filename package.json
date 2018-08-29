@@ -11,7 +11,7 @@
     "babelify": "^8.0.0",
     "browserify": "^16.2.2",
     "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.1",
+    "gulp-babel": "^8.0.0",
     "gulp-plumber": "^1.1.0",
     "gulp-sass": "^4.0.1",
     "gulp-uglifyjs": "^0.6.2",
