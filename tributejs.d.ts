@@ -57,14 +57,14 @@ export type TributeOptions<T> = TributeCollection<T> | {
   collection: Array<TributeCollection<{ [key: string]: any }>>
 }
 
-export default class Tribute {
-  constructor<T extends {}>(options: TributeOptions<T>)
+export default class Tribute<T extends {}> {
+  constructor(options: TributeOptions<T>)
 
   isActive: boolean
 
-  append<T extends {}>(index: number, values: Array<T>, replace?: boolean): void
+  append(index: number, values: Array<T>, replace?: boolean): void
 
-  appendCurrent<T extends {}>(values: Array<T>, replace?: boolean): void
+  appendCurrent(values: Array<T>, replace?: boolean): void
 
   attach(to: Element): void
 
