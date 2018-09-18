@@ -64,7 +64,7 @@ var TributeSearch = function () {
             // if the pattern search at end
             if (pattern.length === patternIndex) {
 
-                // calculate socre and copy the cache containing the indices where it's found
+                // calculate score and copy the cache containing the indices where it's found
                 return {
                     score: this.calculateScore(patternCache),
                     cache: patternCache.slice()
