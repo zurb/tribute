@@ -37,8 +37,10 @@ class Tribute {
                 // symbol that starts the lookup
                 trigger: trigger,
 
+                // is it wrapped in an iframe
                 iframe: iframe,
 
+                // class applied to selected item
                 selectClass: selectClass,
 
                 // function called on select that retuns the content to insert
