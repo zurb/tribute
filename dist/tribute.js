@@ -687,6 +687,14 @@ var TributeEvents = function () {
                         _this.tribute.hideMenu();
                     }
                 },
+                space: function space(e, el) {
+                    if (_this.tribute.isActive && !_this.tribute.allowSpaces) {
+                        // e.preventDefault();
+                        e.stopPropagation();
+                        _this.tribute.isActive = false;
+                        _this.tribute.hideMenu();
+                    }
+                },
                 tab: function tab(e, el) {
                     // choose first match
                     _this.callbacks().enter(e, el);
@@ -800,6 +808,10 @@ var TributeEvents = function () {
             }, {
                 key: 40,
                 value: 'DOWN'
+            },
+                {
+                key: 32,
+                value: 'SPACE'
             }];
         }
     }]);
