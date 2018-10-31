@@ -76,6 +76,7 @@ var Tribute = function () {
         this.allowSpaces = allowSpaces;
         this.replaceTextSuffix = replaceTextSuffix;
         this.positionMenu = positionMenu;
+        this.hasTrailingSpace = false;
 
         if (values) {
             this.collection = [{
@@ -391,7 +392,7 @@ var Tribute = function () {
         }
     }, {
         key: "replaceText",
-        value: function replaceText(content, originalEvent, item) {
+            value: function replaceText(content, originalEvent, item) {
             this.range.replaceTriggerText(content, true, true, originalEvent, item);
         }
     }, {
@@ -592,6 +593,13 @@ var TributeEvents = function () {
 
             if (event.keyCode === 27) return;
 
+            if (!instance.tribute.allowSpaces && instance.tribute.hasTrailingSpace) {
+                instance.tribute.hasTrailingSpace = false;
+                instance.commandEvent = true;
+                instance.callbacks()["space"](event, this);
+                return
+            }
+
             if (!instance.tribute.isActive) {
                 var keyCode = instance.getKeyCode(instance, this, event);
 
@@ -612,8 +620,8 @@ var TributeEvents = function () {
         }
     }, {
         key: 'shouldDeactivate',
-        value: function shouldDeactivate(event) {
-            if (!this.tribute.isActive) return false;
+            value: function shouldDeactivate(event) {
+                if (!this.tribute.isActive) return false;
 
             if (this.tribute.current.mentionText.length === 0) {
                 var eventKeyPressed = false;
@@ -631,7 +639,7 @@ var TributeEvents = function () {
         value: function getKeyCode(instance, el, event) {
             var char = void 0;
             var tribute = instance.tribute;
-            var info = tribute.range.getTriggerInfo(false, false, true, tribute.allowSpaces);
+            var info = tribute.range.getTriggerInfo(false, tribute.hasTrailingSpace, true, tribute.allowSpaces);
 
             if (info) {
                 return info.mentionTriggerChar.charCodeAt(0);
@@ -643,7 +651,7 @@ var TributeEvents = function () {
         key: 'updateSelection',
         value: function updateSelection(el) {
             this.tribute.current.element = el;
-            var info = this.tribute.range.getTriggerInfo(false, false, true, this.tribute.allowSpaces);
+            var info = this.tribute.range.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces);
 
             if (info) {
                 this.tribute.current.selectedPath = info.mentionSelectedPath;
@@ -689,10 +697,11 @@ var TributeEvents = function () {
                 },
                 space: function space(e, el) {
                     if (_this.tribute.isActive && !_this.tribute.allowSpaces) {
-                        // e.preventDefault();
                         e.stopPropagation();
-                        _this.tribute.isActive = false;
-                        _this.tribute.hideMenu();
+                        setTimeout(function () {
+                            _this.tribute.hideMenu();
+                            _this.tribute.isActive = false;
+                        }, 0);
                     }
                 },
                 tab: function tab(e, el) {
@@ -808,10 +817,6 @@ var TributeEvents = function () {
             }, {
                 key: 40,
                 value: 'DOWN'
-            },
-                {
-                key: 32,
-                value: 'SPACE'
             }];
         }
     }]);
@@ -957,7 +962,7 @@ var TributeRange = function () {
             var context = this.tribute.current,
                 coordinates = void 0;
 
-            var info = this.getTriggerInfo(false, false, true, this.tribute.allowSpaces);
+            var info = this.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces);
 
             if (typeof info !== 'undefined') {
 
@@ -1250,6 +1255,8 @@ var TributeRange = function () {
                     }
 
                     var regex = allowSpaces ? /[^\S ]/g : /[\xA0\s]/g;
+
+                    this.tribute.hasTrailingSpace = regex.test(currentTriggerSnippet);
 
                     if (!leadingSpace && (menuAlreadyActive || !regex.test(currentTriggerSnippet))) {
                         return {
