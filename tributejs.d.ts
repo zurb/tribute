@@ -50,6 +50,9 @@ export type TributeCollection<T extends {}> = {
   // optionally specify a custom suffix for the replace text
   // (defaults to empty space if undefined)
   replaceTextSuffix?: string
+
+  //specify whether the menu should be positioned
+  positionMenu?: boolean
 }
 
 export type TributeOptions<T> = TributeCollection<T> | {
