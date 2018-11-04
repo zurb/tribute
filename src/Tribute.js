@@ -31,6 +31,7 @@ class Tribute {
         this.allowSpaces = allowSpaces
         this.replaceTextSuffix = replaceTextSuffix
         this.positionMenu = positionMenu
+        this.hasTrailingSpace = false;
 
         if (values) {
             this.collection = [{
