@@ -22,7 +22,7 @@ class TributeRange {
         let context = this.tribute.current,
             coordinates
 
-        let info = this.getTriggerInfo(false, false, true, this.tribute.allowSpaces)
+        let info = this.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces)
 
         if (typeof info !== 'undefined') {
 
@@ -332,6 +332,8 @@ class TributeRange {
                 }
 
                 let regex = allowSpaces ? /[^\S ]/g : /[\xA0\s]/g;
+
+                this.tribute.hasTrailingSpace = regex.test(currentTriggerSnippet);
 
                 if (!leadingSpace && (menuAlreadyActive || !(regex.test(currentTriggerSnippet)))) {
                     return {

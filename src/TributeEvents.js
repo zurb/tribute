@@ -104,6 +104,13 @@ class TributeEvents {
 
         if (event.keyCode === 27) return
 
+        if (!instance.tribute.allowSpaces && instance.tribute.hasTrailingSpace) {
+            instance.tribute.hasTrailingSpace = false;
+            instance.commandEvent = true;
+            instance.callbacks()["space"](event, this);
+            return
+        }
+
         if (!instance.tribute.isActive) {
             let keyCode = instance.getKeyCode(instance, this, event)
 
@@ -142,7 +149,7 @@ class TributeEvents {
     getKeyCode(instance, el, event) {
         let char
         let tribute = instance.tribute
-        let info = tribute.range.getTriggerInfo(false, false, true, tribute.allowSpaces)
+        let info = tribute.range.getTriggerInfo(false, tribute.hasTrailingSpace, true, tribute.allowSpaces)
 
         if (info) {
             return info.mentionTriggerChar.charCodeAt(0)
@@ -153,7 +160,7 @@ class TributeEvents {
 
     updateSelection(el) {
         this.tribute.current.element = el
-        let info = this.tribute.range.getTriggerInfo(false, false, true, this.tribute.allowSpaces)
+        let info = this.tribute.range.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces)
 
         if (info) {
             this.tribute.current.selectedPath = info.mentionSelectedPath
@@ -197,6 +204,15 @@ class TributeEvents {
             tab: (e, el) => {
                 // choose first match
                 this.callbacks().enter(e, el)
+            },
+            space: (e, el) => {
+                if (this.tribute.isActive && !this.tribute.allowSpaces) {
+                    e.stopPropagation();
+                    setTimeout(() => {
+                        this.tribute.hideMenu();
+                        this.tribute.isActive = false;
+                    }, 0);
+                }
             },
             up: (e, el) => {
                 // navigate up ul
