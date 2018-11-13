@@ -32,7 +32,7 @@ class TributeRange {
             }
 
             if (!this.isContentEditable(context.element)) {
-                coordinates = this.getTextAreaOrInputUnderlinePosition(this.getDocument().activeElement,
+                coordinates = this.getTextAreaOrInputUnderlinePosition(this.tribute.current.element,
                     info.mentionPosition)
             }
             else {
@@ -113,7 +113,7 @@ class TributeRange {
     // TODO: this may not be necessary anymore as we are using mouseup instead of click
     resetSelection(targetElement, path, offset) {
         if (!this.isContentEditable(targetElement)) {
-            if (targetElement !== this.getDocument().activeElement) {
+            if (targetElement !== this.tribute.current.element) {
                 targetElement.focus()
             }
         } else {
@@ -138,7 +138,7 @@ class TributeRange {
 
         if (info !== undefined) {
             if (!this.isContentEditable(context.element)) {
-                let myField = this.getDocument().activeElement
+                let myField = this.tribute.current.element
                 let textSuffix = typeof this.tribute.replaceTextSuffix == 'string'
                     ? this.tribute.replaceTextSuffix
                     : ' '
@@ -276,7 +276,7 @@ class TributeRange {
         let selected, path, offset
 
         if (!this.isContentEditable(ctx.element)) {
-            selected = this.getDocument().activeElement
+            selected = this.tribute.current.element
         } else {
             let selectionInfo = this.getContentEditableSelectedPath(ctx)
 
