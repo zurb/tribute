@@ -19,12 +19,12 @@ class TributeMenuEvents {
             }
         }, 300, false)
 
-        // fixes IE11 issues with mousedown
-        this.tribute.range.getDocument().addEventListener('MSPointerDown',
-            this.menuKeydownEvent, false)
+        // fixes IE11 issues with mouseup
+        this.tribute.range.getDocument().addEventListener('MSPointerUp',
+            this.menuClickEvent, false)
         menu.addEventListener('keydown',
             this.menuKeydownEvent, false)
-        this.tribute.range.getDocument().addEventListener('mousedown',
+        this.tribute.range.getDocument().addEventListener('mouseup',
             this.menuClickEvent, false)
         window.addEventListener('resize', this.windowResizeEvent)
 
@@ -33,16 +33,15 @@ class TributeMenuEvents {
         } else {
             window.addEventListener('scroll', this.menuContainerScrollEvent)
         }
-
     }
 
     unbind(menu) {
         menu.removeEventListener('keydown',
             menu.menuKeydownEvent, false)
         delete menu.menuKeydownEvent
-        this.tribute.range.getDocument().removeEventListener('mousedown',
+        this.tribute.range.getDocument().removeEventListener('mouseup',
             this.menuClickEvent, false)
-        this.tribute.range.getDocument().removeEventListener('MSPointerDown',
+        this.tribute.range.getDocument().removeEventListener('MSPointerUp',
             this.menuClickEvent, false)
         window.removeEventListener('resize', this.windowResizeEvent)
 
