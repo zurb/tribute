@@ -374,16 +374,16 @@ class TributeRange {
     }
 
     isMenuOffScreen(coordinates, menuDimensions) {
-        let menuTop = typeof coordinates.top === 'number' ? coordinates.top : coordinates.bottom - menuDimensions.height
-        let menuRight = typeof coordinates.right === 'number' ? coordinates.right : coordinates.left + menuDimensions.width
-        let menuBottom = typeof coordinates.bottom === 'number' ? coordinates.bottom : coordinates.top + menuDimensions.height
-        let menuLeft = typeof coordinates.left === 'number' ? coordinates.left : coordinates.right - menuDimensions.width
-
         let windowWidth = window.innerWidth
         let windowHeight = window.innerHeight
         let doc = document.documentElement
         let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
         let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+
+        let menuTop = typeof coordinates.top === 'number' ? coordinates.top : windowTop + windowHeight - coordinates.bottom - menuDimensions.height
+        let menuRight = typeof coordinates.right === 'number' ? coordinates.right : coordinates.left + menuDimensions.width
+        let menuBottom = typeof coordinates.bottom === 'number' ? coordinates.bottom : coordinates.top + menuDimensions.height
+        let menuLeft = typeof coordinates.left === 'number' ? coordinates.left : windowLeft + windowWidth - coordinates.right - menuDimensions.width
 
         return {
             top: menuTop < Math.floor(windowTop),
@@ -484,7 +484,7 @@ class TributeRange {
         let menuDimensions = this.getMenuDimensions()
         let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
 
-        if (menuIsOffScreen.horizontally) {
+        if (menuIsOffScreen.right) {
             coordinates.right = windowWidth - coordinates.left
             coordinates.left = 'auto'
         }
@@ -493,7 +493,7 @@ class TributeRange {
             ? this.tribute.menuContainer.offsetHeight
             : this.getDocument().body.offsetHeight
 
-        if (menuIsOffScreen.vertically) {
+        if (menuIsOffScreen.bottom) {
             let parentRect = this.tribute.menuContainer
                 ? this.tribute.menuContainer.getBoundingClientRect()
                 : this.getDocument().body.getBoundingClientRect()
@@ -503,8 +503,21 @@ class TributeRange {
             coordinates.top = 'auto'
         }
 
-        this.getDocument().body.removeChild(div)
+        menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
+        if (menuIsOffScreen.left) {
+            coordinates.left = windowWidth > menuDimensions.width
+                ? windowLeft + windowWidth - menuDimensions.width
+                : windowLeft
+            delete coordinates.right
+        }
+        if (menuIsOffScreen.top) {
+            coordinates.top = windowHeight > menuDimensions.height
+                ? windowTop + windowHeight - menuDimensions.height
+                : windowTop
+            delete coordinates.bottom
+        }
 
+        this.getDocument().body.removeChild(div)
         return coordinates
     }
 
@@ -545,44 +558,36 @@ class TributeRange {
         let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
 
         if (menuIsOffScreen.right) {
-            coordinates.left = 'auto'
             coordinates.right = windowWidth - rect.left - windowLeft
+            coordinates.left = 'auto'
         }
 
-        let parentRect = this.tribute.menuContainer
-            ? this.tribute.menuContainer.getBoundingClientRect()
-            : this.getDocument().body.getBoundingClientRect()
         let parentHeight = this.tribute.menuContainer
             ? this.tribute.menuContainer.offsetHeight
             : this.getDocument().body.offsetHeight
 
         if (menuIsOffScreen.bottom) {
+            let parentRect = this.tribute.menuContainer
+                ? this.tribute.menuContainer.getBoundingClientRect()
+                : this.getDocument().body.getBoundingClientRect()
             let scrollStillAvailable = parentHeight - (windowHeight - parentRect.top)
 
-            windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
-            windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
-            coordinates.top = 'auto'
             coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top)
+            coordinates.top = 'auto'
         }
 
         menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
         if (menuIsOffScreen.left) {
-            if (windowWidth > menuDimensions.width) {
-                coordinates.left = 'auto'
-                coordinates.right = parentRect.right - windowLeft - windowWidth
-            } else {
-                coordinates.left = windowLeft
-                delete coordinates.right
-            }
+            coordinates.left = windowWidth > menuDimensions.width
+                ? windowLeft + windowWidth - menuDimensions.width
+                : windowLeft
+            delete coordinates.right
         }
         if (menuIsOffScreen.top) {
-            if (windowHeight > menuDimensions.height) {
-                coordinates.top = 'auto'
-                coordinates.bottom = parentRect.bottom - windowTop - windowHeight
-            } else {
-                coordinates.top = windowTop
-                delete coordinates.bottom
-            }
+            coordinates.top = windowHeight > menuDimensions.height
+                ? windowTop + windowHeight - menuDimensions.height
+                : windowTop
+            delete coordinates.bottom
         }
 
         markerEl.parentNode.removeChild(markerEl)
