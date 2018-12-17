@@ -558,8 +558,8 @@ class TributeRange {
         let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
 
         if (menuIsOffScreen.right) {
-            coordinates.right = windowWidth - rect.left - windowLeft
             coordinates.left = 'auto'
+            coordinates.right = windowWidth - rect.left - windowLeft
         }
 
         let parentHeight = this.tribute.menuContainer
@@ -572,8 +572,8 @@ class TributeRange {
                 : this.getDocument().body.getBoundingClientRect()
             let scrollStillAvailable = parentHeight - (windowHeight - parentRect.top)
 
-            coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top)
             coordinates.top = 'auto'
+            coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top)
         }
 
         menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
