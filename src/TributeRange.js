@@ -65,9 +65,7 @@ class TributeRange {
                 }
                 let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
 
-                let menuIsOffScreenHorizontally = window.innerWidth > menuDimensions.width && (menuIsOffScreen.left || menuIsOffScreen.right)
-                let menuIsOffScreenVertically = window.innerHeight > menuDimensions.height && (menuIsOffScreen.top || menuIsOffScreen.bottom)
-                if (menuIsOffScreenHorizontally || menuIsOffScreenVertically) {
+                if (menuIsOffScreen.horizontally || menuIsOffScreen.vertically) {
                     this.tribute.menu.style.cssText = 'display: none'
                     this.positionMenuAtCaret(scrollTo)
                 }
@@ -372,10 +370,8 @@ class TributeRange {
     }
 
     isMenuOffScreen(coordinates, menuDimensions) {
-        let menuTop = typeof coordinates.top === 'number' ? coordinates.top : coordinates.bottom - menuDimensions.height
-        let menuRight = typeof coordinates.right === 'number' ? coordinates.right : coordinates.left + menuDimensions.width
-        let menuBottom = typeof coordinates.bottom === 'number' ? coordinates.bottom : coordinates.top + menuDimensions.height
-        let menuLeft = typeof coordinates.left === 'number' ? coordinates.left : coordinates.right - menuDimensions.width
+        let contentWidth = menuDimensions.width + coordinates.left
+        let contentHeight = menuDimensions.height + coordinates.top
 
         let windowWidth = window.innerWidth
         let windowHeight = window.innerHeight
@@ -384,10 +380,8 @@ class TributeRange {
         let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
 
         return {
-            top: menuTop < Math.floor(windowTop),
-            right: menuRight > Math.ceil(windowLeft + windowWidth),
-            bottom: menuBottom > Math.ceil(windowTop + windowHeight),
-            left: menuLeft < Math.floor(windowLeft)
+            horizontally: Math.ceil(contentWidth - windowLeft) >= windowWidth,
+            vertically: Math.ceil(contentHeight - windowTop) >= windowHeight
         }
     }
 
@@ -542,45 +536,25 @@ class TributeRange {
         let menuDimensions = this.getMenuDimensions()
         let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
 
-        if (menuIsOffScreen.right) {
+        if (menuIsOffScreen.horizontally) {
             coordinates.left = 'auto'
             coordinates.right = windowWidth - rect.left - windowLeft
         }
 
-        let parentRect = this.tribute.menuContainer
-            ? this.tribute.menuContainer.getBoundingClientRect()
-            : this.getDocument().body.getBoundingClientRect()
         let parentHeight = this.tribute.menuContainer
             ? this.tribute.menuContainer.offsetHeight
             : this.getDocument().body.offsetHeight
 
-        if (menuIsOffScreen.bottom) {
+        if (menuIsOffScreen.vertically) {
+            let parentRect = this.tribute.menuContainer
+                ? this.tribute.menuContainer.getBoundingClientRect()
+                : this.getDocument().body.getBoundingClientRect()
             let scrollStillAvailable = parentHeight - (windowHeight - parentRect.top)
 
             windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
             windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
             coordinates.top = 'auto'
             coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top)
-        }
-
-        menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
-        if (menuIsOffScreen.left) {
-            if (windowWidth > menuDimensions.width) {
-                coordinates.left = 'auto'
-                coordinates.right = parentRect.right - windowLeft - windowWidth
-            } else {
-                coordinates.left = windowLeft
-                delete coordinates.right
-            }
-        }
-        if (menuIsOffScreen.top) {
-            if (windowHeight > menuDimensions.height) {
-                coordinates.top = 'auto'
-                coordinates.bottom = parentRect.bottom - windowTop - windowHeight
-            } else {
-                coordinates.top = windowTop
-                delete coordinates.bottom
-            }
         }
 
         markerEl.parentNode.removeChild(markerEl)
