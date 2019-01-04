@@ -381,6 +381,13 @@ class TributeRange {
         let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
         let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
 
+        if (contentWidth > windowWidth) {
+            return {
+                horizontally: false,
+                vertically: false
+            }
+        }
+
         return {
             horizontally: Math.ceil(contentWidth - windowLeft) >= windowWidth,
             vertically: Math.ceil(contentHeight - windowTop) >= windowHeight
