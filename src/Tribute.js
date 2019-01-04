@@ -21,6 +21,7 @@ class Tribute {
         allowSpaces = false,
         replaceTextSuffix = null,
         positionMenu = true,
+        spaceSelectsMatch = false,
     }) {
 
         this.menuSelected = 0
@@ -32,6 +33,7 @@ class Tribute {
         this.replaceTextSuffix = replaceTextSuffix
         this.positionMenu = positionMenu
         this.hasTrailingSpace = false;
+        this.spaceSelectsMatch = spaceSelectsMatch;
 
         if (values) {
             this.collection = [{
@@ -68,7 +70,7 @@ class Tribute {
                 // array of objects or a function returning an array of objects
                 values: values,
 
-                requireLeadingSpace: requireLeadingSpace,
+                requireLeadingSpace: requireLeadingSpace
             }]
         }
         else if (collection) {

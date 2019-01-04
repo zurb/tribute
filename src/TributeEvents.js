@@ -18,6 +18,9 @@ class TributeEvents {
             key: 27,
             value: 'ESCAPE'
         }, {
+            key: 32,
+            value: 'SPACE'
+        }, {
             key: 38,
             value: 'UP'
         }, {
@@ -206,12 +209,16 @@ class TributeEvents {
                 this.callbacks().enter(e, el)
             },
             space: (e, el) => {
-                if (this.tribute.isActive && !this.tribute.allowSpaces) {
-                    e.stopPropagation();
-                    setTimeout(() => {
-                        this.tribute.hideMenu();
-                        this.tribute.isActive = false;
-                    }, 0);
+                if (this.tribute.isActive) {
+                    if (this.tribute.spaceSelectsMatch) {
+                        this.callbacks().enter(e, el)
+                    } else if (!this.tribute.allowSpaces) {
+                        e.stopPropagation();
+                        setTimeout(() => {
+                            this.tribute.hideMenu();
+                            this.tribute.isActive = false;
+                        }, 0);
+                    }
                 }
             },
             up: (e, el) => {

@@ -181,6 +181,9 @@ Collection object shown with defaults:
   // specify whether the menu should be positioned.  Set to false and use in conjuction with menuContainer to create an inline menu
   // (defaults to true)
   positionMenu: true,
+
+  // when the spacebar is hit, select the current match
+  spaceSelectsMatch: false
 }
 ```
 
@@ -190,7 +193,7 @@ The `lookup` column can also be passed a function to construct a string to query
 
 ```js
 {
-  lookup: function (person) {
+  lookup: function (person, mentionText) {
     return person.name + person.email;
   }
 }
