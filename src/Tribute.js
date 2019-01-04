@@ -22,6 +22,7 @@ class Tribute {
         replaceTextSuffix = null,
         positionMenu = true,
     }) {
+
         this.menuSelected = 0
         this.current = {}
         this.inputEvent = false
@@ -215,7 +216,7 @@ class Tribute {
                     if (typeof this.current.collection.lookup === 'string') {
                         return el[this.current.collection.lookup]
                     } else if (typeof this.current.collection.lookup === 'function') {
-                        return this.current.collection.lookup(el, this.current.mentionText)
+                        return this.current.collection.lookup(el)
                     } else {
                         throw new Error('Invalid lookup attribute, lookup must be string or function.')
                     }
