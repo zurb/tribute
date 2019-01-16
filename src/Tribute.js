@@ -22,6 +22,7 @@ class Tribute {
         replaceTextSuffix = null,
         positionMenu = true,
         spaceSelectsMatch = false,
+        searchOpts = {},
     }) {
 
         this.menuSelected = 0
@@ -70,7 +71,9 @@ class Tribute {
                 // array of objects or a function returning an array of objects
                 values: values,
 
-                requireLeadingSpace: requireLeadingSpace
+                requireLeadingSpace: requireLeadingSpace,
+
+                searchOpts: searchOpts
             }]
         }
         else if (collection) {
@@ -92,7 +95,8 @@ class Tribute {
                     lookup: item.lookup || lookup,
                     fillAttr: item.fillAttr || fillAttr,
                     values: item.values,
-                    requireLeadingSpace: item.requireLeadingSpace
+                    requireLeadingSpace: item.requireLeadingSpace,
+                    searchOpts: item.searchOpts || searchOpts
                 }
             })
         }
@@ -212,8 +216,8 @@ class Tribute {
             }
 
             let items = this.search.filter(this.current.mentionText, values, {
-                pre: '<span>',
-                post: '</span>',
+                pre: this.current.collection.searchOpts.pre || '<span>',
+                post: this.current.collection.searchOpts.post || '</span>',
                 extract: (el) => {
                     if (typeof this.current.collection.lookup === 'string') {
                         return el[this.current.collection.lookup]
