@@ -18,7 +18,7 @@ class TributeMenuEvents {
             }
         }, 300, false)
 
-        // fixes IE11 issues with mouseup
+        // fixes IE11 issues with mousedown
         this.tribute.range.getDocument().addEventListener('MSPointerDown',
             this.menuClickEvent, false)
         this.tribute.range.getDocument().addEventListener('mousedown',
