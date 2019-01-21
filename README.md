@@ -183,7 +183,14 @@ Collection object shown with defaults:
   positionMenu: true,
 
   // when the spacebar is hit, select the current match
-  spaceSelectsMatch: false
+  spaceSelectsMatch: false,
+
+  // Customize the elements used to wrap matched strings within the results list
+  // defaults to <span></span> if undefined
+  searchOpts: {
+    pre: '<span>',
+    post: '</span>'
+  }
 }
 ```
 
