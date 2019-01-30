@@ -112,9 +112,20 @@ class TributeRange {
         targetElement.focus()
     }
 
+    resetSelection(targetElement, path, offset) {
+        if (!this.isContentEditable(targetElement)) {
+            if (targetElement !== this.getDocument().activeElement) {
+                targetElement.focus();
+            }
+        } else {
+            this.selectElement(targetElement, path, offset);
+        }
+    }
+
     replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace, originalEvent, item) {
         let context = this.tribute.current
         let info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace, this.tribute.allowSpaces)
+        this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
 
         // Create the event
         let replaceEvent = new CustomEvent('tribute-replaced', {
