@@ -17,7 +17,7 @@
   .tribute-container li {
     padding: 5px 5px;
     cursor: pointer; }
-    .tribute-container li.highlight, .tribute-container li:hover {
+    .tribute-container li.highlight {
       background: #ddd; }
     .tribute-container li span {
       font-weight: bold; }
