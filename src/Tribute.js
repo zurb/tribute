@@ -83,6 +83,8 @@ class Tribute {
             }]
         }
         else if (collection) {
+            if (this.autocompleteMode)
+                console.warn('Tribute in autocomplete mode does not work for collections')
             this.collection = collection.map(item => {
                 return {
                     trigger: item.trigger || trigger,

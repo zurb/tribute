@@ -240,7 +240,7 @@ class TributeEvents {
                     } else if (selected === 0) {
                       this.tribute.menuSelected = count - 1
                       this.setActiveLi()
-                    // this.tribute.menu.scrollTop = this.tribute.menu.scrollHeight // @todo check if needed
+                      this.tribute.menu.scrollTop = this.tribute.menu.scrollHeight
                     }
                 }
             },
@@ -258,7 +258,7 @@ class TributeEvents {
                     } else if (count === selected) {
                         this.tribute.menuSelected = 0
                         this.setActiveLi()
-                        // this.tribute.menu.scrollTop = 0 // @todo check if needed
+                        this.tribute.menu.scrollTop = 0
                     }
                 }
             },
