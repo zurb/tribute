@@ -22,7 +22,7 @@ class TributeRange {
         let context = this.tribute.current,
             coordinates
 
-        let info = this.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces)
+        let info = this.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces, this.tribute.autocompleteMode)
 
         if (typeof info !== 'undefined') {
 
@@ -114,7 +114,7 @@ class TributeRange {
 
     replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace, originalEvent, item) {
         let context = this.tribute.current
-        let info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace, this.tribute.allowSpaces)
+        let info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace, this.tribute.allowSpaces, this.tribute.autocompleteMode)
 
         // Create the event
         let replaceEvent = new CustomEvent('tribute-replaced', {
@@ -144,7 +144,7 @@ class TributeRange {
                     : '\xA0'
                 text += textSuffix
                 this.pasteHtml(text, info.mentionPosition,
-                    info.mentionPosition + info.mentionText.length + 1)
+                    info.mentionPosition + info.mentionText.length + !this.tribute.autocompleteMode)
             }
 
             context.element.dispatchEvent(replaceEvent)
@@ -259,7 +259,14 @@ class TributeRange {
         return text
     }
 
-    getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces) {
+    getLastWordInText(text) {
+        text = text.replace(/\u00A0/g, ' '); // https://stackoverflow.com/questions/29850407/how-do-i-replace-unicode-character-u00a0-with-a-space-in-javascript
+        let wordsArray = text.split(' ')
+        let worldsCount = wordsArray.length - 1
+        return wordsArray[worldsCount].trim()
+    }
+
+    getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces, isAutocomplete) {
         let ctx = this.tribute.current
         let selected, path, offset
 
@@ -276,6 +283,17 @@ class TributeRange {
         }
 
         let effectiveRange = this.getTextPrecedingCurrentSelection()
+        let lastWordOfEffectiveRange = this.getLastWordInText(effectiveRange)
+
+        if (isAutocomplete) {
+            return {
+                mentionPosition: effectiveRange.length - lastWordOfEffectiveRange.length,
+                mentionText: lastWordOfEffectiveRange,
+                mentionSelectedElement: selected,
+                mentionSelectedPath: path,
+                mentionSelectedOffset: offset
+            }
+        }
 
         if (effectiveRange !== undefined && effectiveRange !== null) {
             let mostRecentTriggerCharPos = -1
