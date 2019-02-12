@@ -16,14 +16,36 @@ module.exports = function(config) {
     // testing framework to use (jasmine/mocha/qunit/...)
     // as well as any additional frameworks (requirejs/chai/sinon/...)
     frameworks: [
-      "jasmine"
+      "jasmine",
+      "browserify",
     ],
 
     // list of files / patterns to load in the browser
     files: [
       '../dist/tribute.js',
-      '../test/spec/**/*.js'
+      '../test/spec/**/*.js',
     ],
+
+    preprocessors: {
+      '../src/*.js': ['browserify'],
+      '../test/spec/*.js': ['browserify'],
+    },
+
+    reporters: ['kjhtml', 'spec'],
+
+    specReporter: {
+      maxLogLines: 5,             // limit number of lines logged per test
+      suppressErrorSummary: true, // do not print error summary
+      suppressFailed: false,      // do not print information about failed tests
+      suppressPassed: false,      // do not print information about passed tests
+      suppressSkipped: true,      // do not print information about skipped tests
+      showSpecTiming: false,      // print the time elapsed for each spec
+    },
+
+    browserify: {
+      debug: true,
+      transform: [ ['babelify'] ],
+    },
 
     // list of files / patterns to exclude
     exclude: [
@@ -47,7 +69,10 @@ module.exports = function(config) {
     // Which plugins to enable
     plugins: [
       "karma-chrome-launcher",
-      "karma-jasmine"
+      "karma-jasmine",
+      "karma-browserify",
+      "karma-jasmine-html-reporter",
+      "karma-spec-reporter",
     ],
 
     // Continuous Integration mode
