@@ -114,7 +114,7 @@ class TributeEvents {
             return
         }
 
-        if (!instance.tribute.isActive) {
+        if (true) {
             let keyCode = instance.getKeyCode(instance, this, event)
 
             if (isNaN(keyCode) || !keyCode) return
