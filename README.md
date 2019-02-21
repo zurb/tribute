@@ -10,6 +10,7 @@ A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Fir
 - [Tips](#tips)
 - [Contributing](#contributing)
 - [Framework Support](#framework-support)
+- [WYSIWYG Editor Support](#wysiwyg-editor-support)
 - [Contribution Ideas](#contribution-ideas)
 
 ## Installing
@@ -409,6 +410,9 @@ Angular 2+ - [ngx-tribute](https://github.com/ladderio/ngx-tribute) by **Ladder.
 Ruby — [tribute-rb](https://github.com/zurb/tribute-rb) by **ZURB**
 
 React – [react-tribute](https://github.com/BolsteDev/react-tribute) by **Bolste**
+
+## WYSIWYG Editor Support
+* Froala Editor - https://www.froala.com/wysiwyg-editor/examples/tribute-js
 
 ## Contribution Ideas
 
