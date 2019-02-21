@@ -214,8 +214,7 @@ class Tribute {
             if (!this.isActive) {
                 return
             }
-
-            let items = this.search.filter(this.current.mentionText, values, {
+            let items = this.search.filter(this.current.mentionText.trim(), values, {
                 pre: this.current.collection.searchOpts.pre || '<span>',
                 post: this.current.collection.searchOpts.post || '</span>',
                 extract: (el) => {

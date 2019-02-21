@@ -316,7 +316,7 @@ class TributeRange {
                         firstSnippetChar === '\xA0'
                     )
                 if (hasTrailingSpace) {
-                    currentTriggerSnippet = currentTriggerSnippet.trim()
+                    currentTriggerSnippet = currentTriggerSnippet.replace(/\s+$/, ''); //Remove trailing whitespace only
                 }
 
                 let regex = allowSpaces ? /[^\S ]/g : /[\xA0\s]/g;
@@ -324,6 +324,15 @@ class TributeRange {
                 this.tribute.hasTrailingSpace = regex.test(currentTriggerSnippet);
 
                 if (!leadingSpace && (menuAlreadyActive || !(regex.test(currentTriggerSnippet)))) {
+                    return {
+                        mentionPosition: mostRecentTriggerCharPos,
+                        mentionText: currentTriggerSnippet,
+                        mentionSelectedElement: selected,
+                        mentionSelectedPath: path,
+                        mentionSelectedOffset: offset,
+                        mentionTriggerChar: triggerChar
+                    }
+                } else {
                     return {
                         mentionPosition: mostRecentTriggerCharPos,
                         mentionText: currentTriggerSnippet,
