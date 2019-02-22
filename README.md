@@ -237,6 +237,11 @@ activateLink.addEventListener('mousedown', function (e) {
 });
 ```
 
+Note that `showMenuForCollection` has an optional second parameter called `collectionIndex` that defaults to 0. This allows you to specify which collection you want to trigger with the first index starting at 0.
+
+For example, if you want to trigger the second collection you would use the following snippet: `tribute.showMenuForCollection(input, 1);`
+
+
 ## Events
 
 ### Replaced
