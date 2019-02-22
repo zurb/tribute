@@ -273,7 +273,7 @@ class Tribute {
         }
     }
 
-    showMenuForCollection(element, collectionIndex) {
+    showMenuForCollection(element, collectionIndex, options = { addTrigger: true }) {
         if (element !== document.activeElement) {
             this.placeCaretAtEnd(element)
         }
@@ -282,10 +282,12 @@ class Tribute {
         this.current.externalTrigger = true
         this.current.element = element
 
-        if (element.isContentEditable)
-            this.insertTextAtCursor(this.current.collection.trigger)
-        else
-            this.insertAtCaret(element, this.current.collection.trigger)
+        if (options && options['addTrigger'] && options['addTrigger'] === true) {
+            if (element.isContentEditable)
+                this.insertTextAtCursor(this.current.collection.trigger)
+            else
+                this.insertAtCaret(element, this.current.collection.trigger)
+        }
 
         this.showMenuFor(element)
     }
