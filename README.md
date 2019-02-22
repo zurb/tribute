@@ -424,6 +424,5 @@ React – [react-tribute](https://github.com/BolsteDev/react-tribute) by **Bolst
 The major focus that we could use your help with is creating wrappers for different JavaScript frameworks. Some of the ones we are interested in are outlined below. We also see a couple of areas for improving compatibility with different rendering situations, such as in iframes inside of rich text editors.
 
 **Some ideas that are for grabs**
-* Ember component
-* Compatibility with WYSIWYG editors (TinyMCE, etc)
-* Testing
+* Prosemirror component
+* `noMatchTemplate` per collection.
