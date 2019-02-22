@@ -10,6 +10,7 @@ class Tribute {
         iframe = null,
         selectClass = 'highlight',
         trigger = '@',
+        autocompleteMode = false,
         selectTemplate = null,
         menuItemTemplate = null,
         lookup = 'key',
@@ -24,7 +25,7 @@ class Tribute {
         spaceSelectsMatch = false,
         searchOpts = {},
     }) {
-
+        this.autocompleteMode = autocompleteMode
         this.menuSelected = 0
         this.current = {}
         this.inputEvent = false
@@ -35,6 +36,11 @@ class Tribute {
         this.positionMenu = positionMenu
         this.hasTrailingSpace = false;
         this.spaceSelectsMatch = spaceSelectsMatch;
+
+        if (this.autocompleteMode) {
+            trigger = ''
+            allowSpaces = false
+        }
 
         if (values) {
             this.collection = [{
@@ -77,6 +83,8 @@ class Tribute {
             }]
         }
         else if (collection) {
+            if (this.autocompleteMode)
+                console.warn('Tribute in autocomplete mode does not work for collections')
             this.collection = collection.map(item => {
                 return {
                     trigger: item.trigger || trigger,
@@ -256,7 +264,9 @@ class Tribute {
                 li.addEventListener('mouseenter', (e) => {
                   let li = e.target;
                   let index = li.getAttribute('data-index')
-                  this.events.setActiveLi(index)
+                  if (e.movementX !== 0 && e.movementY !== 0) {
+                    this.events.setActiveLi(index)
+                  }
                 })
                 if (this.menuSelected === index) {
                     li.className = this.current.collection.selectClass
@@ -349,7 +359,7 @@ class Tribute {
 
     selectItemAtIndex(index, originalEvent) {
         index = parseInt(index)
-        if (typeof index !== 'number') return
+        if (typeof index !== 'number' || isNaN(index)) return
         let item = this.current.filteredItems[index]
         let content = this.current.collection.selectTemplate(item)
         if (content !== null) this.replaceText(content, originalEvent, item)
