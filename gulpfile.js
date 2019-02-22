@@ -23,16 +23,7 @@ var server = {
     port: '8001'
 }
 
-gulp.task('uglify', ['bundler'], function() {
-    gulp.src('dist/tribute.js')
-        .pipe(uglify('tribute.min.js', {
-            outSourceMap: true
-        }))
-        .pipe(gulp.dest('dist'))
-});
-
-// Basic usage
-gulp.task('bundler', function() {
+gulp.task('bundler', function(done) {
     // Single entry point to browserify
     return browserify('src/index.js', {
             debug: true, standalone: "Tribute"
@@ -44,16 +35,29 @@ gulp.task('bundler', function() {
         })
         .pipe(source('tribute.js'))
         .pipe(gulp.dest('dist'));
+    done();
 });
 
-gulp.task('sass', function() {
+gulp.task('uglify', gulp.series('bundler', function(done) {
+    gulp.src('dist/tribute.js')
+        .pipe(uglify('tribute.min.js', {
+            outSourceMap: true
+        }))
+        .pipe(gulp.dest('dist'));
+    done();
+}));
+
+// Basic usage
+
+gulp.task('sass', function(done) {
     gulp.src(sourcePaths.styles)
         .pipe(plumber())
         .pipe(sass())
         .pipe(gulp.dest(distPaths.styles));
+    done();
 });
 
-gulp.task('webserver', function() {
+gulp.task('webserver', function(done) {
     gulp.src('.')
         .pipe(webserver({
             host: server.host,
@@ -61,17 +65,28 @@ gulp.task('webserver', function() {
             livereload: false,
             directoryListing: false
         }));
+    done();
 });
 
-gulp.task('openbrowser', ['build'], function() {
+gulp.task('build', gulp.series('sass', 'uglify', function (done) {
+    done();
+}));
+
+gulp.task('openbrowser', gulp.series('build', function(done) {
     opn('http://' + server.host + ':' + server.port + '/example/index.html');
+    done();
+}));
+
+gulp.task('watch', function(done) {
+    gulp.watch(sourcePaths.styles, gulp.series('sass', function (done) {
+        done();
+    }));
+    gulp.watch(sourcePaths.src, gulp.series('bundler', function (done) {
+        done();
+    }));
+    done();
 });
 
-gulp.task('watch', function() {
-    gulp.watch(sourcePaths.styles, ['sass']);
-    gulp.watch(sourcePaths.src, ['bundler']);
-});
-
-gulp.task('build', ['sass', 'uglify']);
-
-gulp.task('default', ['build', 'webserver', 'watch', 'openbrowser']);
+gulp.task('default', gulp.series('build', 'webserver', 'watch', 'openbrowser', function (done) {
+    done();
+}));

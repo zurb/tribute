@@ -512,7 +512,7 @@ var Tribute = function () {
 }();
 
 exports.default = Tribute;
-module.exports = exports["default"];
+module.exports = exports.default;
 
 },{"./TributeEvents":2,"./TributeMenuEvents":3,"./TributeRange":4,"./TributeSearch":5,"./utils":7}],2:[function(require,module,exports){
 'use strict';
@@ -854,7 +854,7 @@ var TributeEvents = function () {
 }();
 
 exports.default = TributeEvents;
-module.exports = exports['default'];
+module.exports = exports.default;
 
 },{}],3:[function(require,module,exports){
 'use strict';
@@ -943,7 +943,7 @@ var TributeMenuEvents = function () {
 }();
 
 exports.default = TributeMenuEvents;
-module.exports = exports['default'];
+module.exports = exports.default;
 
 },{}],4:[function(require,module,exports){
 'use strict';
@@ -1568,7 +1568,7 @@ var TributeRange = function () {
 }();
 
 exports.default = TributeRange;
-module.exports = exports['default'];
+module.exports = exports.default;
 
 },{}],5:[function(require,module,exports){
 'use strict';
@@ -1746,7 +1746,7 @@ var TributeSearch = function () {
 }();
 
 exports.default = TributeSearch;
-module.exports = exports['default'];
+module.exports = exports.default;
 
 },{}],6:[function(require,module,exports){
 "use strict";
@@ -1766,7 +1766,7 @@ exports.default = _Tribute2.default; /**
                                      * Native ES6 JavaScript @mention Plugin
                                      **/
 
-module.exports = exports["default"];
+module.exports = exports.default;
 
 },{"./Tribute":1}],7:[function(require,module,exports){
 'use strict';
