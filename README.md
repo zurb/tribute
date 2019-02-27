@@ -186,6 +186,9 @@ Collection object shown with defaults:
   // when the spacebar is hit, select the current match
   spaceSelectsMatch: false,
 
+  // turn tribute into an autocomplete
+  autocompleteMode: false,
+
   // Customize the elements used to wrap matched strings within the results list
   // defaults to <span></span> if undefined
   searchOpts: {

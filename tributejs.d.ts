@@ -1,4 +1,4 @@
-// Type definitions for TributeJS v3.5.3
+// Type definitions for TributeJS v3.6.0
 // Project: https://github.com/zurb/tribute
 // Definitions by: Jordan Humphreys <https://github.com/mrsweaters/>
 
@@ -53,6 +53,9 @@ export type TributeCollection<T extends {}> = {
 
   //specify whether the menu should be positioned
   positionMenu?: boolean
+
+  //specify whether to put Tribute in autocomplete mode
+  autocompleteMode?: boolean
 }
 
 export type TributeOptions<T> = TributeCollection<T> | {
