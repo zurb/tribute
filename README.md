@@ -419,6 +419,8 @@ Ruby — [tribute-rb](https://github.com/zurb/tribute-rb) by **ZURB**
 
 React – [react-tribute](https://github.com/BolsteDev/react-tribute) by **Bolste**
 
+Ember – [ember-tribute](https://github.com/MalayaliRobz/ember-tribute) by **MalayaliRobz**
+
 ## WYSIWYG Editor Support
 * Froala Editor - https://www.froala.com/wysiwyg-editor/examples/tribute-js
 
