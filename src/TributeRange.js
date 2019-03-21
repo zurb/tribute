@@ -45,7 +45,7 @@ class TributeRange {
                                      right: ${coordinates.right}px;
                                      bottom: ${coordinates.bottom}px;
                                      position: absolute;
-                                     zIndex: 10000;
+                                     z-index: 10000;
                                      display: block;`
 
             if (coordinates.left === 'auto') {
@@ -409,7 +409,7 @@ class TributeRange {
         this.tribute.menu.style.cssText = `top: 0px;
                                  left: 0px;
                                  position: fixed;
-                                 zIndex: 10000;
+                                 z-index: 10000;
                                  display: block;
                                  visibility; hidden;`
        dimensions.width = this.tribute.menu.offsetWidth
