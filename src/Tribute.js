@@ -261,15 +261,15 @@ class Tribute {
             items.forEach((item, index) => {
                 let li = this.range.getDocument().createElement('li')
                 li.setAttribute('data-index', index)
-                li.addEventListener('mouseenter', (e) => {
+                li.addEventListener('mousemove', (e) => {
                   let li = e.target;
                   let index = li.getAttribute('data-index')
-                  if (e.movementX !== 0 && e.movementY !== 0) {
-                    this.events.setActiveLi(index)
-                  }
+                    if (e.movementY !== 0) {
+                        this.events.setActiveLi(index)
+                    }
                 })
                 if (this.menuSelected === index) {
-                    li.className = this.current.collection.selectClass
+                  li.className = this.current.collection.selectClass
                 }
                 li.innerHTML = this.current.collection.menuItemTemplate(item)
                 ul.appendChild(li)
