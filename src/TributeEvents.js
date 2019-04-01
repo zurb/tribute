@@ -192,7 +192,7 @@ class TributeEvents {
             },
             enter: (e, el) => {
                 // choose selection
-                if (this.tribute.isActive) {
+                if (this.tribute.isActive && this.tribute.current.filteredItems) {
                     e.preventDefault()
                     e.stopPropagation()
                     setTimeout(() => {
@@ -228,7 +228,7 @@ class TributeEvents {
             },
             up: (e, el) => {
                 // navigate up ul
-                if (this.tribute.isActive) {
+                if (this.tribute.isActive && this.tribute.current.filteredItems) {
                     e.preventDefault()
                     e.stopPropagation()
                     let count = this.tribute.current.filteredItems.length,
@@ -246,7 +246,7 @@ class TributeEvents {
             },
             down: (e, el) => {
                 // navigate down ul
-                if (this.tribute.isActive) {
+                if (this.tribute.isActive && this.tribute.current.filteredItems) {
                     e.preventDefault()
                     e.stopPropagation()
                     let count = this.tribute.current.filteredItems.length - 1,
