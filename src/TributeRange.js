@@ -59,6 +59,9 @@ class TributeRange {
             if (scrollTo) this.scrollIntoView()
 
             window.setTimeout(() => {
+                // return when menu is already hidden
+                if (!this.tribute.current || !this.tribute.current.element) return;
+
                 let menuDimensions = {
                    width: this.tribute.menu.offsetWidth,
                    height: this.tribute.menu.offsetHeight
