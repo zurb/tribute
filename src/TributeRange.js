@@ -144,7 +144,7 @@ class TributeRange {
                     : '\xA0'
                 text += textSuffix
                 this.pasteHtml(text, info.mentionPosition,
-                    info.mentionPosition + info.mentionText.length + !this.tribute.autocompleteMode)
+                    info.mentionPosition + info.mentionText.length + info.mentionTriggerChar.length);
             }
 
             context.element.dispatchEvent(replaceEvent)
@@ -323,10 +323,10 @@ class TributeRange {
                     )
                 )
             ) {
-                let currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + 1,
+                let currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + triggerChar.length,
                     effectiveRange.length)
 
-                triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + 1)
+                triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + triggerChar.length)
                 let firstSnippetChar = currentTriggerSnippet.substring(0, 1)
                 let leadingSpace = currentTriggerSnippet.length > 0 &&
                     (
