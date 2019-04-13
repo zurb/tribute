@@ -355,14 +355,22 @@ class TributeRange {
         }
     }
 
-    lastIndexWithLeadingSpace (str, char) {
+    lastIndexWithLeadingSpace (str, trigger) {
         let reversedStr = str.split('').reverse().join('')
         let index = -1
 
         for (let cidx = 0, len = str.length; cidx < len; cidx++) {
             let firstChar = cidx === str.length - 1
             let leadingSpace = /\s/.test(reversedStr[cidx + 1])
-            let match = char === reversedStr[cidx]
+            
+            let match = true;
+            
+            for (let triggerIdx = trigger.length - 1; triggerIdx >= 0; triggerIdx--) {
+              if(trigger[triggerIdx] !== reversedStr[cidx-triggerIdx]) {
+                match = false;
+                break;
+              }
+            }
 
             if (match && (firstChar || leadingSpace)) {
                 index = str.length - 1 - cidx
@@ -465,7 +473,7 @@ class TributeRange {
         div.textContent = element.value.substring(0, position)
 
         if (element.nodeName === 'INPUT') {
-            div.textContent = div.textContent.replace(/\s/g, ' ')
+            div.textContent = div.textContent.replace(/\s/g, ' ')
         }
 
         let span = this.getDocument().createElement('span')
