@@ -143,8 +143,11 @@ class TributeRange {
                     ? this.tribute.replaceTextSuffix
                     : '\xA0'
                 text += textSuffix
-                this.pasteHtml(text, info.mentionPosition,
-                    info.mentionPosition + info.mentionText.length + !this.tribute.autocompleteMode)
+                let endPos = info.mentionPosition + info.mentionText.length
+                if (!this.tribute.autocompleteMode) {
+                    endPos += info.mentionTriggerChar.length
+                }
+                this.pasteHtml(text, info.mentionPosition, endPos);
             }
 
             context.element.dispatchEvent(replaceEvent)
@@ -323,10 +326,10 @@ class TributeRange {
                     )
                 )
             ) {
-                let currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + 1,
+                let currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + triggerChar.length,
                     effectiveRange.length)
 
-                triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + 1)
+                triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + triggerChar.length)
                 let firstSnippetChar = currentTriggerSnippet.substring(0, 1)
                 let leadingSpace = currentTriggerSnippet.length > 0 &&
                     (
@@ -355,14 +358,22 @@ class TributeRange {
         }
     }
 
-    lastIndexWithLeadingSpace (str, char) {
+    lastIndexWithLeadingSpace (str, trigger) {
         let reversedStr = str.split('').reverse().join('')
         let index = -1
 
         for (let cidx = 0, len = str.length; cidx < len; cidx++) {
             let firstChar = cidx === str.length - 1
             let leadingSpace = /\s/.test(reversedStr[cidx + 1])
-            let match = char === reversedStr[cidx]
+            
+            let match = true;
+            
+            for (let triggerIdx = trigger.length - 1; triggerIdx >= 0; triggerIdx--) {
+              if(trigger[triggerIdx] !== reversedStr[cidx-triggerIdx]) {
+                match = false;
+                break;
+              }
+            }
 
             if (match && (firstChar || leadingSpace)) {
                 index = str.length - 1 - cidx
@@ -465,7 +476,7 @@ class TributeRange {
         div.textContent = element.value.substring(0, position)
 
         if (element.nodeName === 'INPUT') {
-            div.textContent = div.textContent.replace(/\s/g, ' ')
+            div.textContent = div.textContent.replace(/\s/g, ' ')
         }
 
         let span = this.getDocument().createElement('span')
