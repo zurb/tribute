@@ -143,9 +143,11 @@ class TributeRange {
                     ? this.tribute.replaceTextSuffix
                     : '\xA0'
                 text += textSuffix
-                let autocompleteOffet = this.tribute.autocompleteMode ? info.mentionTriggerChar.length : 0
-                this.pasteHtml(text, info.mentionPosition,
-                    info.mentionPosition + info.mentionText.length + autocompleteOffet)
+                let endPos = info.mentionPosition + info.mentionText.length
+                if (!this.tribute.autocompleteMode) {
+                    endPos += info.mentionTriggerChar.length
+                }
+                this.pasteHtml(text, info.mentionPosition, endPos);
             }
 
             context.element.dispatchEvent(replaceEvent)
