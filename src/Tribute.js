@@ -257,6 +257,7 @@ class Tribute {
             }
 
             ul.innerHTML = ''
+            let fragment = this.range.getDocument().createDocumentFragment()
 
             items.forEach((item, index) => {
                 let li = this.range.getDocument().createElement('li')
@@ -272,8 +273,9 @@ class Tribute {
                   li.className = this.current.collection.selectClass
                 }
                 li.innerHTML = this.current.collection.menuItemTemplate(item)
-                ul.appendChild(li)
+                fragment.appendChild(li)
             })
+            ul.appendChild(fragment)
         }
 
         if (typeof this.current.collection.values === 'function') {
