@@ -24,6 +24,7 @@ class Tribute {
         positionMenu = true,
         spaceSelectsMatch = false,
         searchOpts = {},
+        menuItemLimit = null,
     }) {
         this.autocompleteMode = autocompleteMode
         this.menuSelected = 0
@@ -79,7 +80,9 @@ class Tribute {
 
                 requireLeadingSpace: requireLeadingSpace,
 
-                searchOpts: searchOpts
+                searchOpts: searchOpts,
+
+                menuItemLimit: menuItemLimit,
             }]
         }
         else if (collection) {
@@ -104,7 +107,8 @@ class Tribute {
                     fillAttr: item.fillAttr || fillAttr,
                     values: item.values,
                     requireLeadingSpace: item.requireLeadingSpace,
-                    searchOpts: item.searchOpts || searchOpts
+                    searchOpts: item.searchOpts || searchOpts,
+                    menuItemLimit: item.menuItemLimit || menuItemLimit,
                 }
             })
         }
@@ -254,6 +258,10 @@ class Tribute {
                 }
 
                 return
+            }
+
+            if (this.current.collection.menuItemLimit) {
+                items = items.slice(0, this.current.collection.menuItemLimit)
             }
 
             ul.innerHTML = ''
