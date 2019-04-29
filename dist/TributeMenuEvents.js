@@ -22,7 +22,6 @@ var TributeMenuEvents = function () {
         value: function bind(menu) {
             var _this = this;
 
-            menu.menuKeydownEvent = this.tribute.events.keydown.bind(this.menu, this);
             this.menuClickEvent = this.tribute.events.click.bind(null, this);
             this.menuContainerScrollEvent = this.debounce(function () {
                 if (_this.tribute.isActive) {
@@ -36,8 +35,7 @@ var TributeMenuEvents = function () {
             }, 300, false);
 
             // fixes IE11 issues with mousedown
-            this.tribute.range.getDocument().addEventListener('MSPointerDown', this.menuKeydownEvent, false);
-            menu.addEventListener('keydown', this.menuKeydownEvent, false);
+            this.tribute.range.getDocument().addEventListener('MSPointerDown', this.menuClickEvent, false);
             this.tribute.range.getDocument().addEventListener('mousedown', this.menuClickEvent, false);
             window.addEventListener('resize', this.windowResizeEvent);
 
@@ -50,8 +48,6 @@ var TributeMenuEvents = function () {
     }, {
         key: 'unbind',
         value: function unbind(menu) {
-            menu.removeEventListener('keydown', menu.menuKeydownEvent, false);
-            delete menu.menuKeydownEvent;
             this.tribute.range.getDocument().removeEventListener('mousedown', this.menuClickEvent, false);
             this.tribute.range.getDocument().removeEventListener('MSPointerDown', this.menuClickEvent, false);
             window.removeEventListener('resize', this.windowResizeEvent);
@@ -88,4 +84,4 @@ var TributeMenuEvents = function () {
 }();
 
 exports.default = TributeMenuEvents;
-module.exports = exports['default'];
+module.exports = exports.default;

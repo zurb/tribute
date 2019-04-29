@@ -179,8 +179,11 @@ class TributeRange {
     }
 
     getWindowSelection() {
-        if (this.tribute.collection.iframe) {
-            return this.tribute.collection.iframe.contentWindow.getSelection()
+        let collectionItem = this.tribute.collection.find(item => {
+            return item.trigger === this.tribute.current.trigger
+        })
+        if (collectionItem && collectionItem.iframe) {
+            return collectionItem.iframe.contentWindow.getSelection()
         }
 
         return window.getSelection()
