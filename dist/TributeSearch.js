@@ -173,4 +173,4 @@ var TributeSearch = function () {
 }();
 
 exports.default = TributeSearch;
-module.exports = exports['default'];
+module.exports = exports.default;

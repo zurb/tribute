@@ -39,7 +39,7 @@ var TributeRange = function () {
             var context = this.tribute.current,
                 coordinates = void 0;
 
-            var info = this.getTriggerInfo(false, false, true, this.tribute.allowSpaces);
+            var info = this.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces, this.tribute.autocompleteMode);
 
             if (typeof info !== 'undefined') {
 
@@ -49,7 +49,7 @@ var TributeRange = function () {
                 }
 
                 if (!this.isContentEditable(context.element)) {
-                    coordinates = this.getTextAreaOrInputUnderlinePosition(this.getDocument().activeElement, info.mentionPosition);
+                    coordinates = this.getTextAreaOrInputUnderlinePosition(this.tribute.current.element, info.mentionPosition);
                 } else {
                     coordinates = this.getContentEditableCaretPosition(info.mentionPosition);
                 }
@@ -73,7 +73,9 @@ var TributeRange = function () {
                     };
                     var menuIsOffScreen = _this.isMenuOffScreen(coordinates, menuDimensions);
 
-                    if (menuIsOffScreen.horizontally || menuIsOffScreen.vertically) {
+                    var menuIsOffScreenHorizontally = window.innerWidth > menuDimensions.width && (menuIsOffScreen.left || menuIsOffScreen.right);
+                    var menuIsOffScreenVertically = window.innerHeight > menuDimensions.height && (menuIsOffScreen.top || menuIsOffScreen.bottom);
+                    if (menuIsOffScreenHorizontally || menuIsOffScreenVertically) {
                         _this.tribute.menu.style.cssText = 'display: none';
                         _this.positionMenuAtCaret(scrollTo);
                     }
@@ -117,28 +119,11 @@ var TributeRange = function () {
             sel.addRange(range);
             targetElement.focus();
         }
-
-        // TODO: this may not be necessary anymore as we are using mouseup instead of click
-
-    }, {
-        key: 'resetSelection',
-        value: function resetSelection(targetElement, path, offset) {
-            if (!this.isContentEditable(targetElement)) {
-                if (targetElement !== this.getDocument().activeElement) {
-                    targetElement.focus();
-                }
-            } else {
-                this.selectElement(targetElement, path, offset);
-            }
-        }
     }, {
         key: 'replaceTriggerText',
         value: function replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace, originalEvent, item) {
             var context = this.tribute.current;
-            // TODO: this may not be necessary anymore as we are using mouseup instead of click
-            // this.resetSelection(context.element, context.selectedPath, context.selectedOffset)
-
-            var info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace, this.tribute.allowSpaces);
+            var info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace, this.tribute.allowSpaces, this.tribute.autocompleteMode);
 
             // Create the event
             var replaceEvent = new CustomEvent('tribute-replaced', {
@@ -150,7 +135,7 @@ var TributeRange = function () {
 
             if (info !== undefined) {
                 if (!this.isContentEditable(context.element)) {
-                    var myField = this.getDocument().activeElement;
+                    var myField = this.tribute.current.element;
                     var textSuffix = typeof this.tribute.replaceTextSuffix == 'string' ? this.tribute.replaceTextSuffix : ' ';
                     text += textSuffix;
                     var startPos = info.mentionPosition;
@@ -162,7 +147,7 @@ var TributeRange = function () {
                     // add a space to the end of the pasted text
                     var _textSuffix = typeof this.tribute.replaceTextSuffix == 'string' ? this.tribute.replaceTextSuffix : '\xA0';
                     text += _textSuffix;
-                    this.pasteHtml(text, info.mentionPosition, info.mentionPosition + info.mentionText.length + 1);
+                    this.pasteHtml(text, info.mentionPosition, info.mentionPosition + info.mentionText.length + !this.tribute.autocompleteMode);
                 }
 
                 context.element.dispatchEvent(replaceEvent);
@@ -201,8 +186,13 @@ var TributeRange = function () {
     }, {
         key: 'getWindowSelection',
         value: function getWindowSelection() {
-            if (this.tribute.collection.iframe) {
-                return this.tribute.collection.iframe.contentWindow.getSelection();
+            var _this2 = this;
+
+            var collectionItem = this.tribute.collection.find(function (item) {
+                return item.trigger === _this2.tribute.current.trigger;
+            });
+            if (collectionItem && collectionItem.iframe) {
+                return collectionItem.iframe.contentWindow.getSelection();
             }
 
             return window.getSelection();
@@ -283,9 +273,17 @@ var TributeRange = function () {
             return text;
         }
     }, {
+        key: 'getLastWordInText',
+        value: function getLastWordInText(text) {
+            text = text.replace(/\u00A0/g, ' '); // https://stackoverflow.com/questions/29850407/how-do-i-replace-unicode-character-u00a0-with-a-space-in-javascript
+            var wordsArray = text.split(' ');
+            var worldsCount = wordsArray.length - 1;
+            return wordsArray[worldsCount].trim();
+        }
+    }, {
         key: 'getTriggerInfo',
-        value: function getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces) {
-            var _this2 = this;
+        value: function getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces, isAutocomplete) {
+            var _this3 = this;
 
             var ctx = this.tribute.current;
             var selected = void 0,
@@ -293,7 +291,7 @@ var TributeRange = function () {
                 offset = void 0;
 
             if (!this.isContentEditable(ctx.element)) {
-                selected = this.getDocument().activeElement;
+                selected = this.tribute.current.element;
             } else {
                 var selectionInfo = this.getContentEditableSelectedPath(ctx);
 
@@ -305,6 +303,17 @@ var TributeRange = function () {
             }
 
             var effectiveRange = this.getTextPrecedingCurrentSelection();
+            var lastWordOfEffectiveRange = this.getLastWordInText(effectiveRange);
+
+            if (isAutocomplete) {
+                return {
+                    mentionPosition: effectiveRange.length - lastWordOfEffectiveRange.length,
+                    mentionText: lastWordOfEffectiveRange,
+                    mentionSelectedElement: selected,
+                    mentionSelectedPath: path,
+                    mentionSelectedOffset: offset
+                };
+            }
 
             if (effectiveRange !== undefined && effectiveRange !== null) {
                 var mostRecentTriggerCharPos = -1;
@@ -312,7 +321,7 @@ var TributeRange = function () {
 
                 this.tribute.collection.forEach(function (config) {
                     var c = config.trigger;
-                    var idx = config.requireLeadingSpace ? _this2.lastIndexWithLeadingSpace(effectiveRange, c) : effectiveRange.lastIndexOf(c);
+                    var idx = config.requireLeadingSpace ? _this3.lastIndexWithLeadingSpace(effectiveRange, c) : effectiveRange.lastIndexOf(c);
 
                     if (idx > mostRecentTriggerCharPos) {
                         mostRecentTriggerCharPos = idx;
@@ -332,6 +341,8 @@ var TributeRange = function () {
                     }
 
                     var regex = allowSpaces ? /[^\S ]/g : /[\xA0\s]/g;
+
+                    this.tribute.hasTrailingSpace = regex.test(currentTriggerSnippet);
 
                     if (!leadingSpace && (menuAlreadyActive || !regex.test(currentTriggerSnippet))) {
                         return {
@@ -373,18 +384,22 @@ var TributeRange = function () {
     }, {
         key: 'isMenuOffScreen',
         value: function isMenuOffScreen(coordinates, menuDimensions) {
-            var contentWidth = menuDimensions.width + coordinates.left;
-            var contentHeight = menuDimensions.height + coordinates.top;
-
             var windowWidth = window.innerWidth;
             var windowHeight = window.innerHeight;
             var doc = document.documentElement;
             var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
             var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
 
+            var menuTop = typeof coordinates.top === 'number' ? coordinates.top : windowTop + windowHeight - coordinates.bottom - menuDimensions.height;
+            var menuRight = typeof coordinates.right === 'number' ? coordinates.right : coordinates.left + menuDimensions.width;
+            var menuBottom = typeof coordinates.bottom === 'number' ? coordinates.bottom : coordinates.top + menuDimensions.height;
+            var menuLeft = typeof coordinates.left === 'number' ? coordinates.left : windowLeft + windowWidth - coordinates.right - menuDimensions.width;
+
             return {
-                horizontally: Math.ceil(contentWidth - windowLeft) >= windowWidth,
-                vertically: Math.ceil(contentHeight - windowTop) >= windowHeight
+                top: menuTop < Math.floor(windowTop),
+                right: menuRight > Math.ceil(windowLeft + windowWidth),
+                bottom: menuBottom > Math.ceil(windowTop + windowHeight),
+                left: menuLeft < Math.floor(windowLeft)
             };
         }
     }, {
@@ -467,14 +482,14 @@ var TributeRange = function () {
             var menuDimensions = this.getMenuDimensions();
             var menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
 
-            if (menuIsOffScreen.horizontally) {
+            if (menuIsOffScreen.right) {
                 coordinates.right = windowWidth - coordinates.left;
                 coordinates.left = 'auto';
             }
 
             var parentHeight = this.tribute.menuContainer ? this.tribute.menuContainer.offsetHeight : this.getDocument().body.offsetHeight;
 
-            if (menuIsOffScreen.vertically) {
+            if (menuIsOffScreen.bottom) {
                 var parentRect = this.tribute.menuContainer ? this.tribute.menuContainer.getBoundingClientRect() : this.getDocument().body.getBoundingClientRect();
                 var scrollStillAvailable = parentHeight - (windowHeight - parentRect.top);
 
@@ -482,8 +497,17 @@ var TributeRange = function () {
                 coordinates.top = 'auto';
             }
 
-            this.getDocument().body.removeChild(div);
+            menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
+            if (menuIsOffScreen.left) {
+                coordinates.left = windowWidth > menuDimensions.width ? windowLeft + windowWidth - menuDimensions.width : windowLeft;
+                delete coordinates.right;
+            }
+            if (menuIsOffScreen.top) {
+                coordinates.top = windowHeight > menuDimensions.height ? windowTop + windowHeight - menuDimensions.height : windowTop;
+                delete coordinates.bottom;
+            }
 
+            this.getDocument().body.removeChild(div);
             return coordinates;
         }
     }, {
@@ -525,21 +549,29 @@ var TributeRange = function () {
             var menuDimensions = this.getMenuDimensions();
             var menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
 
-            if (menuIsOffScreen.horizontally) {
+            if (menuIsOffScreen.right) {
                 coordinates.left = 'auto';
                 coordinates.right = windowWidth - rect.left - windowLeft;
             }
 
             var parentHeight = this.tribute.menuContainer ? this.tribute.menuContainer.offsetHeight : this.getDocument().body.offsetHeight;
 
-            if (menuIsOffScreen.vertically) {
+            if (menuIsOffScreen.bottom) {
                 var parentRect = this.tribute.menuContainer ? this.tribute.menuContainer.getBoundingClientRect() : this.getDocument().body.getBoundingClientRect();
                 var scrollStillAvailable = parentHeight - (windowHeight - parentRect.top);
 
-                windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-                windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
                 coordinates.top = 'auto';
                 coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top);
+            }
+
+            menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
+            if (menuIsOffScreen.left) {
+                coordinates.left = windowWidth > menuDimensions.width ? windowLeft + windowWidth - menuDimensions.width : windowLeft;
+                delete coordinates.right;
+            }
+            if (menuIsOffScreen.top) {
+                coordinates.top = windowHeight > menuDimensions.height ? windowTop + windowHeight - menuDimensions.height : windowTop;
+                delete coordinates.bottom;
             }
 
             markerEl.parentNode.removeChild(markerEl);
@@ -593,4 +625,4 @@ var TributeRange = function () {
 }();
 
 exports.default = TributeRange;
-module.exports = exports['default'];
+module.exports = exports.default;
