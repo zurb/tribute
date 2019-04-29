@@ -179,8 +179,8 @@ class TributeRange {
     }
 
     getWindowSelection() {
-        if (this.tribute.collection.iframe) {
-            return this.tribute.collection.iframe.contentWindow.getSelection()
+        if (this.tribute.current.collection.iframe) {
+            return this.tribute.current.collection.iframe.contentWindow.getSelection()
         }
 
         return window.getSelection()

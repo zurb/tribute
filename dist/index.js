@@ -15,4 +15,4 @@ exports.default = _Tribute2.default; /**
                                      * Native ES6 JavaScript @mention Plugin
                                      **/
 
-module.exports = exports["default"];
+module.exports = exports.default;
