@@ -10,11 +10,6 @@ dist: trusty
 
 cache: yarn
 
-env:
-  global:
-    # See https://git.io/vdao3 for details.
-    - JOBS=1
-
 branches:
   only:
     - master
