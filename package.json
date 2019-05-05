@@ -17,9 +17,10 @@
     "gulp-uglifyjs": "^0.6.2",
     "gulp-webserver": "^0.9.1",
     "jasmine-core": "^3.3.0",
-    "karma": "^4.0.0",
+    "karma": "^4.1.0",
     "karma-browserify": "^6.0.0",
     "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.2",
     "karma-jasmine": "^2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
     "karma-spec-reporter": "0.0.32",
@@ -34,7 +35,7 @@
   },
   "scripts": {
     "run": "babel src -w -d dist",
-    "test": "karma start test/karma.conf.js"
+    "test": "gulp build && karma start test/karma.conf.js"
   },
   "author": "Jordan Humphreys <jordan@zurb.com>",
   "license": "MIT",

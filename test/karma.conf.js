@@ -23,16 +23,18 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       '../dist/tribute.js',
+      '../dist/tribute.css',
       '../test/spec/*.js',
       '../test/libs/*.js'
     ],
 
     // add preprocessor to the files that should be processed via browserify
     preprocessors: {
-      '../test/spec/*.js': ['browserify']
+      '../test/spec/*.js': ['browserify'],
+      '../dist/tribute.js': ['coverage']
     },
 
-    reporters: ['kjhtml', 'spec'],
+    reporters: ['kjhtml', 'spec', 'coverage'],
 
     specReporter: {
       maxLogLines: 5,             // limit number of lines logged per test
@@ -74,7 +76,13 @@ module.exports = function(config) {
       "karma-browserify",
       "karma-jasmine-html-reporter",
       "karma-spec-reporter",
+      "karma-coverage"
     ],
+
+    coverageReporter: {
+      type: 'html',
+      dir: 'coverage/'
+    },
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit

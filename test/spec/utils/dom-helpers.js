@@ -15,7 +15,7 @@ export const createDomElement = function(element = 'text') {
 export const clearDom = function() {
   let wrapperDiv = document.querySelector('#tribute-wrapper-div');
   if (wrapperDiv) {
-    wrapperDiv.innerHTML = ''
+    wrapperDiv.parentNode.removeChild(wrapperDiv);
   }
   let tributeContainer = document.querySelector('.tribute-container');
   if (tributeContainer) {
