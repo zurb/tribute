@@ -37,7 +37,8 @@
   "scripts": {
     "run": "babel src -w -d dist",
     "test": "gulp build && karma start test/karma.conf.js",
-    "test-single-run": "gulp build && karma start test/karma.conf.js --single-run --browsers ChromeHeadless"
+    "build": "gulp build",
+    "test-single-run": "karma start test/karma.conf.js --single-run --browsers ChromeHeadless"
   },
   "author": "Jordan Humphreys <jordan@zurb.com>",
   "license": "MIT",

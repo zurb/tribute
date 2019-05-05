@@ -35,9 +35,10 @@ jobs:
     - stage: "Tests"
       name: "Tests"
       script:
-        - npm run test-single-run
+        - yarn run test-single-run
 
 before_install:
   - yarn --version
+  - yarn run build
 
 script:
