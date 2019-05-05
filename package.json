@@ -25,6 +25,7 @@
     "karma-jasmine-html-reporter": "^1.4.0",
     "karma-spec-reporter": "0.0.32",
     "opn": "^5.3.0",
+    "puppeteer": "^1.15.0",
     "vinyl-source-stream": "^2.0.0",
     "watchify": "^3.7.0",
     "zombie": "^6.1.2"
@@ -35,7 +36,8 @@
   },
   "scripts": {
     "run": "babel src -w -d dist",
-    "test": "gulp build && karma start test/karma.conf.js"
+    "test": "gulp build && karma start test/karma.conf.js",
+    "test-single-run": "gulp build && karma start test/karma.conf.js --single-run --browsers ChromeHeadless"
   },
   "author": "Jordan Humphreys <jordan@zurb.com>",
   "license": "MIT",
