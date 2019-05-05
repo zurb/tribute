@@ -38,7 +38,8 @@ jobs:
         - yarn run test-single-run
 
 before_install:
+  - yarn global add gulp-cli
   - yarn --version
-  - yarn run build
 
 script:
+  - yarn run build
