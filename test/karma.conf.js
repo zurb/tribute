@@ -2,7 +2,6 @@
 // http://karma-runner.github.io/0.12/config/configuration-file.html
 // Generated on 2016-02-05 using
 // generator-karma 1.0.1
-process.env.CHROME_BIN = require('puppeteer').executablePath()
 
 module.exports = function(config) {
   'use strict';
