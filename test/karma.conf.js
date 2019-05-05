@@ -17,25 +17,26 @@ module.exports = function(config) {
     // as well as any additional frameworks (requirejs/chai/sinon/...)
     frameworks: [
       "jasmine",
-      "browserify",
+      "browserify"
     ],
 
     // list of files / patterns to load in the browser
     files: [
       '../dist/tribute.js',
-      '../test/spec/**/*.js',
+      '../test/spec/*.js',
+      '../test/libs/*.js'
     ],
 
+    // add preprocessor to the files that should be processed via browserify
     preprocessors: {
-      '../src/*.js': ['browserify'],
-      '../test/spec/*.js': ['browserify'],
+      '../test/spec/*.js': ['browserify']
     },
 
     reporters: ['kjhtml', 'spec'],
 
     specReporter: {
       maxLogLines: 5,             // limit number of lines logged per test
-      suppressErrorSummary: true, // do not print error summary
+      suppressErrorSummary: false, // do not print error summary
       suppressFailed: false,      // do not print information about failed tests
       suppressPassed: false,      // do not print information about passed tests
       suppressSkipped: true,      // do not print information about skipped tests
@@ -44,7 +45,7 @@ module.exports = function(config) {
 
     browserify: {
       debug: true,
-      transform: [ ['babelify'] ],
+      transform: [['babelify']]
     },
 
     // list of files / patterns to exclude
