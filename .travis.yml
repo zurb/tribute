@@ -10,25 +10,9 @@ dist: trusty
 
 cache: yarn
 
-branches:
-  only:
-    - master
-    - tribute-basic-test-cases
-
-jobs:
-  fail_fast: true
-  allow_failures:
-
-  include:
-    # runs linting and tests with current locked deps
-
-    - stage: "Tests"
-      name: "Tests"
-      script:
-        - yarn run test-single-run
-
 before_install:
   - yarn --version
 
 script:
   - yarn run build
+  - yarn run test-single-run

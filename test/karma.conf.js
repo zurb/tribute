@@ -21,8 +21,6 @@ module.exports = function(config) {
       "browserify"
     ],
 
-    browsers: ['Chrome'],
-
     // list of files / patterns to load in the browser
     files: [
       '../dist/tribute.js',
