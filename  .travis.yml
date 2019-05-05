@@ -11,9 +11,7 @@ dist: trusty
 addons:
   chrome: stable
 
-cache:
-  directories:
-    - $HOME/.npm
+cache: yarn
 
 env:
   global:
@@ -40,8 +38,6 @@ jobs:
         - npm run test-single-run
 
 before_install:
-  - npm config set spin false
-  - npm install -g npm@6
-  - npm --version
+  - yarn --version
 
 script:
