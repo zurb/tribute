@@ -22,8 +22,6 @@ branches:
   only:
     - master
     - tribute-basic-test-cases
-    # npm version tags
-    - /^v\d+\.\d+\.\d+/
 
 jobs:
   fail_fast: true
@@ -38,7 +36,6 @@ jobs:
         - yarn run test-single-run
 
 before_install:
-  - yarn global add gulp-cli
   - yarn --version
 
 script:
