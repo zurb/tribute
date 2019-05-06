@@ -45,7 +45,7 @@ class TributeRange {
                                      right: ${coordinates.right}px;
                                      bottom: ${coordinates.bottom}px;
                                      position: absolute;
-                                     zIndex: 10000;
+                                     z-index: 10000;
                                      display: block;`
 
             if (coordinates.left === 'auto') {
