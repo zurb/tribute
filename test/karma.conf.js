@@ -2,6 +2,7 @@
 // http://karma-runner.github.io/0.12/config/configuration-file.html
 // Generated on 2016-02-05 using
 // generator-karma 1.0.1
+process.env.CHROME_BIN = require('puppeteer').executablePath()
 
 module.exports = function(config) {
   'use strict';
@@ -17,25 +18,28 @@ module.exports = function(config) {
     // as well as any additional frameworks (requirejs/chai/sinon/...)
     frameworks: [
       "jasmine",
-      "browserify",
+      "browserify"
     ],
 
     // list of files / patterns to load in the browser
     files: [
       '../dist/tribute.js',
-      '../test/spec/**/*.js',
+      '../dist/tribute.css',
+      '../test/spec/*.js',
+      '../test/libs/*.js'
     ],
 
+    // add preprocessor to the files that should be processed via browserify
     preprocessors: {
-      '../src/*.js': ['browserify'],
       '../test/spec/*.js': ['browserify'],
+      '../dist/tribute.js': ['coverage']
     },
 
-    reporters: ['kjhtml', 'spec'],
+    reporters: ['kjhtml', 'spec', 'coverage'],
 
     specReporter: {
       maxLogLines: 5,             // limit number of lines logged per test
-      suppressErrorSummary: true, // do not print error summary
+      suppressErrorSummary: false, // do not print error summary
       suppressFailed: false,      // do not print information about failed tests
       suppressPassed: false,      // do not print information about passed tests
       suppressSkipped: true,      // do not print information about skipped tests
@@ -44,7 +48,7 @@ module.exports = function(config) {
 
     browserify: {
       debug: true,
-      transform: [ ['babelify'] ],
+      transform: [['babelify']]
     },
 
     // list of files / patterns to exclude
@@ -73,7 +77,13 @@ module.exports = function(config) {
       "karma-browserify",
       "karma-jasmine-html-reporter",
       "karma-spec-reporter",
+      "karma-coverage"
     ],
+
+    coverageReporter: {
+      type: 'html',
+      dir: 'coverage/'
+    },
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit

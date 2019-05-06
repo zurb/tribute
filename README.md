@@ -407,6 +407,15 @@ That's it! Now you can use the `example/index.html` to test out changes to the c
 
 Once you have made your changes, feel free to submit a pull request.
 
+## Testing
+ We use [Karma](https://karma-runner.github.io/latest/index.html) and [Jasmin](https://jasmine.github.io) as the testing framework.
+
+ To run the tests type:
+  ```
+  yarn run build
+  yarn test
+  ```
+
 ## Framework Support
 
 Vue.js — [vue-tribute](https://github.com/syropian/vue-tribute) by **@syropian**
