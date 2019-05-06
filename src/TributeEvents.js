@@ -119,13 +119,13 @@ class TributeEvents {
                 instance.callbacks().triggerChar(event, this, '')
             } else {
                 let keyCode = instance.getKeyCode(instance, this, event)
-    
+
                 if (isNaN(keyCode) || !keyCode) return
-    
+
                 let trigger = instance.tribute.triggers().find(trigger => {
                     return trigger.charCodeAt(0) === keyCode
                 })
-    
+
                 if (typeof trigger !== 'undefined') {
                     instance.callbacks().triggerChar(event, this, trigger)
                 }
