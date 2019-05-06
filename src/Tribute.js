@@ -200,8 +200,8 @@ class Tribute {
         // Only proceed if menu isn't already shown for the current element & mentionText
         if (this.isActive &&
             this.current.element === element &&
-            this.current.mentionText === this.currentMentionTextSnapshot
-            && !force) {
+            this.current.mentionText === this.currentMentionTextSnapshot &&
+            !force) {
           return
         }
         this.currentMentionTextSnapshot = this.current.mentionText
