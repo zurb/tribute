@@ -1,5 +1,7 @@
 'use strict';
 
+import bigList from './utils/bigList.json';
+
 import {
   createDomElement,
   clearDom,
@@ -36,7 +38,7 @@ describe('Tribute @mentions cases', function () {
   ['text', 'contenteditable'].forEach(elementType => {
     it(`when values key is predefined array. For : ${elementType}`, () => {
       let input = createDomElement(elementType);
-      
+
       let collectionObject = {
         trigger: '@',
         selectTemplate: function (item) {
@@ -54,7 +56,7 @@ describe('Tribute @mentions cases', function () {
       }
 
       let tribute = attachTribute(collectionObject, input.id);
-      
+
       fillIn(input, ' @');
       let popupList = document.querySelectorAll('.tribute-container > ul > li');
       expect(popupList.length).toBe(2);
@@ -69,6 +71,36 @@ describe('Tribute @mentions cases', function () {
       fillIn(input, ' @sir');
       popupList = document.querySelectorAll('.tribute-container > ul > li');
       expect(popupList.length).toBe(1);
+
+      detachTribute(tribute, input.id);
+    });
+
+    it(`when values array is large and menuItemLimit is set. For : ${elementType}`, () => {
+      let input = createDomElement(elementType);
+
+      let collectionObject = {
+        trigger: '@',
+        menuItemLimit: 25,
+        selectTemplate: function (item) {
+          if (typeof item === 'undefined') return null;
+          if (this.range.isContentEditable(this.current.element)) {
+            return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
+          }
+
+          return '@' + item.original.value;
+        },
+        values: bigList,
+      }
+
+      let tribute = attachTribute(collectionObject, input.id);
+
+      fillIn(input, ' @');
+      let popupList = document.querySelectorAll('.tribute-container > ul > li');
+      expect(popupList.length).toBe(25);
+
+      fillIn(input, ' @an');
+      popupList = document.querySelectorAll('.tribute-container > ul > li');
+      expect(popupList.length).toBe(25);
 
       detachTribute(tribute, input.id);
     });
