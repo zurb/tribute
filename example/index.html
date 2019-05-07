@@ -108,7 +108,10 @@
         }
       });
 
-      tribute.attach(document.getElementById('test'));
+      let nodeTest = document.getElementById('test')
+      var nodeTestInputTimeout;
+
+      tribute.attach(nodeTest);
       tribute.attach(document.getElementById('testInput'));
       tribute.attach(document.getElementById('testarea'));
 
@@ -156,14 +159,25 @@
 
       tributeMultipleTriggers.attach(document.getElementById('testMultiple'));
 
-      document.getElementById('test').addEventListener('tribute-replaced', function (e) {
+      nodeTest.addEventListener('tribute-replaced', function (e) {
         console.log('Original Event:', e.detail.event);
         console.log('Matched item:', e.detail.item);
       });
 
-      document.getElementById('test').addEventListener('tribute-no-match', function (e) {
-        var values = [{key: 'Cheese Tacos', value: 'Cheese Tacos', email: 'cheesetacos@zurb.com'}];
-        tribute.appendCurrent(values);
+      nodeTest.addEventListener('tribute-no-match', function (e) {
+        if (nodeTestInputTimeout) clearTimeout(nodeTestInputTimeout);
+        let context = tribute.current;
+
+        if (context.mentionText.length > 0) {
+          nodeTestInputTimeout = setTimeout(function () {
+            tribute.appendCurrent([{
+              key: context.mentionText,
+              value: context.mentionText,
+              email: `#{context.mentionText}@example.com`}
+            ]);
+            tribute.showMenuForCollection(nodeTest, null, true);
+          }, 300);
+        }
       });
 
       var activateLink = document.getElementById('activateInput');

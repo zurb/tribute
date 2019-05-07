@@ -196,9 +196,12 @@ class Tribute {
         return this.range.getDocument().body.appendChild(wrapper)
     }
 
-    showMenuFor(element, scrollTo) {
+    showMenuFor(element, scrollTo, force = false) {
         // Only proceed if menu isn't already shown for the current element & mentionText
-        if (this.isActive && this.current.element === element && this.current.mentionText === this.currentMentionTextSnapshot) {
+        if (this.isActive &&
+            this.current.element === element &&
+            this.current.mentionText === this.currentMentionTextSnapshot &&
+            !force) {
           return
         }
         this.currentMentionTextSnapshot = this.current.mentionText
@@ -283,8 +286,8 @@ class Tribute {
         }
     }
 
-    showMenuForCollection(element, collectionIndex) {
-        if (element !== document.activeElement) {
+    showMenuForCollection(element, collectionIndex, ignoreCaret = false) {
+        if (element !== document.activeElement && !ignoreCaret) {
             this.placeCaretAtEnd(element)
         }
 
@@ -292,12 +295,13 @@ class Tribute {
         this.current.externalTrigger = true
         this.current.element = element
 
-        if (element.isContentEditable)
+        if (element.isContentEditable && !ignoreCaret) {
             this.insertTextAtCursor(this.current.collection.trigger)
-        else
+        } else if (!ignoreCaret) {
             this.insertAtCaret(element, this.current.collection.trigger)
+        }
 
-        this.showMenuFor(element)
+        this.showMenuFor(element, null, ignoreCaret)
     }
 
     // TODO: make sure this works for inputs/textareas
