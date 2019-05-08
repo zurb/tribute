@@ -179,8 +179,9 @@ class TributeRange {
     }
 
     getWindowSelection() {
-        if (this.tribute.collection.iframe) {
-            return this.tribute.collection.iframe.contentWindow.getSelection()
+        const {tribute: {current: {element: {ownerDocument}}}} = this
+        if (ownerDocument) {
+            return ownerDocument.getSelection()
         }
 
         return window.getSelection()
