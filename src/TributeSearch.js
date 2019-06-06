@@ -28,13 +28,16 @@ class TributeSearch {
             compareString = opts.caseSensitive && string || string.toLowerCase(),
             ch, compareChar
 
+        if (opts.skip) {
+            return {rendered: string, score: 0}
+        }
+
         pattern = opts.caseSensitive && pattern || pattern.toLowerCase()
 
         let patternCache = this.traverse(compareString, pattern, 0, 0, [])
         if (!patternCache) {
             return null
         }
-
         return {
             rendered: this.render(string, patternCache.cache, pre, post),
             score: patternCache.score
@@ -113,9 +116,6 @@ class TributeSearch {
     }
 
     filter(pattern, arr, opts) {
-        if (this.opts && this.opts.skip)
-            return arr;
-
         opts = opts || {}
         return arr
             .reduce((prev, element, idx, arr) => {
