@@ -112,6 +112,9 @@ class TributeSearch {
     }
 
     filter(pattern, arr, opts) {
+        if (this.tribute.collection.searchOpts.skip)
+            return arr;
+
         opts = opts || {}
         return arr
             .reduce((prev, element, idx, arr) => {
