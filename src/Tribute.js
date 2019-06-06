@@ -119,7 +119,7 @@ class Tribute {
         new TributeRange(this)
         new TributeEvents(this)
         new TributeMenuEvents(this)
-        new TributeSearch(this)
+        new TributeSearch(this, searchOpts)
     }
 
     static defaultSelectTemplate(item) {

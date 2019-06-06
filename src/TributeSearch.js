@@ -1,8 +1,9 @@
 // Thanks to https://github.com/mattyork/fuzzy
 class TributeSearch {
-    constructor(tribute) {
+    constructor(tribute, opts) {
         this.tribute = tribute
         this.tribute.search = this
+        this.opts = opts;
     }
 
     simpleFilter(pattern, array) {
@@ -112,7 +113,7 @@ class TributeSearch {
     }
 
     filter(pattern, arr, opts) {
-        if (this.tribute.collection.searchOpts.skip)
+        if (this.opts && this.opts.skip)
             return arr;
 
         opts = opts || {}
