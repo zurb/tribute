@@ -2,17 +2,9 @@
 
 import bigList from './utils/bigList.json';
 
-import {
-  createDomElement,
-  clearDom,
-  fillIn,
-  simulateMouseClick
-} from './utils/dom-helpers';
+import {clearDom, createDomElement, fillIn, simulateMouseClick} from './utils/dom-helpers';
 
-import  {
-  attachTribute,
-  detachTribute
-} from './utils/tribute-helpers';
+import {attachTribute, detachTribute} from './utils/tribute-helpers';
 
 describe('Tribute instantiation', function () {
   it('should not error in the base case from the README', () => {
@@ -225,4 +217,38 @@ describe('Tribute autocomplete mode cases', function () {
     });
   });
 
+});
+
+
+describe('When Tribute searchOpts.skip', function () {
+  afterEach(function () {
+    clearDom();
+  });
+
+  it('should skip local filtering and display all items', () => {
+      let input = createDomElement();
+
+      let collectionObject = {
+          searchOpts: { skip: true },
+          noMatchTemplate: function () {
+              this.hideMenu();
+          },
+          selectTemplate: function(item) {
+              return item.original.value;
+          },
+          values: [
+              {key: 'Tributação e Divisas', value: 'Tributação e Divisas'},
+              {key: 'Tributação e Impostos', value: 'Tributação e Impostos'},
+              {key: 'Tributação e Taxas', value: 'Tributação e Taxas'},
+          ]
+      };
+
+      let tribute = attachTribute(collectionObject, input.id);
+      fillIn(input, '@random-text');
+
+      let popupList = document.querySelectorAll('.tribute-container > ul > li');
+      expect(popupList.length).toBe(3);
+
+      detachTribute(tribute, input.id);
+  });
 });
