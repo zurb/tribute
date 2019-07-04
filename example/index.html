@@ -68,6 +68,17 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="large-8 columns">
+        <div class="callout large">
+          <h5>Tribute with <code>autocompleteMode:true</code>  on <code>textarea</code> element:</h5>
+  
+          <textarea id="test-autocomplete-textarea" cols="40" rows="10" placeholder="States of USA"></textarea>
+        </div>
+      </div>
+    </div>
+
+
     <div class="row float-right" id="content">
       <div class="large-8 medium-8 columns">
         <h5>Tribute on traditional form elements!</h5>
@@ -246,6 +257,8 @@
         }
       });
       tributeAutocompleteTest.attach(document.getElementById('test-autocomplete'));
+
+      tributeAutocompleteTest.attach(document.getElementById('test-autocomplete-textarea'));
     </script>
   </body>
 </html>
