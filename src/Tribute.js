@@ -252,7 +252,7 @@ class Tribute {
             if (!items.length) {
                 let noMatchEvent = new CustomEvent('tribute-no-match', { detail: this.menu })
                 this.current.element.dispatchEvent(noMatchEvent)
-                if (!this.current.collection.noMatchTemplate) {
+                if (!this.current.collection.noMatchTemplate()) {
                     this.hideMenu()
                 } else {
                     ul.innerHTML = this.current.collection.noMatchTemplate()
