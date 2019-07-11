@@ -122,6 +122,21 @@ class Tribute {
         new TributeSearch(this)
     }
 
+    get isActive() {
+        return this._isActive;
+    }
+
+    set isActive(val) {
+        if(this._isActive != val){
+            this._isActive = val;
+            if(this.current.element){
+                let noMatchEvent = new CustomEvent(`tribute-active-${val}`)
+                this.current.element.dispatchEvent(noMatchEvent)
+            }
+        }
+    }
+
+
     static defaultSelectTemplate(item) {
       if (typeof item === 'undefined') return null;
       if (this.range.isContentEditable(this.current.element)) {
@@ -252,7 +267,7 @@ class Tribute {
             if (!items.length) {
                 let noMatchEvent = new CustomEvent('tribute-no-match', { detail: this.menu })
                 this.current.element.dispatchEvent(noMatchEvent)
-                if (!this.current.collection.noMatchTemplate) {
+                if (!this.current.collection.noMatchTemplate()) {
                     this.hideMenu()
                 } else {
                     ul.innerHTML = this.current.collection.noMatchTemplate()

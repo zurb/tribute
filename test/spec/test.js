@@ -252,3 +252,72 @@ describe('When Tribute searchOpts.skip', function () {
       detachTribute(tribute, input.id);
   });
 });
+
+describe('Tribute events', function () {
+  afterEach(function () {
+    clearDom();
+  });
+
+  it('should raise tribute-active-true', () => {
+    let input = createDomElement();
+
+    var eventSpy = jasmine.createSpy();
+    input.addEventListener('tribute-active-true', eventSpy);
+
+    let collectionObject = {
+        noMatchTemplate: function () {
+            this.hideMenu();
+        },
+        selectTemplate: function(item) {
+            return item.original.value;
+        },
+        values: [
+            {key: 'Tributação e Divisas', value: 'Tributação e Divisas'},
+            {key: 'Tributação e Impostos', value: 'Tributação e Impostos'},
+            {key: 'Tributação e Taxas', value: 'Tributação e Taxas'},
+        ]
+    };
+
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, '@random-text');
+
+    let popupList = document.querySelectorAll('.tribute-container > ul > li');
+    expect(eventSpy).toHaveBeenCalled();
+
+    detachTribute(tribute, input.id);
+});
+});
+
+
+describe('Tribute events', function () {
+  afterEach(function () {
+    clearDom();
+  });
+
+  it('should raise tribute-active-false', () => {
+    let input = createDomElement();
+
+    var eventSpy = jasmine.createSpy();
+    input.addEventListener('tribute-active-false', eventSpy);
+
+    let collectionObject = {
+        noMatchTemplate: function () { return ''; },
+        selectTemplate: function(item) {
+            return item.original.value;
+        },
+        values: [
+            {key: 'Tributação e Divisas', value: 'Tributação e Divisas'},
+            {key: 'Tributação e Impostos', value: 'Tributação e Impostos'},
+            {key: 'Tributação e Taxas', value: 'Tributação e Taxas'},
+        ]
+    };
+
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, '@random-text');
+
+    let popupList = document.querySelectorAll('.tribute-container > ul > li');
+    expect(eventSpy).toHaveBeenCalled();
+
+    detachTribute(tribute, input.id);
+});
+});
