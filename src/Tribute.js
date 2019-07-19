@@ -61,13 +61,7 @@ class Tribute {
                 menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
 
                 // function called when menu is empty, disables hiding of menu.
-                noMatchTemplate: (t => {
-                    if (typeof t === 'function') {
-                        return t.bind(this)
-                    }
-
-                    return noMatchTemplate || function () {return ''}.bind(this)
-                })(noMatchTemplate),
+                noMatchTemplate: typeof noMatchTemplate === 'function' ? noMatchTemplate.bind(this) : null,
 
                 // column to search against in the object
                 lookup: lookup,
@@ -96,13 +90,7 @@ class Tribute {
                     selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(this),
                     menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
                     // function called when menu is empty, disables hiding of menu.
-                    noMatchTemplate: (t => {
-                        if (typeof t === 'function') {
-                            return t.bind(this)
-                        }
-
-                        return null
-                    })(noMatchTemplate),
+                    noMatchTemplate: typeof noMatchTemplate === 'function' ? noMatchTemplate.bind(this) : null,
                     lookup: item.lookup || lookup,
                     fillAttr: item.fillAttr || fillAttr,
                     values: item.values,
