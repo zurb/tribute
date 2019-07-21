@@ -252,3 +252,102 @@ describe('When Tribute searchOpts.skip', function () {
       detachTribute(tribute, input.id);
   });
 });
+
+describe('Tribute NoMatchTemplate cases', function () {
+  afterEach(function () {
+    clearDom();
+  });
+
+  it('should display template when specified as text', () => {
+      let input = createDomElement();
+
+      let collectionObject = {
+          noMatchTemplate: "testcase",
+          selectTemplate: function(item) {
+              return item.original.value;
+          },
+          values: [
+            { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+            { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+          ]
+      };
+
+      let tribute = attachTribute(collectionObject, input.id);
+      fillIn(input, '@random-text');
+
+      let containerDiv = document.getElementsByClassName("tribute-container")[0];
+      expect(containerDiv.innerText).toBe('testcase');
+
+      detachTribute(tribute, input.id);
+  });
+
+  it('should display template when specified as function', () => {
+    let input = createDomElement();
+
+    let collectionObject = {
+        noMatchTemplate: function(){ return "testcase"},
+        selectTemplate: function(item) {
+            return item.original.value;
+        },
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ]
+    };
+
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, '@random-text');
+
+    let containerDiv = document.getElementsByClassName("tribute-container")[0];
+    expect(containerDiv.innerText).toBe('testcase');
+
+    detachTribute(tribute, input.id);
+});
+
+  it('should display no menu container when text is empty', () => {
+    let input = createDomElement();
+
+    let collectionObject = {
+        noMatchTemplate: "",
+        selectTemplate: function(item) {
+            return item.original.value;
+        },
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ]
+    };
+
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, '@random-text');
+
+    let popupListWrapper = document.querySelector('.tribute-container');
+    expect(popupListWrapper.style.display).toBe('none');
+
+    detachTribute(tribute, input.id);
+});
+
+it('should display no menu when function returns empty string', () => {
+  let input = createDomElement();
+
+  let collectionObject = {
+      noMatchTemplate: function(){ return ""},
+      selectTemplate: function(item) {
+          return item.original.value;
+      },
+      values: [
+        { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+        { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+      ]
+  };
+
+  let tribute = attachTribute(collectionObject, input.id);
+  fillIn(input, '@random-text');
+
+  let popupListWrapper = document.querySelector('.tribute-container');
+  expect(popupListWrapper.style.display).toBe('none');
+
+  detachTribute(tribute, input.id);
+});
+
+});
