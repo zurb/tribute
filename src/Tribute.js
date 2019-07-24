@@ -252,10 +252,10 @@ class Tribute {
             if (!items.length) {
                 let noMatchEvent = new CustomEvent('tribute-no-match', { detail: this.menu })
                 this.current.element.dispatchEvent(noMatchEvent)
-                if (!this.current.collection.noMatchTemplate) {
+                if ( typeof this.current.collection.noMatchTemplate === 'function' && !this.current.collection.noMatchTemplate() || !this.current.collection.noMatchTemplate) {
                     this.hideMenu()
                 } else {
-                    ul.innerHTML = this.current.collection.noMatchTemplate()
+                    typeof this.current.collection.noMatchTemplate === 'function' ? ul.innerHTML = this.current.collection.noMatchTemplate() : ul.innerHTML = this.current.collection.noMatchTemplate
                 }
 
                 return
