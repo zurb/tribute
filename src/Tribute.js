@@ -272,8 +272,7 @@ class Tribute {
                 let li = this.range.getDocument().createElement('li')
                 li.setAttribute('data-index', index)
                 li.addEventListener('mousemove', (e) => {
-                  let li = e.target;
-                  let index = li.getAttribute('data-index')
+                    let [li, index] = this._findLiTarget(e.target)
                     if (e.movementY !== 0) {
                         this.events.setActiveLi(index)
                     }
@@ -292,6 +291,14 @@ class Tribute {
         } else {
             processValues(this.current.collection.values)
         }
+    }
+
+    _findLiTarget(el) {
+        if (!el) return []
+        const index = el.getAttribute('data-index');
+        return !index ?
+            this._findLiTarget(el.parentNode) :
+            [el, index]
     }
 
     showMenuForCollection(element, collectionIndex) {
