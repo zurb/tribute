@@ -46,13 +46,16 @@ var TributeSearch = function () {
                 ch = void 0,
                 compareChar = void 0;
 
+            if (opts.skip) {
+                return { rendered: string, score: 0 };
+            }
+
             pattern = opts.caseSensitive && pattern || pattern.toLowerCase();
 
             var patternCache = this.traverse(compareString, pattern, 0, 0, []);
             if (!patternCache) {
                 return null;
             }
-
             return {
                 rendered: this.render(string, patternCache.cache, pre, post),
                 score: patternCache.score
@@ -173,4 +176,4 @@ var TributeSearch = function () {
 }();
 
 exports.default = TributeSearch;
-module.exports = exports['default'];
+module.exports = exports.default;
