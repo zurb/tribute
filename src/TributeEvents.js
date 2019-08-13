@@ -78,6 +78,7 @@ class TributeEvents {
     }
 
     click(instance, event) {
+        console.log('clickity')
         let tribute = instance.tribute
         if (tribute.menu && tribute.menu.contains(event.target)) {
             let li = event.target
@@ -119,13 +120,13 @@ class TributeEvents {
                 instance.callbacks().triggerChar(event, this, '')
             } else {
                 let keyCode = instance.getKeyCode(instance, this, event)
-    
+
                 if (isNaN(keyCode) || !keyCode) return
-    
+
                 let trigger = instance.tribute.triggers().find(trigger => {
                     return trigger.charCodeAt(0) === keyCode
                 })
-    
+
                 if (typeof trigger !== 'undefined') {
                     instance.callbacks().triggerChar(event, this, trigger)
                 }
@@ -304,7 +305,7 @@ class TributeEvents {
       let height = elem.getBoundingClientRect().height
 
       if (includeMargin) {
-        let style = elem.currentStyle || window.getComputedStyle(elem)
+        let style = elem.currentStyle || this.getWindowSelection().getComputedStyle(elem)
         return height + parseFloat(style.marginTop) + parseFloat(style.marginBottom)
       }
 

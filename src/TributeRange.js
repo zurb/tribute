@@ -6,16 +6,32 @@ class TributeRange {
     }
 
     getDocument() {
-        let iframe
-        if (this.tribute.current.collection) {
-            iframe = this.tribute.current.collection.iframe
+        const {tribute: {current: {element: {ownerDocument}}}} = this
+
+        if (ownerDocument) {
+            return ownerDocument;
         }
 
-        if (!iframe) {
-            return document
+        return document;
+    }
+
+    getWindowSelection() {
+        let ownerWindow = this.getWindow();
+
+        return ownerWindow.getSelection();
+    }
+
+    getWindow() {
+        let doc = this.getDocument();
+        let ownerWindow = (doc.defaultView) ?
+          doc.defaultView :
+          doc.parentWindow;
+
+        if (ownerWindow) {
+            return ownerWindow;
         }
 
-        return iframe.contentWindow.document
+        return window;
     }
 
     positionMenuAtCaret(scrollTo) {
@@ -58,15 +74,15 @@ class TributeRange {
 
             if (scrollTo) this.scrollIntoView()
 
-            window.setTimeout(() => {
+            setTimeout(() => {
                 let menuDimensions = {
                    width: this.tribute.menu.offsetWidth,
                    height: this.tribute.menu.offsetHeight
                 }
                 let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
 
-                let menuIsOffScreenHorizontally = window.innerWidth > menuDimensions.width && (menuIsOffScreen.left || menuIsOffScreen.right)
-                let menuIsOffScreenVertically = window.innerHeight > menuDimensions.height && (menuIsOffScreen.top || menuIsOffScreen.bottom)
+                let menuIsOffScreenHorizontally = this.getWindowSelection().innerWidth > menuDimensions.width && (menuIsOffScreen.left || menuIsOffScreen.right)
+                let menuIsOffScreenVertically = this.getWindowSelection().innerHeight > menuDimensions.height && (menuIsOffScreen.top || menuIsOffScreen.bottom)
                 if (menuIsOffScreenHorizontally || menuIsOffScreenVertically) {
                     this.tribute.menu.style.cssText = 'display: none'
                     this.positionMenuAtCaret(scrollTo)
@@ -177,14 +193,6 @@ class TributeRange {
             sel.removeAllRanges()
             sel.addRange(range)
         }
-    }
-
-    getWindowSelection() {
-        if (this.tribute.collection.iframe) {
-            return this.tribute.collection.iframe.contentWindow.getSelection()
-        }
-
-        return window.getSelection()
     }
 
     getNodePositionInParent(element) {
@@ -379,11 +387,12 @@ class TributeRange {
     }
 
     isMenuOffScreen(coordinates, menuDimensions) {
-        let windowWidth = window.innerWidth
-        let windowHeight = window.innerHeight
+        let windowObject = this.getWindowSelection();
+        let windowWidth = windowObject.innerWidth
+        let windowHeight = windowObject.innerHeight
         let doc = document.documentElement
-        let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
-        let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+        let windowLeft = (windowObject.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
+        let windowTop = (windowObject.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
 
         let menuTop = typeof coordinates.top === 'number' ? coordinates.top : windowTop + windowHeight - coordinates.bottom - menuDimensions.height
         let menuRight = typeof coordinates.right === 'number' ? coordinates.right : coordinates.left + menuDimensions.width
@@ -432,14 +441,14 @@ class TributeRange {
             'textDecoration', 'letterSpacing', 'wordSpacing'
         ]
 
-        let isFirefox = (window.mozInnerScreenX !== null)
+        let isFirefox = (this.getWindowSelection().mozInnerScreenX !== null)
 
         let div = this.getDocument().createElement('div')
         div.id = 'input-textarea-caret-position-mirror-div'
         this.getDocument().body.appendChild(div)
 
         let style = div.style
-        let computed = window.getComputedStyle ? getComputedStyle(element) : element.currentStyle
+        let computed = this.getWindowSelection().getComputedStyle ? getComputedStyle(element) : element.currentStyle
 
         style.whiteSpace = 'pre-wrap'
         if (element.nodeName !== 'INPUT') {
@@ -475,16 +484,16 @@ class TributeRange {
 
         let rect = element.getBoundingClientRect()
         let doc = document.documentElement
-        let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
-        let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+        let windowLeft = (this.getWindowSelection().pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
+        let windowTop = (this.getWindowSelection().pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
 
         let coordinates = {
             top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
             left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
         }
 
-        let windowWidth = window.innerWidth
-        let windowHeight = window.innerHeight
+        let windowWidth = this.getWindowSelection().innerWidth
+        let windowHeight = this.getWindowSelection().innerHeight
 
         let menuDimensions = this.getMenuDimensions()
         let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
@@ -550,14 +559,14 @@ class TributeRange {
 
         let rect = markerEl.getBoundingClientRect()
         let doc = document.documentElement
-        let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
-        let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+        let windowLeft = (this.getWindowSelection().pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
+        let windowTop = (this.getWindowSelection().pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
         let coordinates = {
             left: rect.left + windowLeft,
             top: rect.top + markerEl.offsetHeight + windowTop
         }
-        let windowWidth = window.innerWidth
-        let windowHeight = window.innerHeight
+        let windowWidth = this.getWindowSelection().innerWidth
+        let windowHeight = this.getWindowSelection().innerHeight
 
         let menuDimensions = this.getMenuDimensions()
         let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
@@ -622,21 +631,21 @@ class TributeRange {
         let elemBottom = elemTop + clientRect.height
 
         if (elemTop < 0) {
-            window.scrollTo(0, window.pageYOffset + clientRect.top - reasonableBuffer)
-        } else if (elemBottom > window.innerHeight) {
-            let maxY = window.pageYOffset + clientRect.top - reasonableBuffer
+            this.getWindowSelection().scrollTo(0, this.getWindowSelection().pageYOffset + clientRect.top - reasonableBuffer)
+        } else if (elemBottom > this.getWindowSelection().innerHeight) {
+            let maxY = this.getWindowSelection().pageYOffset + clientRect.top - reasonableBuffer
 
-            if (maxY - window.pageYOffset > maxScrollDisplacement) {
-                maxY = window.pageYOffset + maxScrollDisplacement
+            if (maxY - this.getWindowSelection().pageYOffset > maxScrollDisplacement) {
+                maxY = this.getWindowSelection().pageYOffset + maxScrollDisplacement
             }
 
-            let targetY = window.pageYOffset - (window.innerHeight - elemBottom)
+            let targetY = this.getWindowSelection().pageYOffset - (this.getWindowSelection().innerHeight - elemBottom)
 
             if (targetY > maxY) {
                 targetY = maxY
             }
 
-            window.scrollTo(0, targetY)
+            this.getWindowSelection().scrollTo(0, targetY)
         }
     }
 }
