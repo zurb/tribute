@@ -606,6 +606,7 @@ var TributeEvents = function () {
     }, {
         key: 'click',
         value: function click(instance, event) {
+            console.log('clickity');
             var tribute = instance.tribute;
             if (tribute.menu && tribute.menu.contains(event.target)) {
                 var li = event.target;
@@ -840,7 +841,7 @@ var TributeEvents = function () {
             var height = elem.getBoundingClientRect().height;
 
             if (includeMargin) {
-                var style = elem.currentStyle || window.getComputedStyle(elem);
+                var style = elem.currentStyle || this.getWindowSelection().getComputedStyle(elem);
                 return height + parseFloat(style.marginTop) + parseFloat(style.marginBottom);
             }
 
@@ -918,14 +919,15 @@ var TributeMenuEvents = function () {
             }, 300, false);
 
             // fixes IE11 issues with mousedown
-            this.tribute.range.getDocument().addEventListener('MSPointerDown', this.menuClickEvent, false);
-            this.tribute.range.getDocument().addEventListener('mousedown', this.menuClickEvent, false);
-            window.addEventListener('resize', this.windowResizeEvent);
+            this.tribute.menuContainer.addEventListener('MSPointerDown', this.menuClickEvent, false);
+            this.tribute.menuContainer.addEventListener('mousedown', this.menuClickEvent, false);
+
+            this.tribute.range.getWindow().addEventListener('resize', this.windowResizeEvent);
 
             if (this.menuContainer) {
                 this.menuContainer.addEventListener('scroll', this.menuContainerScrollEvent, false);
             } else {
-                window.addEventListener('scroll', this.menuContainerScrollEvent);
+                this.tribute.range.getWindow().addEventListener('scroll', this.menuContainerScrollEvent);
             }
         }
     }, {
@@ -933,12 +935,12 @@ var TributeMenuEvents = function () {
         value: function unbind(menu) {
             this.tribute.range.getDocument().removeEventListener('mousedown', this.menuClickEvent, false);
             this.tribute.range.getDocument().removeEventListener('MSPointerDown', this.menuClickEvent, false);
-            window.removeEventListener('resize', this.windowResizeEvent);
+            this.tribute.range.getWindow().removeEventListener('resize', this.windowResizeEvent);
 
             if (this.menuContainer) {
                 this.menuContainer.removeEventListener('scroll', this.menuContainerScrollEvent, false);
             } else {
-                window.removeEventListener('scroll', this.menuContainerScrollEvent);
+                this.tribute.range.getWindow().removeEventListener('scroll', this.menuContainerScrollEvent);
             }
         }
     }, {
@@ -992,16 +994,33 @@ var TributeRange = function () {
     _createClass(TributeRange, [{
         key: 'getDocument',
         value: function getDocument() {
-            var iframe = void 0;
-            if (this.tribute.current.collection) {
-                iframe = this.tribute.current.collection.iframe;
+            var ownerDocument = this.tribute.current.element.ownerDocument;
+
+
+            if (ownerDocument) {
+                return ownerDocument;
             }
 
-            if (!iframe) {
-                return document;
+            return document;
+        }
+    }, {
+        key: 'getWindowSelection',
+        value: function getWindowSelection() {
+            var ownerWindow = this.getWindow();
+
+            return ownerWindow.getSelection();
+        }
+    }, {
+        key: 'getWindow',
+        value: function getWindow() {
+            var doc = this.getDocument();
+            var ownerWindow = doc.defaultView ? doc.defaultView : doc.parentWindow;
+
+            if (ownerWindow) {
+                return ownerWindow;
             }
 
-            return iframe.contentWindow.document;
+            return window;
         }
     }, {
         key: 'positionMenuAtCaret',
@@ -1038,15 +1057,15 @@ var TributeRange = function () {
 
                 if (scrollTo) this.scrollIntoView();
 
-                window.setTimeout(function () {
+                setTimeout(function () {
                     var menuDimensions = {
                         width: _this.tribute.menu.offsetWidth,
                         height: _this.tribute.menu.offsetHeight
                     };
                     var menuIsOffScreen = _this.isMenuOffScreen(coordinates, menuDimensions);
 
-                    var menuIsOffScreenHorizontally = window.innerWidth > menuDimensions.width && (menuIsOffScreen.left || menuIsOffScreen.right);
-                    var menuIsOffScreenVertically = window.innerHeight > menuDimensions.height && (menuIsOffScreen.top || menuIsOffScreen.bottom);
+                    var menuIsOffScreenHorizontally = _this.getWindowSelection().innerWidth > menuDimensions.width && (menuIsOffScreen.left || menuIsOffScreen.right);
+                    var menuIsOffScreenVertically = _this.getWindowSelection().innerHeight > menuDimensions.height && (menuIsOffScreen.top || menuIsOffScreen.bottom);
                     if (menuIsOffScreenHorizontally || menuIsOffScreenVertically) {
                         _this.tribute.menu.style.cssText = 'display: none';
                         _this.positionMenuAtCaret(scrollTo);
@@ -1155,15 +1174,6 @@ var TributeRange = function () {
                 sel.removeAllRanges();
                 sel.addRange(range);
             }
-        }
-    }, {
-        key: 'getWindowSelection',
-        value: function getWindowSelection() {
-            if (this.tribute.collection.iframe) {
-                return this.tribute.collection.iframe.contentWindow.getSelection();
-            }
-
-            return window.getSelection();
         }
     }, {
         key: 'getNodePositionInParent',
@@ -1352,11 +1362,12 @@ var TributeRange = function () {
     }, {
         key: 'isMenuOffScreen',
         value: function isMenuOffScreen(coordinates, menuDimensions) {
-            var windowWidth = window.innerWidth;
-            var windowHeight = window.innerHeight;
+            var windowObject = this.getWindowSelection();
+            var windowWidth = windowObject.innerWidth;
+            var windowHeight = windowObject.innerHeight;
             var doc = document.documentElement;
-            var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-            var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+            var windowLeft = (windowObject.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+            var windowTop = (windowObject.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
 
             var menuTop = typeof coordinates.top === 'number' ? coordinates.top : windowTop + windowHeight - coordinates.bottom - menuDimensions.height;
             var menuRight = typeof coordinates.right === 'number' ? coordinates.right : coordinates.left + menuDimensions.width;
@@ -1394,14 +1405,14 @@ var TributeRange = function () {
         value: function getTextAreaOrInputUnderlinePosition(element, position, flipped) {
             var properties = ['direction', 'boxSizing', 'width', 'height', 'overflowX', 'overflowY', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'fontStyle', 'fontVariant', 'fontWeight', 'fontStretch', 'fontSize', 'fontSizeAdjust', 'lineHeight', 'fontFamily', 'textAlign', 'textTransform', 'textIndent', 'textDecoration', 'letterSpacing', 'wordSpacing'];
 
-            var isFirefox = window.mozInnerScreenX !== null;
+            var isFirefox = this.getWindowSelection().mozInnerScreenX !== null;
 
             var div = this.getDocument().createElement('div');
             div.id = 'input-textarea-caret-position-mirror-div';
             this.getDocument().body.appendChild(div);
 
             var style = div.style;
-            var computed = window.getComputedStyle ? getComputedStyle(element) : element.currentStyle;
+            var computed = this.getWindowSelection().getComputedStyle ? getComputedStyle(element) : element.currentStyle;
 
             style.whiteSpace = 'pre-wrap';
             if (element.nodeName !== 'INPUT') {
@@ -1436,16 +1447,16 @@ var TributeRange = function () {
 
             var rect = element.getBoundingClientRect();
             var doc = document.documentElement;
-            var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-            var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+            var windowLeft = (this.getWindowSelection().pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+            var windowTop = (this.getWindowSelection().pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
 
             var coordinates = {
                 top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
                 left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
             };
 
-            var windowWidth = window.innerWidth;
-            var windowHeight = window.innerHeight;
+            var windowWidth = this.getWindowSelection().innerWidth;
+            var windowHeight = this.getWindowSelection().innerHeight;
 
             var menuDimensions = this.getMenuDimensions();
             var menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
@@ -1505,14 +1516,14 @@ var TributeRange = function () {
 
             var rect = markerEl.getBoundingClientRect();
             var doc = document.documentElement;
-            var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-            var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+            var windowLeft = (this.getWindowSelection().pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+            var windowTop = (this.getWindowSelection().pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
             var coordinates = {
                 left: rect.left + windowLeft,
                 top: rect.top + markerEl.offsetHeight + windowTop
             };
-            var windowWidth = window.innerWidth;
-            var windowHeight = window.innerHeight;
+            var windowWidth = this.getWindowSelection().innerWidth;
+            var windowHeight = this.getWindowSelection().innerHeight;
 
             var menuDimensions = this.getMenuDimensions();
             var menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
@@ -1570,21 +1581,21 @@ var TributeRange = function () {
             var elemBottom = elemTop + clientRect.height;
 
             if (elemTop < 0) {
-                window.scrollTo(0, window.pageYOffset + clientRect.top - reasonableBuffer);
-            } else if (elemBottom > window.innerHeight) {
-                var maxY = window.pageYOffset + clientRect.top - reasonableBuffer;
+                this.getWindowSelection().scrollTo(0, this.getWindowSelection().pageYOffset + clientRect.top - reasonableBuffer);
+            } else if (elemBottom > this.getWindowSelection().innerHeight) {
+                var maxY = this.getWindowSelection().pageYOffset + clientRect.top - reasonableBuffer;
 
-                if (maxY - window.pageYOffset > maxScrollDisplacement) {
-                    maxY = window.pageYOffset + maxScrollDisplacement;
+                if (maxY - this.getWindowSelection().pageYOffset > maxScrollDisplacement) {
+                    maxY = this.getWindowSelection().pageYOffset + maxScrollDisplacement;
                 }
 
-                var targetY = window.pageYOffset - (window.innerHeight - elemBottom);
+                var targetY = this.getWindowSelection().pageYOffset - (this.getWindowSelection().innerHeight - elemBottom);
 
                 if (targetY > maxY) {
                     targetY = maxY;
                 }
 
-                window.scrollTo(0, targetY);
+                this.getWindowSelection().scrollTo(0, targetY);
             }
         }
     }]);

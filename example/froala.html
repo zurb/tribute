@@ -1,0 +1,91 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZURB Tribute | Demo</title>
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="../dist/tribute.css" />
+    <style>
+      body {
+        position: relative;
+        padding: 0 25px;
+      }
+      .tribute-demo-input {
+        outline: none;
+        border: 1px solid #eee;
+        padding: 3px 5px;
+        border-radius: 2px;
+        font-size: 15px;
+        min-height: 32px;
+        cursor: text;
+      }
+      .tribute-demo-input:focus {
+        border-color: #d1d1d1;
+        background-color: #fbfbfb;
+      }
+      [contenteditable=true]:empty:before{
+        content: attr(placeholder);
+        display: block;
+        color: #ccc;
+      }
+
+      .float-right {
+        float: right;
+      }
+    </style>
+
+    <!-- Include Editor style. -->
+    <link href="https://cdn.jsdelivr.net/npm/froala-editor@3.0.4/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Include Editor JS files. -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@3.0.4/js/froala_editor.pkgd.min.js"></script>
+    <script src="../dist/tribute.js"></script>
+  </head>
+  <body>
+    <h1>Bees on parade</h1>
+    <p>Look at those bees, they are on parade. How about that?</p>
+    <!-- Create a tag that we will use as the editable area. -->
+    <!-- You can use a div tag as well. -->
+    <textarea></textarea>
+
+    <!-- Initialize the editor. -->
+    <script>
+      let tribute;
+      new FroalaEditor('textarea', {
+        iframe: true,
+        events: {
+          initialized: function() {
+            var editor = this;
+
+            tribute = new Tribute({
+              menuContainer: document.body,
+              values: [
+                        { key: 'Phil Heartman', value: 'pheartman' },
+                        { key: 'Gordon', value: 'gramsey' },
+                        { key: 'Jacob', value: 'jacob' },
+                        { key: 'Ethan', value: 'ethan' },
+                        { key: 'Emma', value: 'emma' },
+                        { key: 'Isabella', value: 'isabella' }
+                      ],
+              selectTemplate: function(item) {
+                return '<span class="fr-deletable fr-tribute">' + item.original.key + '</a></span>';
+              }
+            });
+
+            tribute.attach(editor.el);
+
+            editor.events.on('keydown', function(e) {
+              if (e.which == FroalaEditor.KEYCODE.ENTER && tribute.isActive) {
+                return false;
+              }
+            }, true);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
+
+
