@@ -14,6 +14,10 @@
     "gulp-babel": "^8.0.0",
     "gulp-plumber": "^1.1.0",
     "gulp-sass": "^4.0.1",
+    "gulp-connect": "^5.7.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-uglify": "^3.0.2",
     "jasmine-core": "^3.3.0",
     "karma": "^4.1.0",
     "karma-browserify": "^6.0.0",
@@ -42,10 +46,6 @@
   "author": "Jordan Humphreys <jordan@zurb.com>",
   "license": "MIT",
   "dependencies": {
-    "exorcist": "^1.0.1",
-    "gulp-connect": "^5.7.0",
-    "gulp-rename": "^1.4.0",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-uglify": "^3.0.2"
+    "exorcist": "^1.0.1"
   }
 }
