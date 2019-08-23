@@ -31,8 +31,7 @@
     "open": "^6.4.0",
     "puppeteer": "^1.19.0",
     "vinyl-source-stream": "^2.0.0",
-    "watchify": "^3.11.1",
-    "zombie": "^6.1.4"
+    "watchify": "^3.11.1"
   },
   "repository": {
     "type": "git",
