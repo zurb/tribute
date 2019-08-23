@@ -10,7 +10,7 @@
     "@babel/preset-env": "^7.5.5",
     "babel-plugin-add-module-exports": "^1.0.2",
     "babelify": "10.0.0",
-    "browserify": "^16.2.2",
+    "browserify": "^16.5.0",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-plumber": "^1.2.1",
