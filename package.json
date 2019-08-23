@@ -48,6 +48,7 @@
   "author": "Jordan Humphreys <jordan@zurb.com>",
   "license": "MIT",
   "files": [
-    "dist/"
+    "dist/",
+    "tributejs.d.ts"
   ]
 }
