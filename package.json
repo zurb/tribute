@@ -18,6 +18,7 @@
     "gulp-rename": "^1.4.0",
     "gulp-sourcemaps": "^2.6.5",
     "gulp-uglify": "^3.0.2",
+    "exorcist": "^1.0.1"
     "jasmine-core": "^3.3.0",
     "karma": "^4.1.0",
     "karma-browserify": "^6.0.0",
@@ -44,8 +45,5 @@
     "test-single-run": "karma start test/karma.conf.js --single-run --browsers ChromeHeadless"
   },
   "author": "Jordan Humphreys <jordan@zurb.com>",
-  "license": "MIT",
-  "dependencies": {
-    "exorcist": "^1.0.1"
-  }
+  "license": "MIT"
 }
