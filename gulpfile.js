@@ -2,7 +2,7 @@ var gulp        = require('gulp');
 var plumber     = require('gulp-plumber');
 var sass        = require('gulp-sass');
 var connect     = require('gulp-connect');
-var opn         = require('opn');
+var open        = require('open');
 var browserify  = require('browserify');
 var source      = require('vinyl-source-stream');
 var babelify    = require('babelify');
@@ -74,7 +74,7 @@ gulp.task('build', gulp.series('sass', 'uglify', function (done) {
 }));
 
 gulp.task('openbrowser', gulp.series('build', function(done) {
-    opn('http://' + server.host + ':' + server.port + '/example/index.html');
+    open('http://' + server.host + ':' + server.port + '/example/index.html');
     done();
 }));
 
