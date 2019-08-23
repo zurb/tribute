@@ -46,5 +46,8 @@
     "test-single-run": "karma start test/karma.conf.js --single-run --browsers ChromeHeadless"
   },
   "author": "Jordan Humphreys <jordan@zurb.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "files": [
+    "dist/"
+  ]
 }
