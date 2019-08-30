@@ -2,7 +2,7 @@
   "name": "tributejs",
   "version": "3.7.2",
   "description": "Native ES6 @mentions",
-  "main": "dist/tribute.js",
+  "main": "dist/tribute-browser.js",
   "types": "tributejs.d.ts",
   "devDependencies": {
     "@babel/cli": "^7.5.5",

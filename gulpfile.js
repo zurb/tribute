@@ -33,17 +33,17 @@ gulp.task('bundler', function(done) {
         })
         .transform(babelify)
         .bundle()
-        .pipe(exorcist('dist/tribute.js.map'))
-        .pipe(source('tribute.js'))
+        .pipe(exorcist('dist/tribute-browser.js.map'))
+        .pipe(source('tribute-browser.js'))
         .pipe(gulp.dest('dist'));
     done();
 });
 
 gulp.task('uglify', gulp.series('bundler', function(done) {
-    gulp.src('dist/tribute.js')
+    gulp.src('dist/tribute-browser.js')
         .pipe(sourcemaps.init())
         .pipe(gulp.dest('dist'))
-        .pipe(rename('tribute.min.js'))
+        .pipe(rename('tribute-browser.min.js'))
         .pipe(uglify())
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest('dist'));

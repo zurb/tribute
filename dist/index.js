@@ -3,16 +3,16 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports["default"] = void 0;
 
-var _Tribute = require("./Tribute");
+var _Tribute = _interopRequireDefault(require("./Tribute"));
 
-var _Tribute2 = _interopRequireDefault(_Tribute);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = _Tribute2.default; /**
-                                     * Tribute.js
-                                     * Native ES6 JavaScript @mention Plugin
-                                     **/
-
+/**
+* Tribute.js
+* Native ES6 JavaScript @mention Plugin
+**/
+var _default = _Tribute["default"];
+exports["default"] = _default;
 module.exports = exports.default;
