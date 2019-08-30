@@ -38,7 +38,6 @@
     "url": "git://github.com/zurb/tribute.git"
   },
   "scripts": {
-    "run": "babel src -w -d dist",
     "start": "yarn run gulp default",
     "test": "karma start test/karma.conf.js",
     "build": "yarn run gulp build",
