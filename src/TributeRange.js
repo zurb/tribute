@@ -262,7 +262,7 @@ class TributeRange {
 
     getLastWordInText(text) {
         text = text.replace(/\u00A0/g, ' '); // https://stackoverflow.com/questions/29850407/how-do-i-replace-unicode-character-u00a0-with-a-space-in-javascript
-        let wordsArray = text.split(' ')
+        let wordsArray = text.split(/\s+/);
         let worldsCount = wordsArray.length - 1
         return wordsArray[worldsCount].trim()
     }
