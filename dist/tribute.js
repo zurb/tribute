@@ -1398,7 +1398,7 @@ function () {
         width: null,
         height: null
       };
-      this.tribute.menu.style.cssText = "top: 0px;\n                                 left: 0px;\n                                 position: fixed;\n                                 zIndex: 10000;\n                                 display: block;\n                                 visibility; hidden;";
+      this.tribute.menu.style.cssText = "top: 0px;\n                                 left: 0px;\n                                 position: fixed;\n                                 display: block;\n                                 visibility; hidden;";
       dimensions.width = this.tribute.menu.offsetWidth;
       dimensions.height = this.tribute.menu.offsetHeight;
       this.tribute.menu.style.cssText = "display: none;";
