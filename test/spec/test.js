@@ -217,6 +217,28 @@ describe('Tribute autocomplete mode cases', function () {
     });
   });
 
+  ['contenteditable'].forEach(elementType => {
+    it(`should work with newlines`, () => {
+      let input = createDomElement(elementType);
+
+      let collectionObject = {
+        selectTemplate: function (item) {
+          return item.original.value;
+        },
+        autocompleteMode: true,
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ],
+      }
+
+      let tribute = attachTribute(collectionObject, input.id);
+      fillIn(input, 'random{newline}J');
+      let popupList = document.querySelectorAll('.tribute-container > ul > li');
+      expect(popupList.length).toBe(1);
+      detachTribute(tribute, input.id);
+    });
+  });
 });
 
 
