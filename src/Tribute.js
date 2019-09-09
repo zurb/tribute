@@ -1,4 +1,4 @@
-import TributeUtils from "./utils";
+import "./utils";
 import TributeEvents from "./TributeEvents";
 import TributeMenuEvents from "./TributeMenuEvents";
 import TributeRange from "./TributeRange";
