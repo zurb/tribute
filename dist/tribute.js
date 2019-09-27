@@ -1448,9 +1448,17 @@ function () {
       var doc = document.documentElement;
       var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
       var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+      var top = 0;
+      var left = 0;
+
+      if (this.menuContainerIsBody) {
+        top = rect.top;
+        left = rect.left;
+      }
+
       var coordinates = {
-        top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
-        left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
+        top: top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
+        left: left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
       };
       var windowWidth = window.innerWidth;
       var windowHeight = window.innerHeight;
@@ -1510,9 +1518,20 @@ function () {
       var doc = document.documentElement;
       var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
       var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+      var left = 0;
+      var top = 0;
+
+      if (this.menuContainerIsBody) {
+        left = rect.left;
+        top = rect.top;
+      } else {
+        left = markerEl.offsetLeft;
+        top = markerEl.offsetTop;
+      }
+
       var coordinates = {
-        left: rect.left + windowLeft,
-        top: rect.top + markerEl.offsetHeight + windowTop
+        left: left + windowLeft,
+        top: top + markerEl.offsetHeight + windowTop
       };
       var windowWidth = window.innerWidth;
       var windowHeight = window.innerHeight;
@@ -1589,6 +1608,11 @@ function () {
 
         window.scrollTo(0, targetY);
       }
+    }
+  }, {
+    key: "menuContainerIsBody",
+    get: function get() {
+      return this.tribute.menuContainer === document.body || !this.tribute.menuContainer;
     }
   }]);
 
