@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
-var _utils = _interopRequireDefault(require("./utils"));
+require("./utils");
 
 var _TributeEvents = _interopRequireDefault(require("./TributeEvents"));
 
@@ -275,6 +275,10 @@ function () {
           }
         });
 
+        if (_this2.current.collection.menuItemLimit) {
+          items = items.slice(0, _this2.current.collection.menuItemLimit);
+        }
+
         _this2.current.filteredItems = items;
 
         var ul = _this2.menu.querySelector('ul');
@@ -295,10 +299,6 @@ function () {
           }
 
           return;
-        }
-
-        if (_this2.current.collection.menuItemLimit) {
-          items = items.slice(0, _this2.current.collection.menuItemLimit);
         }
 
         ul.innerHTML = '';
