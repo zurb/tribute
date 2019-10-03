@@ -39,13 +39,11 @@ class TributeRange {
                 coordinates = this.getContentEditableCaretPosition(info.mentionPosition)
             }
 
-
             this.tribute.menu.style.cssText = `top: ${coordinates.top}px;
                                      left: ${coordinates.left}px;
                                      right: ${coordinates.right}px;
                                      bottom: ${coordinates.bottom}px;
                                      position: absolute;
-                                     z-index: 10000;
                                      display: block;`
 
             if (coordinates.left === 'auto') {

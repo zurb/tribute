@@ -1041,7 +1041,7 @@ function () {
           coordinates = this.getContentEditableCaretPosition(info.mentionPosition);
         }
 
-        this.tribute.menu.style.cssText = "top: ".concat(coordinates.top, "px;\n                                     left: ").concat(coordinates.left, "px;\n                                     right: ").concat(coordinates.right, "px;\n                                     bottom: ").concat(coordinates.bottom, "px;\n                                     position: absolute;\n                                     z-index: 10000;\n                                     display: block;");
+        this.tribute.menu.style.cssText = "top: ".concat(coordinates.top, "px;\n                                     left: ").concat(coordinates.left, "px;\n                                     right: ").concat(coordinates.right, "px;\n                                     bottom: ").concat(coordinates.bottom, "px;\n                                     position: absolute;\n                                     display: block;");
 
         if (coordinates.left === 'auto') {
           this.tribute.menu.style.left = 'auto';
