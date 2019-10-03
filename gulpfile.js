@@ -28,7 +28,7 @@ var server = {
 
 gulp.task('bundler', function(done) {
     // Single entry point to browserify
-    return browserify('src/index.js', {
+    browserify('src/index.js', {
             debug: true, standalone: "Tribute"
         })
         .transform(babelify)

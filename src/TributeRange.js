@@ -76,6 +76,11 @@ class TributeRange {
         }
     }
 
+    get menuContainerIsBody() {
+        return this.tribute.menuContainer === document.body || !this.tribute.menuContainer;
+    }
+
+
     selectElement(targetElement, path, offset) {
         let range
         let elem = targetElement
@@ -475,9 +480,16 @@ class TributeRange {
         let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
         let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
 
+        let top = 0;
+        let left = 0;
+        if (this.menuContainerIsBody) {
+          top = rect.top;
+          left = rect.left;
+        }
+
         let coordinates = {
-            top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
-            left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
+            top: top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
+            left: left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
         }
 
         let windowWidth = window.innerWidth
@@ -549,9 +561,20 @@ class TributeRange {
         let doc = document.documentElement
         let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
         let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+
+        let left = 0
+        let top = 0
+        if (this.menuContainerIsBody) {
+          left = rect.left
+          top = rect.top
+        } else {
+          left = markerEl.offsetLeft;
+          top = markerEl.offsetTop;
+        }
+
         let coordinates = {
-            left: rect.left + windowLeft,
-            top: rect.top + markerEl.offsetHeight + windowTop
+            left: left + windowLeft,
+            top: top + markerEl.offsetHeight + windowTop
         }
         let windowWidth = window.innerWidth
         let windowHeight = window.innerHeight

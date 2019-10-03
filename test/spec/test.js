@@ -373,3 +373,81 @@ it('should display no menu when function returns empty string', () => {
 });
 
 });
+
+describe('Tribute menu positioning', function() {
+  afterEach(function () {
+    clearDom();
+  });
+
+  function checkPosition(collectionObject, input) {
+    let bottomContent = document.createElement('div');
+    bottomContent.style = 'background: blue; height: 400px; width: 10px;';
+    document.body.appendChild(bottomContent);
+
+    let inputRect = input.getBoundingClientRect();
+    let inputX = inputRect.x;
+    let inputY = inputRect.y;
+
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, '@');
+
+    let popupListWrapper = document.querySelector('.tribute-container');
+    let menuRect = popupListWrapper.getBoundingClientRect();
+    let menuX = menuRect.x;
+    let menuY = menuRect.y;
+
+    detachTribute(tribute, input.id);
+    bottomContent.remove();
+    clearDom();
+    return {x: menuX, y: menuY};
+  }
+
+
+  it('should display a container menu in the same position when menuContainer is specified on an input as when the menuContainer is the body', () => {
+    let input = createDomElement();
+    let container = input.parentElement;
+    container.style = 'position: relative;';
+    let {x: specifiedX, y: specifiedY} = checkPosition({
+        menuContainer: container,
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ]
+    }, input);
+
+    input = createDomElement();
+    let {x: unspecifiedX, y: unspecifiedY} = checkPosition({
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ]
+    }, input);
+
+    expect(unspecifiedY).toEqual(specifiedY);
+    expect(unspecifiedX).toEqual(specifiedX);
+  });
+
+  it('should display a container menu in the same position when menuContainer is specified on an contenteditable as when the menuContainer is the body', () => {
+    let input = createDomElement('contenteditable');
+    let container = input.parentElement;
+    container.style = 'position: relative;';
+    let {x: specifiedX, y: specifiedY} = checkPosition({
+        menuContainer: container,
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ]
+    }, input);
+
+    input = createDomElement('contenteditable');
+    let {x: unspecifiedX, y: unspecifiedY} = checkPosition({
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ]
+    }, input);
+
+    expect(unspecifiedY).toEqual(specifiedY);
+    expect(unspecifiedX).toEqual(specifiedX);
+  });
+});

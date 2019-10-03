@@ -29,7 +29,12 @@
         display: block;
         color: #ccc;
       }
-
+      #test-autocomplete-container {
+        position: relative;
+      }
+      #test-autocomplete-textarea-container {
+        position: relative;
+      }
       .float-right {
         float: right;
       }
@@ -63,7 +68,9 @@
         <div class="callout large">
           <h5>Tribute with <code>autocompleteMode:true</code>  on <code>contenteditable</code> element:</h5>
           <!-- <a id="activateInput">@mention</a> -->
-          <p id="test-autocomplete" class="tribute-demo-input" placeholder="States of USA"></p>
+          <div id="test-autocomplete-container">
+            <p id="test-autocomplete" class="tribute-demo-input" placeholder="States of USA"></p>
+          </div>
         </div>
       </div>
     </div>
@@ -73,7 +80,9 @@
         <div class="callout large">
           <h5>Tribute with <code>autocompleteMode:true</code>  on <code>textarea</code> element:</h5>
 
-           <textarea id="test-autocomplete-textarea" cols="40" rows="10" placeholder="States of USA"></textarea>
+          <div id="test-autocomplete-textarea-container">
+            <textarea id="test-autocomplete-textarea" cols="40" rows="10" placeholder="States of USA"></textarea>
+          </div>
         </div>
       </div>
     </div>
@@ -188,9 +197,10 @@
       }
 
       // example of Tribute in autocomplete mode
-      var tributeAutocompleteTest = new Tribute({
+
+
+      var tributeAttributes = {
         autocompleteMode: true,
-        menuContainer: document.getElementById('content'),
         values: [
           { key: "Alabama", value: "Alabama" },
           { key: "Alaska", value: "Alaska" },
@@ -254,9 +264,12 @@
         menuItemTemplate: function (item) {
           return item.string;
         }
-      });
+      };
+      var tributeAutocompleteTest = new Tribute(Object.assign({menuContainer: document.getElementById('test-autocomplete-container')}, tributeAttributes));
       tributeAutocompleteTest.attach(document.getElementById('test-autocomplete'));
-      tributeAutocompleteTest.attach(document.getElementById('test-autocomplete-textarea'));
+
+      var tributeAutocompleteTestArea = new Tribute(Object.assign({menuContainer: document.getElementById('test-autocomplete-textarea-container')}, tributeAttributes));
+      tributeAutocompleteTestArea.attach(document.getElementById('test-autocomplete-textarea'));
     </script>
   </body>
 </html>
