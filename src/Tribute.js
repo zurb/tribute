@@ -242,6 +242,10 @@ class Tribute {
                 }
             })
 
+            if (this.current.collection.menuItemLimit) {
+                items = items.slice(0, this.current.collection.menuItemLimit)
+            }
+
             this.current.filteredItems = items
 
 
@@ -259,10 +263,6 @@ class Tribute {
                 }
 
                 return
-            }
-
-            if (this.current.collection.menuItemLimit) {
-                items = items.slice(0, this.current.collection.menuItemLimit)
             }
 
             ul.innerHTML = ''
