@@ -159,6 +159,8 @@ Collection object shown with defaults:
   noMatchTemplate: null,
 
   // specify an alternative parent container for the menu
+  // container must be a positioned element for the menu to appear correctly ie. `position: relative;`
+  // default container is the body
   menuContainer: document.body,
 
   // column to search against in the object (accepts function or string)
