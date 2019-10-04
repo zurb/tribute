@@ -136,7 +136,10 @@ class TributeRange {
                     : ' '
                 text += textSuffix
                 let startPos = info.mentionPosition
-                let endPos = info.mentionPosition + info.mentionText.length + textSuffix.length + info.mentionTriggerChar.length - 1
+                let endPos = info.mentionPosition + info.mentionText.length + textSuffix.length
+                if (!this.tribute.autocompleteMode) {
+                    endPos += info.mentionTriggerChar.length - 1
+                }
                 myField.value = myField.value.substring(0, startPos) + text +
                     myField.value.substring(endPos, myField.value.length)
                 myField.selectionStart = startPos + text.length
