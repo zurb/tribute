@@ -28,73 +28,75 @@ describe('Tribute @mentions cases', function () {
   });
 
   ['text', 'contenteditable'].forEach(elementType => {
-    it(`when values key is predefined array. For : ${elementType}`, () => {
-      let input = createDomElement(elementType);
+    ['@', '$('].forEach(trigger => {
+      it(`when values key is predefined array. For : ${elementType} / ${trigger}`, () => {
+        let input = createDomElement(elementType);
 
-      let collectionObject = {
-        trigger: '@',
-        selectTemplate: function (item) {
-          if (typeof item === 'undefined') return null;
-          if (this.range.isContentEditable(this.current.element)) {
-            return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
-          }
+        let collectionObject = {
+          trigger: trigger,
+          selectTemplate: function (item) {
+            if (typeof item === 'undefined') return null;
+            if (this.range.isContentEditable(this.current.element)) {
+              return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
+            }
 
-          return '@' + item.original.value;
-        },
-        values: [
-          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
-          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
-        ],
-      }
+            return trigger + item.original.value;
+          },
+          values: [
+            { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+            { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+          ],
+        }
 
-      let tribute = attachTribute(collectionObject, input.id);
+        let tribute = attachTribute(collectionObject, input.id);
 
-      fillIn(input, ' @');
-      let popupList = document.querySelectorAll('.tribute-container > ul > li');
-      expect(popupList.length).toBe(2);
-      simulateMouseClick(popupList[0]); // click on Jordan Humphreys
+        fillIn(input, ' ' + trigger);
+        let popupList = document.querySelectorAll('.tribute-container > ul > li');
+        expect(popupList.length).toBe(2);
+        simulateMouseClick(popupList[0]); // click on Jordan Humphreys
 
-      if (elementType === 'text') {
-        expect(input.value).toBe(' @Jordan Humphreys ');
-      } else if (elementType === 'contenteditable') {
-        expect(input.innerHTML).toBe(' <span contenteditable="false"><a href="http://zurb.com" target="_blank" title="getstarted@zurb.com">Jordan Humphreys</a></span>&nbsp;');
-      }
+        if (elementType === 'text') {
+          expect(input.value).toBe(' ' + trigger + 'Jordan Humphreys ');
+        } else if (elementType === 'contenteditable') {
+          expect(input.innerHTML).toBe(' <span contenteditable="false"><a href="http://zurb.com" target="_blank" title="getstarted@zurb.com">Jordan Humphreys</a></span>&nbsp;');
+        }
 
-      fillIn(input, ' @sir');
-      popupList = document.querySelectorAll('.tribute-container > ul > li');
-      expect(popupList.length).toBe(1);
+        fillIn(input, ' ' + trigger + 'sir');
+        popupList = document.querySelectorAll('.tribute-container > ul > li');
+        expect(popupList.length).toBe(1);
 
-      detachTribute(tribute, input.id);
-    });
+        detachTribute(tribute, input.id);
+      });
 
-    it(`when values array is large and menuItemLimit is set. For : ${elementType}`, () => {
-      let input = createDomElement(elementType);
+      it(`when values array is large and menuItemLimit is set. For : ${elementType} / ${trigger}`, () => {
+        let input = createDomElement(elementType);
 
-      let collectionObject = {
-        trigger: '@',
-        menuItemLimit: 25,
-        selectTemplate: function (item) {
-          if (typeof item === 'undefined') return null;
-          if (this.range.isContentEditable(this.current.element)) {
-            return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
-          }
+        let collectionObject = {
+          trigger: trigger,
+          menuItemLimit: 25,
+          selectTemplate: function (item) {
+            if (typeof item === 'undefined') return null;
+            if (this.range.isContentEditable(this.current.element)) {
+              return '<span contenteditable="false"><a href="http://zurb.com" target="_blank" title="' + item.original.email + '">' + item.original.value + '</a></span>';
+            }
 
-          return '@' + item.original.value;
-        },
-        values: bigList,
-      }
+            return trigger + item.original.value;
+          },
+          values: bigList,
+        }
 
-      let tribute = attachTribute(collectionObject, input.id);
+        let tribute = attachTribute(collectionObject, input.id);
 
-      fillIn(input, ' @');
-      let popupList = document.querySelectorAll('.tribute-container > ul > li');
-      expect(popupList.length).toBe(25);
+        fillIn(input, ' ' + trigger);
+        let popupList = document.querySelectorAll('.tribute-container > ul > li');
+        expect(popupList.length).toBe(25);
 
-      fillIn(input, ' @an');
-      popupList = document.querySelectorAll('.tribute-container > ul > li');
-      expect(popupList.length).toBe(25);
+        fillIn(input, ' ' + trigger + 'an');
+        popupList = document.querySelectorAll('.tribute-container > ul > li');
+        expect(popupList.length).toBe(25);
 
-      detachTribute(tribute, input.id);
+        detachTribute(tribute, input.id);
+      });
     });
   });
 });
@@ -324,7 +326,7 @@ describe('Tribute NoMatchTemplate cases', function () {
     expect(containerDiv.innerText).toBe('testcase');
 
     detachTribute(tribute, input.id);
-});
+  });
 
   it('should display no menu container when text is empty', () => {
     let input = createDomElement();
@@ -347,30 +349,30 @@ describe('Tribute NoMatchTemplate cases', function () {
     expect(popupListWrapper.style.display).toBe('none');
 
     detachTribute(tribute, input.id);
-});
+  });
 
-it('should display no menu when function returns empty string', () => {
-  let input = createDomElement();
+  it('should display no menu when function returns empty string', () => {
+    let input = createDomElement();
 
-  let collectionObject = {
-      noMatchTemplate: function(){ return ""},
-      selectTemplate: function(item) {
-          return item.original.value;
-      },
-      values: [
-        { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
-        { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
-      ]
-  };
+    let collectionObject = {
+        noMatchTemplate: function(){ return ""},
+        selectTemplate: function(item) {
+            return item.original.value;
+        },
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ]
+    };
 
-  let tribute = attachTribute(collectionObject, input.id);
-  fillIn(input, '@random-text');
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, '@random-text');
 
-  let popupListWrapper = document.querySelector('.tribute-container');
-  expect(popupListWrapper.style.display).toBe('none');
+    let popupListWrapper = document.querySelector('.tribute-container');
+    expect(popupListWrapper.style.display).toBe('none');
 
-  detachTribute(tribute, input.id);
-});
+    detachTribute(tribute, input.id);
+  });
 
 });
 
@@ -450,4 +452,34 @@ describe('Tribute menu positioning', function() {
     expect(unspecifiedY).toEqual(specifiedY);
     expect(unspecifiedX).toEqual(specifiedX);
   });
+});
+
+describe('Multi-char tests', function() {
+  afterEach(function () {
+    clearDom();
+  });
+
+  it('should display no menu when only first char of multi-char trigger is used', () => {
+    let input = createDomElement();
+
+    let collectionObject = {
+        trigger: '$(',
+        selectTemplate: function(item) {
+            return item.original.value;
+        },
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ]
+    };
+
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, ' $');
+
+    let popupListWrapper = document.querySelector('.tribute-container');
+    expect(popupListWrapper).toBe(null);
+
+    detachTribute(tribute, input.id);
+  });
+
 });
