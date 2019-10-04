@@ -497,7 +497,6 @@ The major focus that we could use your help with is creating wrappers for differ
 - `noMatchTemplate` per collection.
 
 ## Brought to you by
+[ZURB](https://zurb.com), the creators of [Helio](https://helio.app)
 
-[https://zurb.com/](ZURB), the creators of [https://helio.app/](Helio)
-
-Design successful products by rapidly revealing key user behaviors. [https://helio.app/](Helio) makes it easy to get reactions on your designs quickly so your team can focus on solving the right problems, right now.
+Design successful products by rapidly revealing key user behaviors. [Helio](https://helio.app) makes it easy to get reactions on your designs quickly so your team can focus on solving the right problems, right now.
