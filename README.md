@@ -146,7 +146,7 @@ Collection object shown with defaults:
 
 ```js
 {
-  // symbol that starts the lookup
+  // symbol or string that starts the lookup
   trigger: '@',
 
   // element to target for @mentions
@@ -183,7 +183,7 @@ Collection object shown with defaults:
   // REQUIRED: array of objects to match
   values: [],
 
-  // specify whether a space is required before the trigger character
+  // specify whether a space is required before the trigger string
   requireLeadingSpace: true,
 
   // specify whether a space is allowed in the middle of mentions
@@ -437,6 +437,29 @@ tribute.detach(document.getElementById("caaanDo"));
 ```
 
 This will remove all event listeners from the DOM that are associated with that element.
+
+### Trigger on multiple character strings
+
+It is also possible to configure Tribute to trigger on a string consisting of multiple characters.
+
+This example shows the usage of Tribute for autocompletion of variables:
+
+```js
+var tribute = new Tribute({
+  trigger: "{{",
+  values: [
+    { key: "red", value: "#FF0000" },
+    { key: "green", value: "#00FF00" }
+  ],
+  selectTemplate: function (item) {
+	  return '{{' + item.original.key + '}}';
+  },
+  menuItemTemplate: function (item) {
+    return item.original.key + ' = ' + item.original.value;
+  },
+});
+```
+
 
 ## Contributing
 
