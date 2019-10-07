@@ -411,7 +411,7 @@ You would then define a function, in this case `remoteSearch`, that returns your
 
 ```js
 function remoteSearch(text, cb) {
-  var URL = "YOUR DATA ENDPOINT";
+  var URL = 'YOUR DATA ENDPOINT';
   xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4) {
@@ -446,10 +446,10 @@ This example shows the usage of Tribute for autocompletion of variables:
 
 ```js
 var tribute = new Tribute({
-  trigger: "{{",
+  trigger: '{{',
   values: [
-    { key: "red", value: "#FF0000" },
-    { key: "green", value: "#00FF00" }
+    { key: 'red', value: '#FF0000' },
+    { key: 'green', value: '#00FF00' }
   ],
   selectTemplate: function (item) {
 	  return '{{' + item.original.key + '}}';
@@ -459,7 +459,6 @@ var tribute = new Tribute({
   },
 });
 ```
-
 
 ## Contributing
 
