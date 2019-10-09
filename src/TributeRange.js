@@ -309,6 +309,7 @@ class TributeRange {
             let mostRecentTriggerCharPos = -1
             let triggerChar
 
+            this.tribute.collection.sort(function (a, b) { return b.trigger - a.trigger })
             this.tribute.collection.forEach(config => {
                 let c = config.trigger
                 let idx = config.requireLeadingSpace ?

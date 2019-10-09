@@ -118,12 +118,10 @@ class TributeEvents {
             if (instance.tribute.autocompleteMode) {
                 instance.callbacks().triggerChar(event, this, '')
             } else {
-                let keyCode = instance.getKeyCode(instance, this, event)
-    
-                if (isNaN(keyCode) || !keyCode) return
+                let mentionTrigger = instance.getMentionTrigger(instance, this, event)
     
                 let trigger = instance.tribute.triggers().find(trigger => {
-                    return trigger.charCodeAt(0) === keyCode
+                    return trigger === mentionTrigger
                 })
     
                 if (typeof trigger !== 'undefined') {
@@ -154,13 +152,13 @@ class TributeEvents {
         return false
     }
 
-    getKeyCode(instance, el, event) {
+    getMentionTrigger(instance, el, event) {
         let char
         let tribute = instance.tribute
         let info = tribute.range.getTriggerInfo(false, tribute.hasTrailingSpace, true, tribute.allowSpaces, tribute.autocompleteMode)
 
         if (info) {
-            return info.mentionTriggerChar.charCodeAt(0)
+            return info.mentionTriggerChar
         } else {
             return false
         }
