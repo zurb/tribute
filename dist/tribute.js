@@ -647,10 +647,9 @@ function () {
         if (instance.tribute.autocompleteMode) {
           instance.callbacks().triggerChar(event, this, '');
         } else {
-          var keyCode = instance.getKeyCode(instance, this, event);
-          if (isNaN(keyCode) || !keyCode) return;
+          var mentionTrigger = instance.getMentionTrigger(instance, this, event);
           var trigger = instance.tribute.triggers().find(function (trigger) {
-            return trigger.charCodeAt(0) === keyCode;
+            return trigger === mentionTrigger;
           });
 
           if (typeof trigger !== 'undefined') {
@@ -679,15 +678,15 @@ function () {
       return false;
     }
   }, {
-    key: "getKeyCode",
-    value: function getKeyCode(instance, el, event) {
+    key: "getMentionTrigger",
+    value: function getMentionTrigger(instance, el, event) {
       var _char;
 
       var tribute = instance.tribute;
       var info = tribute.range.getTriggerInfo(false, tribute.hasTrailingSpace, true, tribute.allowSpaces, tribute.autocompleteMode);
 
       if (info) {
-        return info.mentionTriggerChar.charCodeAt(0);
+        return info.mentionTriggerChar;
       } else {
         return false;
       }
@@ -1133,6 +1132,11 @@ function () {
           text += textSuffix;
           var startPos = info.mentionPosition;
           var endPos = info.mentionPosition + info.mentionText.length + textSuffix.length;
+
+          if (!this.tribute.autocompleteMode) {
+            endPos += info.mentionTriggerChar.length - 1;
+          }
+
           myField.value = myField.value.substring(0, startPos) + text + myField.value.substring(endPos, myField.value.length);
           myField.selectionStart = startPos + text.length;
           myField.selectionEnd = startPos + text.length;
@@ -1141,7 +1145,14 @@ function () {
           var _textSuffix = typeof this.tribute.replaceTextSuffix == 'string' ? this.tribute.replaceTextSuffix : '\xA0';
 
           text += _textSuffix;
-          this.pasteHtml(text, info.mentionPosition, info.mentionPosition + info.mentionText.length + !this.tribute.autocompleteMode);
+
+          var _endPos = info.mentionPosition + info.mentionText.length;
+
+          if (!this.tribute.autocompleteMode) {
+            _endPos += info.mentionTriggerChar.length;
+          }
+
+          this.pasteHtml(text, info.mentionPosition, _endPos);
         }
 
         context.element.dispatchEvent(replaceEvent);
@@ -1308,6 +1319,9 @@ function () {
       if (effectiveRange !== undefined && effectiveRange !== null) {
         var mostRecentTriggerCharPos = -1;
         var triggerChar;
+        this.tribute.collection.sort(function (a, b) {
+          return b.trigger - a.trigger;
+        });
         this.tribute.collection.forEach(function (config) {
           var c = config.trigger;
           var idx = config.requireLeadingSpace ? _this2.lastIndexWithLeadingSpace(effectiveRange, c) : effectiveRange.lastIndexOf(c);
@@ -1320,8 +1334,8 @@ function () {
         });
 
         if (mostRecentTriggerCharPos >= 0 && (mostRecentTriggerCharPos === 0 || !requireLeadingSpace || /[\xA0\s]/g.test(effectiveRange.substring(mostRecentTriggerCharPos - 1, mostRecentTriggerCharPos)))) {
-          var currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + 1, effectiveRange.length);
-          triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + 1);
+          var currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + triggerChar.length, effectiveRange.length);
+          triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + triggerChar.length);
           var firstSnippetChar = currentTriggerSnippet.substring(0, 1);
           var leadingSpace = currentTriggerSnippet.length > 0 && (firstSnippetChar === ' ' || firstSnippetChar === '\xA0');
 
@@ -1347,14 +1361,21 @@ function () {
     }
   }, {
     key: "lastIndexWithLeadingSpace",
-    value: function lastIndexWithLeadingSpace(str, _char) {
+    value: function lastIndexWithLeadingSpace(str, trigger) {
       var reversedStr = str.split('').reverse().join('');
       var index = -1;
 
       for (var cidx = 0, len = str.length; cidx < len; cidx++) {
         var firstChar = cidx === str.length - 1;
         var leadingSpace = /\s/.test(reversedStr[cidx + 1]);
-        var match = _char === reversedStr[cidx];
+        var match = true;
+
+        for (var triggerIdx = trigger.length - 1; triggerIdx >= 0; triggerIdx--) {
+          if (trigger[triggerIdx] !== reversedStr[cidx - triggerIdx]) {
+            match = false;
+            break;
+          }
+        }
 
         if (match && (firstChar || leadingSpace)) {
           index = str.length - 1 - cidx;
