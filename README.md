@@ -65,7 +65,7 @@ Then, add the following to `app/assets/javascripts/application.js`:
 And in `app/assets/stylesheets/application.css`:
 
 ```css
-//= require tribute
+//= require tribute/index
 ```
 
 ### Webpack
