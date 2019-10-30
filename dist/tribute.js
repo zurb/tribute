@@ -75,7 +75,9 @@ function () {
         _ref$searchOpts = _ref.searchOpts,
         searchOpts = _ref$searchOpts === void 0 ? {} : _ref$searchOpts,
         _ref$menuItemLimit = _ref.menuItemLimit,
-        menuItemLimit = _ref$menuItemLimit === void 0 ? null : _ref$menuItemLimit;
+        menuItemLimit = _ref$menuItemLimit === void 0 ? null : _ref$menuItemLimit,
+        _ref$closeOnScroll = _ref.closeOnScroll,
+        closeOnScroll = _ref$closeOnScroll === void 0 ? false : _ref$closeOnScroll;
 
     _classCallCheck(this, Tribute);
 
@@ -90,6 +92,7 @@ function () {
     this.positionMenu = positionMenu;
     this.hasTrailingSpace = false;
     this.spaceSelectsMatch = spaceSelectsMatch;
+    this.closeOnScroll = closeOnScroll;
 
     if (this.autocompleteMode) {
       trigger = '';
@@ -924,16 +927,27 @@ function () {
         if (_this.tribute.isActive) {
           _this.tribute.range.positionMenuAtCaret(true);
         }
-      }, 300, false); // fixes IE11 issues with mousedown
+      }, 300, false);
+      this.closeOnScrollEvent = this.debounce(function () {
+        if (_this.tribute.isActive) {
+          _this.tribute.hideMenu();
+        }
+      }, 10, false); // fixes IE11 issues with mousedown
 
       this.tribute.range.getDocument().addEventListener('MSPointerDown', this.menuClickEvent, false);
       this.tribute.range.getDocument().addEventListener('mousedown', this.menuClickEvent, false);
       window.addEventListener('resize', this.windowResizeEvent);
 
-      if (this.menuContainer) {
-        this.menuContainer.addEventListener('scroll', this.menuContainerScrollEvent, false);
+      if (this.tribute.closeOnScroll == true) {
+        window.addEventListener('scroll', this.closeOnScrollEvent);
+      } else if (this.tribute.closeOnScroll != false) {
+        this.tribute.closeOnScroll.addEventListener('scroll', this.closeOnScrollEvent, false);
       } else {
-        window.addEventListener('scroll', this.menuContainerScrollEvent);
+        if (this.menuContainer) {
+          this.menuContainer.addEventListener('scroll', this.menuContainerScrollEvent, false);
+        } else {
+          window.addEventListener('scroll', this.menuContainerScrollEvent);
+        }
       }
     }
   }, {
@@ -943,10 +957,16 @@ function () {
       this.tribute.range.getDocument().removeEventListener('MSPointerDown', this.menuClickEvent, false);
       window.removeEventListener('resize', this.windowResizeEvent);
 
-      if (this.menuContainer) {
-        this.menuContainer.removeEventListener('scroll', this.menuContainerScrollEvent, false);
+      if (this.tribute.closeOnScroll === true) {
+        window.removeEventListener('scroll', this.closeOnScrollEvent);
+      } else if (this.tribute.closeOnScroll != false) {
+        this.tribute.closeOnScroll.removeEventListener('scroll', this.closeOnScrollEvent);
       } else {
-        window.removeEventListener('scroll', this.menuContainerScrollEvent);
+        if (this.menuContainer) {
+          this.menuContainer.removeEventListener('scroll', this.menuContainerScrollEvent, false);
+        } else {
+          window.removeEventListener('scroll', this.menuContainerScrollEvent);
+        }
       }
     }
   }, {
@@ -1133,6 +1153,11 @@ function () {
           text += textSuffix;
           var startPos = info.mentionPosition;
           var endPos = info.mentionPosition + info.mentionText.length + textSuffix.length;
+
+          if (!this.tribute.autocompleteMode) {
+            endPos += info.mentionTriggerChar.length - 1;
+          }
+
           myField.value = myField.value.substring(0, startPos) + text + myField.value.substring(endPos, myField.value.length);
           myField.selectionStart = startPos + text.length;
           myField.selectionEnd = startPos + text.length;
@@ -1141,7 +1166,14 @@ function () {
           var _textSuffix = typeof this.tribute.replaceTextSuffix == 'string' ? this.tribute.replaceTextSuffix : '\xA0';
 
           text += _textSuffix;
-          this.pasteHtml(text, info.mentionPosition, info.mentionPosition + info.mentionText.length + !this.tribute.autocompleteMode);
+
+          var _endPos = info.mentionPosition + info.mentionText.length;
+
+          if (!this.tribute.autocompleteMode) {
+            _endPos += info.mentionTriggerChar.length;
+          }
+
+          this.pasteHtml(text, info.mentionPosition, _endPos);
         }
 
         context.element.dispatchEvent(replaceEvent);
@@ -1320,8 +1352,8 @@ function () {
         });
 
         if (mostRecentTriggerCharPos >= 0 && (mostRecentTriggerCharPos === 0 || !requireLeadingSpace || /[\xA0\s]/g.test(effectiveRange.substring(mostRecentTriggerCharPos - 1, mostRecentTriggerCharPos)))) {
-          var currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + 1, effectiveRange.length);
-          triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + 1);
+          var currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + triggerChar.length, effectiveRange.length);
+          triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + triggerChar.length);
           var firstSnippetChar = currentTriggerSnippet.substring(0, 1);
           var leadingSpace = currentTriggerSnippet.length > 0 && (firstSnippetChar === ' ' || firstSnippetChar === '\xA0');
 
@@ -1347,14 +1379,21 @@ function () {
     }
   }, {
     key: "lastIndexWithLeadingSpace",
-    value: function lastIndexWithLeadingSpace(str, _char) {
+    value: function lastIndexWithLeadingSpace(str, trigger) {
       var reversedStr = str.split('').reverse().join('');
       var index = -1;
 
       for (var cidx = 0, len = str.length; cidx < len; cidx++) {
         var firstChar = cidx === str.length - 1;
         var leadingSpace = /\s/.test(reversedStr[cidx + 1]);
-        var match = _char === reversedStr[cidx];
+        var match = true;
+
+        for (var triggerIdx = trigger.length - 1; triggerIdx >= 0; triggerIdx--) {
+          if (trigger[triggerIdx] !== reversedStr[cidx - triggerIdx]) {
+            match = false;
+            break;
+          }
+        }
 
         if (match && (firstChar || leadingSpace)) {
           index = str.length - 1 - cidx;
