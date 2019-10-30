@@ -56,6 +56,10 @@ export type TributeCollection<T extends {}> = {
 
   //specify whether to put Tribute in autocomplete mode
   autocompleteMode?: boolean
+
+  // specify whether to close when scolled, and optionally an element to bind
+  // the scoll event to.
+  closeOnScroll?: any
 }
 
 export type TributeOptions<T> = TributeCollection<T> | {
