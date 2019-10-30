@@ -209,6 +209,10 @@ Collection object shown with defaults:
     pre: '<span>',
     post: '</span>'
   }
+
+  // An option to hide the tribute when scrolled
+  // defaults to false, can accept true, or a container to bind the scroll event to.
+  closeOnScroll: true,
 }
 ```
 

@@ -112,6 +112,21 @@
       </div>
     </div>
 
+    <div class="row">
+      <div class="large-8 small-centered columns">
+        <div class="callout large">
+          <h5>Tribute that hides when window is scrolled</h5>
+          <p
+            id="testCloseOnScroll"
+            class="tribute-demo-input"
+            placeholder="Enter some text here"
+          ></p>
+        </div>
+      </div>
+    </div>
+
+    <br /><br />
+
     <div class="row" id="content">
       <div class="large-8 medium-8 small-centered columns">
         <h5>Tribute on traditional form elements!</h5>
@@ -392,6 +407,18 @@
       );
       tributeAutocompleteTestArea.attach(
         document.getElementById("test-autocomplete-textarea")
+      );
+
+      var tributeCloseOnScrollTest = new Tribute(
+        Object.assign(
+          {
+            closeOnScroll: true
+          },
+          tributeAttributes
+        )
+      );
+      tributeCloseOnScrollTest.attach(
+        document.getElementById("testCloseOnScroll")
       );
     </script>
   </body>
