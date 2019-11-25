@@ -157,6 +157,7 @@ class TributeRange {
                 this.pasteHtml(text, info.mentionPosition, endPos)
             }
 
+            context.element.dispatchEvent(new Event('input', { bubbles: true }))
             context.element.dispatchEvent(replaceEvent)
         }
     }
