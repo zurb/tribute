@@ -22,7 +22,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -952,8 +952,8 @@ function () {
   }, {
     key: "debounce",
     value: function debounce(func, wait, immediate) {
-      var _this2 = this,
-          _arguments = arguments;
+      var _arguments = arguments,
+          _this2 = this;
 
       var timeout;
       return function () {
@@ -988,13 +988,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+require("./utils");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-// Thanks to https://github.com/jeff-collins/ment.io
 var TributeRange =
 /*#__PURE__*/
 function () {
@@ -1133,6 +1134,11 @@ function () {
           text += textSuffix;
           var startPos = info.mentionPosition;
           var endPos = info.mentionPosition + info.mentionText.length + textSuffix.length;
+
+          if (!this.tribute.autocompleteMode) {
+            endPos += info.mentionTriggerChar.length - 1;
+          }
+
           myField.value = myField.value.substring(0, startPos) + text + myField.value.substring(endPos, myField.value.length);
           myField.selectionStart = startPos + text.length;
           myField.selectionEnd = startPos + text.length;
@@ -1141,9 +1147,19 @@ function () {
           var _textSuffix = typeof this.tribute.replaceTextSuffix == 'string' ? this.tribute.replaceTextSuffix : '\xA0';
 
           text += _textSuffix;
-          this.pasteHtml(text, info.mentionPosition, info.mentionPosition + info.mentionText.length + !this.tribute.autocompleteMode);
+
+          var _endPos = info.mentionPosition + info.mentionText.length;
+
+          if (!this.tribute.autocompleteMode) {
+            _endPos += info.mentionTriggerChar.length;
+          }
+
+          this.pasteHtml(text, info.mentionPosition, _endPos);
         }
 
+        context.element.dispatchEvent(new CustomEvent('input', {
+          bubbles: true
+        }));
         context.element.dispatchEvent(replaceEvent);
       }
     }
@@ -1320,8 +1336,8 @@ function () {
         });
 
         if (mostRecentTriggerCharPos >= 0 && (mostRecentTriggerCharPos === 0 || !requireLeadingSpace || /[\xA0\s]/g.test(effectiveRange.substring(mostRecentTriggerCharPos - 1, mostRecentTriggerCharPos)))) {
-          var currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + 1, effectiveRange.length);
-          triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + 1);
+          var currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + triggerChar.length, effectiveRange.length);
+          triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + triggerChar.length);
           var firstSnippetChar = currentTriggerSnippet.substring(0, 1);
           var leadingSpace = currentTriggerSnippet.length > 0 && (firstSnippetChar === ' ' || firstSnippetChar === '\xA0');
 
@@ -1347,14 +1363,21 @@ function () {
     }
   }, {
     key: "lastIndexWithLeadingSpace",
-    value: function lastIndexWithLeadingSpace(str, _char) {
+    value: function lastIndexWithLeadingSpace(str, trigger) {
       var reversedStr = str.split('').reverse().join('');
       var index = -1;
 
       for (var cidx = 0, len = str.length; cidx < len; cidx++) {
         var firstChar = cidx === str.length - 1;
         var leadingSpace = /\s/.test(reversedStr[cidx + 1]);
-        var match = _char === reversedStr[cidx];
+        var match = true;
+
+        for (var triggerIdx = trigger.length - 1; triggerIdx >= 0; triggerIdx--) {
+          if (trigger[triggerIdx] !== reversedStr[cidx - triggerIdx]) {
+            match = false;
+            break;
+          }
+        }
 
         if (match && (firstChar || leadingSpace)) {
           index = str.length - 1 - cidx;
@@ -1623,7 +1646,7 @@ var _default = TributeRange;
 exports["default"] = _default;
 module.exports = exports.default;
 
-},{}],5:[function(require,module,exports){
+},{"./utils":7}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
