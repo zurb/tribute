@@ -1,4 +1,6 @@
 // Thanks to https://github.com/jeff-collins/ment.io
+import "./utils";
+
 class TributeRange {
     constructor(tribute) {
         this.tribute = tribute
@@ -156,8 +158,8 @@ class TributeRange {
                 }
                 this.pasteHtml(text, info.mentionPosition, endPos)
             }
-
-            context.element.dispatchEvent(new Event('input', { bubbles: true }))
+            
+            context.element.dispatchEvent(new CustomEvent('input', { bubbles: true }))
             context.element.dispatchEvent(replaceEvent)
         }
     }

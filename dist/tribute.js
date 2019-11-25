@@ -988,13 +988,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+require("./utils");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-// Thanks to https://github.com/jeff-collins/ment.io
 var TributeRange =
 /*#__PURE__*/
 function () {
@@ -1156,7 +1157,7 @@ function () {
           this.pasteHtml(text, info.mentionPosition, _endPos);
         }
 
-        context.element.dispatchEvent(new Event('input', {
+        context.element.dispatchEvent(new CustomEvent('input', {
           bubbles: true
         }));
         context.element.dispatchEvent(replaceEvent);
@@ -1645,7 +1646,7 @@ var _default = TributeRange;
 exports["default"] = _default;
 module.exports = exports.default;
 
-},{}],5:[function(require,module,exports){
+},{"./utils":7}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
