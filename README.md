@@ -504,8 +504,6 @@ Angular 2+ - [ngx-tribute](https://github.com/ladderio/ngx-tribute) by **Ladder.
 
 Ruby — [tribute-rb](https://github.com/zurb/tribute-rb) by **ZURB**
 
-React – [react-tribute](https://github.com/BolsteDev/react-tribute) by **Bolste**
-
 Ember – [ember-tribute](https://github.com/MalayaliRobz/ember-tribute) by **MalayaliRobz**
 
 ## WYSIWYG Editor Support
