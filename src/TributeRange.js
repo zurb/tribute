@@ -1,4 +1,6 @@
 // Thanks to https://github.com/jeff-collins/ment.io
+import "./utils";
+
 class TributeRange {
     constructor(tribute) {
         this.tribute = tribute
@@ -39,13 +41,11 @@ class TributeRange {
                 coordinates = this.getContentEditableCaretPosition(info.mentionPosition)
             }
 
-
             this.tribute.menu.style.cssText = `top: ${coordinates.top}px;
                                      left: ${coordinates.left}px;
                                      right: ${coordinates.right}px;
                                      bottom: ${coordinates.bottom}px;
                                      position: absolute;
-                                     z-index: 10000;
                                      display: block;`
 
             if (coordinates.left === 'auto') {
@@ -77,6 +77,11 @@ class TributeRange {
             this.tribute.menu.style.cssText = 'display: none'
         }
     }
+
+    get menuContainerIsBody() {
+        return this.tribute.menuContainer === document.body || !this.tribute.menuContainer;
+    }
+
 
     selectElement(targetElement, path, offset) {
         let range
@@ -134,6 +139,9 @@ class TributeRange {
                 text += textSuffix
                 let startPos = info.mentionPosition
                 let endPos = info.mentionPosition + info.mentionText.length + textSuffix.length
+                if (!this.tribute.autocompleteMode) {
+                    endPos += info.mentionTriggerChar.length - 1
+                }
                 myField.value = myField.value.substring(0, startPos) + text +
                     myField.value.substring(endPos, myField.value.length)
                 myField.selectionStart = startPos + text.length
@@ -144,10 +152,14 @@ class TributeRange {
                     ? this.tribute.replaceTextSuffix
                     : '\xA0'
                 text += textSuffix
-                this.pasteHtml(text, info.mentionPosition,
-                    info.mentionPosition + info.mentionText.length + !this.tribute.autocompleteMode)
+                let endPos = info.mentionPosition + info.mentionText.length
+                if (!this.tribute.autocompleteMode) {
+                    endPos += info.mentionTriggerChar.length
+                }
+                this.pasteHtml(text, info.mentionPosition, endPos)
             }
-
+            
+            context.element.dispatchEvent(new CustomEvent('input', { bubbles: true }))
             context.element.dispatchEvent(replaceEvent)
         }
     }
@@ -262,7 +274,7 @@ class TributeRange {
 
     getLastWordInText(text) {
         text = text.replace(/\u00A0/g, ' '); // https://stackoverflow.com/questions/29850407/how-do-i-replace-unicode-character-u00a0-with-a-space-in-javascript
-        let wordsArray = text.split(' ')
+        let wordsArray = text.split(/\s+/);
         let worldsCount = wordsArray.length - 1
         return wordsArray[worldsCount].trim()
     }
@@ -324,10 +336,10 @@ class TributeRange {
                     )
                 )
             ) {
-                let currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + 1,
+                let currentTriggerSnippet = effectiveRange.substring(mostRecentTriggerCharPos + triggerChar.length,
                     effectiveRange.length)
 
-                triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + 1)
+                triggerChar = effectiveRange.substring(mostRecentTriggerCharPos, mostRecentTriggerCharPos + triggerChar.length)
                 let firstSnippetChar = currentTriggerSnippet.substring(0, 1)
                 let leadingSpace = currentTriggerSnippet.length > 0 &&
                     (
@@ -356,14 +368,21 @@ class TributeRange {
         }
     }
 
-    lastIndexWithLeadingSpace (str, char) {
+    lastIndexWithLeadingSpace (str, trigger) {
         let reversedStr = str.split('').reverse().join('')
         let index = -1
 
         for (let cidx = 0, len = str.length; cidx < len; cidx++) {
             let firstChar = cidx === str.length - 1
             let leadingSpace = /\s/.test(reversedStr[cidx + 1])
-            let match = char === reversedStr[cidx]
+
+            let match = true
+            for (let triggerIdx = trigger.length - 1; triggerIdx >= 0; triggerIdx--) {
+              if (trigger[triggerIdx] !== reversedStr[cidx-triggerIdx]) {
+                match = false
+                break
+              }
+            }
 
             if (match && (firstChar || leadingSpace)) {
                 index = str.length - 1 - cidx
@@ -410,7 +429,6 @@ class TributeRange {
         this.tribute.menu.style.cssText = `top: 0px;
                                  left: 0px;
                                  position: fixed;
-                                 zIndex: 10000;
                                  display: block;
                                  visibility; hidden;`
        dimensions.width = this.tribute.menu.offsetWidth
@@ -478,9 +496,16 @@ class TributeRange {
         let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
         let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
 
+        let top = 0;
+        let left = 0;
+        if (this.menuContainerIsBody) {
+          top = rect.top;
+          left = rect.left;
+        }
+
         let coordinates = {
-            top: rect.top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
-            left: rect.left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
+            top: top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
+            left: left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
         }
 
         let windowWidth = window.innerWidth
@@ -552,9 +577,20 @@ class TributeRange {
         let doc = document.documentElement
         let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
         let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
+
+        let left = 0
+        let top = 0
+        if (this.menuContainerIsBody) {
+          left = rect.left
+          top = rect.top
+        } else {
+          left = markerEl.offsetLeft;
+          top = markerEl.offsetTop;
+        }
+
         let coordinates = {
-            left: rect.left + windowLeft,
-            top: rect.top + markerEl.offsetHeight + windowTop
+            left: left + windowLeft,
+            top: top + markerEl.offsetHeight + windowTop
         }
         let windowWidth = window.innerWidth
         let windowHeight = window.innerHeight
