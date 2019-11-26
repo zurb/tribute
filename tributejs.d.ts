@@ -1,4 +1,4 @@
-// Type definitions for TributeJS v4.0.0
+// Type definitions for TributeJS v4.1.0
 // Project: https://github.com/zurb/tribute
 // Definitions by: Jordan Humphreys <https://github.com/mrsweaters/>
 
@@ -18,6 +18,9 @@ export type TributeCollection<T extends {}> = {
 
   // class added in the flyout menu for active item
   selectClass?: string
+
+  // class added in the flyout menu for active item
+  containerClass?: string
 
   // function called on select that returns the content to insert
   selectTemplate?: (item: TributeItem<T>) => string
