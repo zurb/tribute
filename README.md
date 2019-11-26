@@ -155,6 +155,9 @@ Collection object shown with defaults:
   // class added in the flyout menu for active item
   selectClass: 'highlight',
 
+  // class added to the menu container
+  containerClass: 'tribute-container',
+
   // function called on select that returns the content to insert
   selectTemplate: function (item) {
     return '@' + item.original.value;
