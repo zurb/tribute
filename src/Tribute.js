@@ -9,6 +9,7 @@ class Tribute {
         values = null,
         iframe = null,
         selectClass = 'highlight',
+        containerClass = 'tribute-container',
         trigger = '@',
         autocompleteMode = false,
         selectTemplate = null,
@@ -54,6 +55,9 @@ class Tribute {
                 // class applied to selected item
                 selectClass: selectClass,
 
+                // class applied to the Container 
+                containerClass: containerClass,
+
                 // function called on select that retuns the content to insert
                 selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
 
@@ -93,6 +97,7 @@ class Tribute {
                     trigger: item.trigger || trigger,
                     iframe: item.iframe || iframe,
                     selectClass: item.selectClass || selectClass,
+                    containerClass: item.containerClass || containerClass,
                     selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(this),
                     menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
                     // function called when menu is empty, disables hiding of menu.
@@ -186,11 +191,10 @@ class Tribute {
         }
     }
 
-    createMenu() {
+    createMenu(containerClass) {
         let wrapper = this.range.getDocument().createElement('div'),
             ul = this.range.getDocument().createElement('ul')
-
-        wrapper.className = 'tribute-container'
+        wrapper.className = containerClass
         wrapper.appendChild(ul)
 
         if (this.menuContainer) {
@@ -209,7 +213,7 @@ class Tribute {
 
         // create the menu if it doesn't exist.
         if (!this.menu) {
-            this.menu = this.createMenu()
+            this.menu = this.createMenu(this.current.collection.containerClass)
             element.tributeMenu = this.menu
             this.menuEvents.bind(this.menu)
         }
