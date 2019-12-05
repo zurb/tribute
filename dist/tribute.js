@@ -994,8 +994,11 @@ var TributeRange = function () {
     _createClass(TributeRange, [{
         key: 'getDocument',
         value: function getDocument() {
-            var ownerDocument = this.tribute.current.element.ownerDocument;
 
+            var ownerDocument = null;
+            if (this.tribute.current.element && this.tribute.current.element.ownerDocument) ownerDocument = this.tribute.current.element.ownerDocument;
+
+            if (this.tribute.current.element && !this.tribute.current.element.ownerDocument) ownerDocument = this.tribute.current.element.parent.querySelector(this.tribute.current.element.tagName.toLowerCase().ownerDocument);
 
             if (ownerDocument) {
                 return ownerDocument;

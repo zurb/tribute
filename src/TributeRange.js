@@ -6,7 +6,14 @@ class TributeRange {
     }
 
     getDocument() {
-        const {tribute: {current: {element: {ownerDocument}}}} = this
+
+        let ownerDocument = null;
+        if (this.tribute.current.element && this.tribute.current.element.ownerDocument)
+            ownerDocument = this.tribute.current.element.ownerDocument;
+
+        if (this.tribute.current.element && !this.tribute.current.element.ownerDocument)
+            ownerDocument = this.tribute.current.element.parent.querySelector(this.tribute.current.element.tagName.toLowerCase().ownerDocument);
+
 
         if (ownerDocument) {
             return ownerDocument;
@@ -24,8 +31,8 @@ class TributeRange {
     getWindow() {
         let doc = this.getDocument();
         let ownerWindow = (doc.defaultView) ?
-          doc.defaultView :
-          doc.parentWindow;
+            doc.defaultView :
+            doc.parentWindow;
 
         if (ownerWindow) {
             return ownerWindow;
@@ -42,7 +49,7 @@ class TributeRange {
 
         if (typeof info !== 'undefined') {
 
-            if(!this.tribute.positionMenu){
+            if (!this.tribute.positionMenu) {
                 this.tribute.menu.style.cssText = `display: block;`
                 return
             }
@@ -76,8 +83,8 @@ class TributeRange {
 
             setTimeout(() => {
                 let menuDimensions = {
-                   width: this.tribute.menu.offsetWidth,
-                   height: this.tribute.menu.offsetHeight
+                    width: this.tribute.menu.offsetWidth,
+                    height: this.tribute.menu.offsetHeight
                 }
                 let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
 
@@ -122,7 +129,7 @@ class TributeRange {
 
         try {
             sel.removeAllRanges()
-        } catch (error) {}
+        } catch (error) { }
 
         sel.addRange(range)
         targetElement.focus()
@@ -364,7 +371,7 @@ class TributeRange {
         }
     }
 
-    lastIndexWithLeadingSpace (str, char) {
+    lastIndexWithLeadingSpace(str, char) {
         let reversedStr = str.split('').reverse().join('')
         let index = -1
 
@@ -422,12 +429,12 @@ class TributeRange {
                                  zIndex: 10000;
                                  display: block;
                                  visibility; hidden;`
-       dimensions.width = this.tribute.menu.offsetWidth
-       dimensions.height = this.tribute.menu.offsetHeight
+        dimensions.width = this.tribute.menu.offsetWidth
+        dimensions.height = this.tribute.menu.offsetHeight
 
-       this.tribute.menu.style.cssText = `display: none;`
+        this.tribute.menu.style.cssText = `display: none;`
 
-       return dimensions
+        return dimensions
     }
 
     getTextAreaOrInputUnderlinePosition(element, position, flipped) {
