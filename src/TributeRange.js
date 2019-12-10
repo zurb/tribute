@@ -14,7 +14,6 @@ class TributeRange {
         if (this.tribute.current.element && !this.tribute.current.element.ownerDocument)
             ownerDocument = this.tribute.current.element.parent.querySelector(this.tribute.current.element.tagName.toLowerCase().ownerDocument);
 
-
         if (ownerDocument) {
             return ownerDocument;
         }
@@ -31,8 +30,8 @@ class TributeRange {
     getWindow() {
         let doc = this.getDocument();
         let ownerWindow = (doc.defaultView) ?
-            doc.defaultView :
-            doc.parentWindow;
+          doc.defaultView :
+          doc.parentWindow;
 
         if (ownerWindow) {
             return ownerWindow;
@@ -83,8 +82,8 @@ class TributeRange {
 
             setTimeout(() => {
                 let menuDimensions = {
-                    width: this.tribute.menu.offsetWidth,
-                    height: this.tribute.menu.offsetHeight
+                   width: this.tribute.menu.offsetWidth,
+                   height: this.tribute.menu.offsetHeight
                 }
                 let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
 
@@ -129,7 +128,7 @@ class TributeRange {
 
         try {
             sel.removeAllRanges()
-        } catch (error) { }
+        } catch (error) {}
 
         sel.addRange(range)
         targetElement.focus()
@@ -318,7 +317,7 @@ class TributeRange {
             this.tribute.collection.forEach(config => {
                 let c = config.trigger
                 let idx = config.requireLeadingSpace ?
-                    this.lastIndexWithLeadingSpace(effectiveRange, c) :
+                    this.lastIndexWithLeadingSpace (effectiveRange, c) :
                     effectiveRange.lastIndexOf(c)
 
                 if (idx > mostRecentTriggerCharPos) {
@@ -429,12 +428,12 @@ class TributeRange {
                                  zIndex: 10000;
                                  display: block;
                                  visibility; hidden;`
-        dimensions.width = this.tribute.menu.offsetWidth
-        dimensions.height = this.tribute.menu.offsetHeight
+       dimensions.width = this.tribute.menu.offsetWidth
+       dimensions.height = this.tribute.menu.offsetHeight
 
-        this.tribute.menu.style.cssText = `display: none;`
+       this.tribute.menu.style.cssText = `display: none;`
 
-        return dimensions
+       return dimensions
     }
 
     getTextAreaOrInputUnderlinePosition(element, position, flipped) {
