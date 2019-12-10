@@ -6,7 +6,13 @@ class TributeRange {
     }
 
     getDocument() {
-        const {tribute: {current: {element: {ownerDocument}}}} = this
+
+        let ownerDocument = null;
+        if (this.tribute.current.element && this.tribute.current.element.ownerDocument)
+            ownerDocument = this.tribute.current.element.ownerDocument;
+
+        if (this.tribute.current.element && !this.tribute.current.element.ownerDocument)
+            ownerDocument = this.tribute.current.element.parent.querySelector(this.tribute.current.element.tagName.toLowerCase().ownerDocument);
 
         if (ownerDocument) {
             return ownerDocument;
@@ -42,7 +48,7 @@ class TributeRange {
 
         if (typeof info !== 'undefined') {
 
-            if(!this.tribute.positionMenu){
+            if (!this.tribute.positionMenu) {
                 this.tribute.menu.style.cssText = `display: block;`
                 return
             }
@@ -311,7 +317,7 @@ class TributeRange {
             this.tribute.collection.forEach(config => {
                 let c = config.trigger
                 let idx = config.requireLeadingSpace ?
-                    this.lastIndexWithLeadingSpace(effectiveRange, c) :
+                    this.lastIndexWithLeadingSpace (effectiveRange, c) :
                     effectiveRange.lastIndexOf(c)
 
                 if (idx > mostRecentTriggerCharPos) {
@@ -364,7 +370,7 @@ class TributeRange {
         }
     }
 
-    lastIndexWithLeadingSpace (str, char) {
+    lastIndexWithLeadingSpace(str, char) {
         let reversedStr = str.split('').reverse().join('')
         let index = -1
 
