@@ -210,7 +210,8 @@ Collection object shown with defaults:
   // defaults to <span></span> if undefined
   searchOpts: {
     pre: '<span>',
-    post: '</span>'
+    post: '</span>',
+    skip: false // true will skip local search, useful if doing server-side search
   }
 }
 ```
