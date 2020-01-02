@@ -36,7 +36,7 @@ export type TributeCollection<T extends {}> = {
   menuContainer?: Element
 
   // column to search against in the object (accepts function or string)
-  lookup?: string | ((item: T) => string)
+  lookup?: string | ((item: T, mentionText: string) => string)
 
   // column that contains the content to insert by default
   fillAttr?: string
