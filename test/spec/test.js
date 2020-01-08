@@ -97,6 +97,32 @@ describe('Tribute @mentions cases', function () {
 
         detachTribute(tribute, input.id);
       });
+
+      it('should add itemClass to list items when set it config', () => {
+
+        let input = createDomElement(elementType);
+
+        let collectionObject = {
+          trigger: trigger,
+          itemClass: 'mention-list-item',
+          selectClass: 'mention-selected',
+          values: [
+            { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+            { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+          ],
+        }
+
+        let tribute = attachTribute(collectionObject, input.id);
+
+        fillIn(input, ' ' + trigger);
+        let popupList = document.querySelectorAll('.tribute-container > ul > li');
+        expect(popupList.length).toBe(2);
+
+        expect(popupList[0].className).toBe('mention-list-item mention-selected');
+        expect(popupList[1].className).toBe('mention-list-item');
+
+        detachTribute(tribute, input.id);
+      });
     });
   });
 });
