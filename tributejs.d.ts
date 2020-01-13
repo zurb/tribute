@@ -9,6 +9,12 @@ export type TributeItem<T extends {}> = {
   string: string
 }
 
+export type TributeSearchOpts = {
+  pre: string
+  post: string
+  skip: boolean
+}
+
 export type TributeCollection<T extends {}> = {
   // symbol that starts the lookup
   trigger?: string
@@ -59,6 +65,9 @@ export type TributeCollection<T extends {}> = {
 
   //specify whether to put Tribute in autocomplete mode
   autocompleteMode?: boolean
+
+  // Customize the elements used to wrap matched strings within the results list
+  searchOpts?: TributeSearchOpts
 }
 
 export type TributeOptions<T> = TributeCollection<T> | {
