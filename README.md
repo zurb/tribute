@@ -158,6 +158,9 @@ Collection object shown with defaults:
   // class added to the menu container
   containerClass: 'tribute-container',
 
+  // class added to each list item
+  itemClass: '',
+
   // function called on select that returns the content to insert
   selectTemplate: function (item) {
     return '@' + item.original.value;

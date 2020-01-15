@@ -10,6 +10,7 @@ class Tribute {
         iframe = null,
         selectClass = 'highlight',
         containerClass = 'tribute-container',
+        itemClass = '',
         trigger = '@',
         autocompleteMode = false,
         selectTemplate = null,
@@ -58,6 +59,9 @@ class Tribute {
                 // class applied to the Container 
                 containerClass: containerClass,
 
+                // class applied to each item
+                itemClass: itemClass,
+
                 // function called on select that retuns the content to insert
                 selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
 
@@ -98,6 +102,7 @@ class Tribute {
                     iframe: item.iframe || iframe,
                     selectClass: item.selectClass || selectClass,
                     containerClass: item.containerClass || containerClass,
+                    itemClass: item.itemClass || itemClass,
                     selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(this),
                     menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
                     // function called when menu is empty, disables hiding of menu.
@@ -275,6 +280,7 @@ class Tribute {
             items.forEach((item, index) => {
                 let li = this.range.getDocument().createElement('li')
                 li.setAttribute('data-index', index)
+                li.className = this.current.collection.itemClass
                 li.addEventListener('mousemove', (e) => {
                     let [li, index] = this._findLiTarget(e.target)
                     if (e.movementY !== 0) {
@@ -282,7 +288,7 @@ class Tribute {
                     }
                 })
                 if (this.menuSelected === index) {
-                  li.className = this.current.collection.selectClass
+                  li.classList.add(this.current.collection.selectClass)
                 }
                 li.innerHTML = this.current.collection.menuItemTemplate(item)
                 fragment.appendChild(li)
