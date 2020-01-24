@@ -1295,7 +1295,7 @@ function () {
     value: function getLastWordInText(text) {
       text = text.replace(/\u00A0/g, ' '); // https://stackoverflow.com/questions/29850407/how-do-i-replace-unicode-character-u00a0-with-a-space-in-javascript
 
-      var wordsArray = text.split(/\s+/);
+      var wordsArray = text.split(/\s|\+|\-|\*|\//);
       var worldsCount = wordsArray.length - 1;
       return wordsArray[worldsCount].trim();
     }
@@ -1734,6 +1734,8 @@ function () {
     key: "traverse",
     value: function traverse(string, pattern, stringIndex, patternIndex, patternCache) {
       // if the pattern search at end
+      pattern = pattern.split(/\-|\+|\*|\(|\)|\//).splice(-1)[0];
+
       if (pattern.length === patternIndex) {
         // calculate score and copy the cache containing the indices where it's found
         return {
