@@ -22,7 +22,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
 
-function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
@@ -46,6 +46,8 @@ function () {
         selectClass = _ref$selectClass === void 0 ? 'highlight' : _ref$selectClass,
         _ref$containerClass = _ref.containerClass,
         containerClass = _ref$containerClass === void 0 ? 'tribute-container' : _ref$containerClass,
+        _ref$itemClass = _ref.itemClass,
+        itemClass = _ref$itemClass === void 0 ? '' : _ref$itemClass,
         _ref$trigger = _ref.trigger,
         trigger = _ref$trigger === void 0 ? '@' : _ref$trigger,
         _ref$autocompleteMode = _ref.autocompleteMode,
@@ -108,6 +110,8 @@ function () {
         selectClass: selectClass,
         // class applied to the Container 
         containerClass: containerClass,
+        // class applied to each item
+        itemClass: itemClass,
         // function called on select that retuns the content to insert
         selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
         // function called that returns content for an item
@@ -140,6 +144,7 @@ function () {
           iframe: item.iframe || iframe,
           selectClass: item.selectClass || selectClass,
           containerClass: item.containerClass || containerClass,
+          itemClass: item.itemClass || itemClass,
           selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(_this),
           menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(_this),
           // function called when menu is empty, disables hiding of menu.
@@ -314,6 +319,7 @@ function () {
           var li = _this2.range.getDocument().createElement('li');
 
           li.setAttribute('data-index', index);
+          li.className = _this2.current.collection.itemClass;
           li.addEventListener('mousemove', function (e) {
             var _this2$_findLiTarget = _this2._findLiTarget(e.target),
                 _this2$_findLiTarget2 = _slicedToArray(_this2$_findLiTarget, 2),
@@ -326,7 +332,7 @@ function () {
           });
 
           if (_this2.menuSelected === index) {
-            li.className = _this2.current.collection.selectClass;
+            li.classList.add(_this2.current.collection.selectClass);
           }
 
           li.innerHTML = _this2.current.collection.menuItemTemplate(item);
@@ -957,8 +963,8 @@ function () {
   }, {
     key: "debounce",
     value: function debounce(func, wait, immediate) {
-      var _this2 = this,
-          _arguments = arguments;
+      var _arguments = arguments,
+          _this2 = this;
 
       var timeout;
       return function () {
