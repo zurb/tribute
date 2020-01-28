@@ -29,7 +29,7 @@
     "karma-jasmine-html-reporter": "^1.4.2",
     "karma-spec-reporter": "0.0.32",
     "open": "^7.0.0",
-    "puppeteer": "^1.19.0",
+    "puppeteer": "^2.1.0",
     "vinyl-source-stream": "^2.0.0",
     "watchify": "^3.11.1"
   },
