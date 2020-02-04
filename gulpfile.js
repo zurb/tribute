@@ -10,7 +10,6 @@ var uglify      = require('gulp-uglify-es').default;
 var rename      = require('gulp-rename');
 var sourcemaps  = require('gulp-sourcemaps');
 var exorcist    = require('exorcist');
-var pump        = require('pump');
 
 var sourcePaths = {
     styles: ['scss/**/*.scss'],
@@ -26,22 +25,6 @@ var server = {
     host: 'localhost',
     port: '8001'
 }
-
-gulp.task('uglify-error-debugging', function (cb) {
-    pump([
-      gulp.src('app/**/*.js'),
-      uglify(),
-      gulp.dest('./dist/')
-    ], cb);
-  });
-
-gulp.task('concat', function() {
-    return gulp.src('app/**/*.js')
-        // .pipe(concat('script.js'))
-        .pipe(uglify())
-        .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
-        .pipe(gulp.dest('./dist/'))
-    });
 
 gulp.task('bundler', function(done) {
     // Single entry point to browserify
