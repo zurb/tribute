@@ -1743,8 +1743,6 @@ function () {
   }, {
     key: "traverse",
     value: function traverse(string, pattern, stringIndex, patternIndex, patternCache) {
-      debugger;
-
       if (this.tribute.autocompleteSeparator) {
         // if the pattern search at end
         pattern = pattern.split(this.tribute.autocompleteSeparator).splice(-1)[0];
