@@ -44,8 +44,11 @@ class TributeSearch {
     }
 
     traverse(string, pattern, stringIndex, patternIndex, patternCache) {
-        // if the pattern search at end
-        pattern = pattern.split(/\-|\+|\*|\(|\)|\//).splice(-1)[0];
+        debugger;
+        if (this.tribute.autocompleteSeparator) {
+            // if the pattern search at end
+            pattern = pattern.split(this.tribute.autocompleteSeparator).splice(-1)[0];
+        }
         if (pattern.length === patternIndex) {
 
             // calculate score and copy the cache containing the indices where it's found

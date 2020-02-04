@@ -52,6 +52,8 @@ function () {
         trigger = _ref$trigger === void 0 ? '@' : _ref$trigger,
         _ref$autocompleteMode = _ref.autocompleteMode,
         autocompleteMode = _ref$autocompleteMode === void 0 ? false : _ref$autocompleteMode,
+        _ref$autocompleteSepa = _ref.autocompleteSeparator,
+        autocompleteSeparator = _ref$autocompleteSepa === void 0 ? null : _ref$autocompleteSepa,
         _ref$selectTemplate = _ref.selectTemplate,
         selectTemplate = _ref$selectTemplate === void 0 ? null : _ref$selectTemplate,
         _ref$menuItemTemplate = _ref.menuItemTemplate,
@@ -84,6 +86,7 @@ function () {
     _classCallCheck(this, Tribute);
 
     this.autocompleteMode = autocompleteMode;
+    this.autocompleteSeparator = autocompleteSeparator;
     this.menuSelected = 0;
     this.current = {};
     this.inputEvent = false;
@@ -1295,7 +1298,14 @@ function () {
     value: function getLastWordInText(text) {
       text = text.replace(/\u00A0/g, ' '); // https://stackoverflow.com/questions/29850407/how-do-i-replace-unicode-character-u00a0-with-a-space-in-javascript
 
-      var wordsArray = text.split(/\s|\+|\-|\*|\//);
+      var wordsArray;
+
+      if (this.tribute.autocompleteSeparator) {
+        wordsArray = text.split(this.tribute.autocompleteSeparator);
+      } else {
+        wordsArray = text.split(/\s+/);
+      }
+
       var worldsCount = wordsArray.length - 1;
       return wordsArray[worldsCount].trim();
     }
@@ -1733,8 +1743,12 @@ function () {
   }, {
     key: "traverse",
     value: function traverse(string, pattern, stringIndex, patternIndex, patternCache) {
-      // if the pattern search at end
-      pattern = pattern.split(/\-|\+|\*|\(|\)|\//).splice(-1)[0];
+      debugger;
+
+      if (this.tribute.autocompleteSeparator) {
+        // if the pattern search at end
+        pattern = pattern.split(this.tribute.autocompleteSeparator).splice(-1)[0];
+      }
 
       if (pattern.length === patternIndex) {
         // calculate score and copy the cache containing the indices where it's found

@@ -13,6 +13,7 @@ class Tribute {
         itemClass = '',
         trigger = '@',
         autocompleteMode = false,
+        autocompleteSeparator = null,
         selectTemplate = null,
         menuItemTemplate = null,
         lookup = 'key',
@@ -28,21 +29,22 @@ class Tribute {
         searchOpts = {},
         menuItemLimit = null,
     }) {
-        this.autocompleteMode = autocompleteMode
-        this.menuSelected = 0
-        this.current = {}
-        this.inputEvent = false
-        this.isActive = false
-        this.menuContainer = menuContainer
-        this.allowSpaces = allowSpaces
-        this.replaceTextSuffix = replaceTextSuffix
-        this.positionMenu = positionMenu
+        this.autocompleteMode = autocompleteMode;
+        this.autocompleteSeparator = autocompleteSeparator;
+        this.menuSelected = 0;
+        this.current = {};
+        this.inputEvent = false;
+        this.isActive = false;
+        this.menuContainer = menuContainer;
+        this.allowSpaces = allowSpaces;
+        this.replaceTextSuffix = replaceTextSuffix;
+        this.positionMenu = positionMenu;
         this.hasTrailingSpace = false;
         this.spaceSelectsMatch = spaceSelectsMatch;
 
         if (this.autocompleteMode) {
-            trigger = ''
-            allowSpaces = false
+            trigger = '';
+            allowSpaces = false;
         }
 
         if (values) {
