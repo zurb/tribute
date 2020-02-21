@@ -46,6 +46,8 @@ function () {
         selectClass = _ref$selectClass === void 0 ? 'highlight' : _ref$selectClass,
         _ref$containerClass = _ref.containerClass,
         containerClass = _ref$containerClass === void 0 ? 'tribute-container' : _ref$containerClass,
+        _ref$itemClass = _ref.itemClass,
+        itemClass = _ref$itemClass === void 0 ? '' : _ref$itemClass,
         _ref$trigger = _ref.trigger,
         trigger = _ref$trigger === void 0 ? '@' : _ref$trigger,
         _ref$autocompleteMode = _ref.autocompleteMode,
@@ -108,6 +110,8 @@ function () {
         selectClass: selectClass,
         // class applied to the Container 
         containerClass: containerClass,
+        // class applied to each item
+        itemClass: itemClass,
         // function called on select that retuns the content to insert
         selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
         // function called that returns content for an item
@@ -140,6 +144,7 @@ function () {
           iframe: item.iframe || iframe,
           selectClass: item.selectClass || selectClass,
           containerClass: item.containerClass || containerClass,
+          itemClass: item.itemClass || itemClass,
           selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(_this),
           menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(_this),
           // function called when menu is empty, disables hiding of menu.
@@ -314,6 +319,7 @@ function () {
           var li = _this2.range.getDocument().createElement('li');
 
           li.setAttribute('data-index', index);
+          li.className = _this2.current.collection.itemClass;
           li.addEventListener('mousemove', function (e) {
             var _this2$_findLiTarget = _this2._findLiTarget(e.target),
                 _this2$_findLiTarget2 = _slicedToArray(_this2$_findLiTarget, 2),
@@ -326,7 +332,7 @@ function () {
           });
 
           if (_this2.menuSelected === index) {
-            li.className = _this2.current.collection.selectClass;
+            li.classList.add(_this2.current.collection.selectClass);
           }
 
           li.innerHTML = _this2.current.collection.menuItemTemplate(item);
@@ -1525,41 +1531,21 @@ function () {
   }, {
     key: "getContentEditableCaretPosition",
     value: function getContentEditableCaretPosition(selectedNodePosition) {
-      var markerTextChar = '﻿';
-      var markerEl,
-          markerId = "sel_".concat(new Date().getTime(), "_").concat(Math.random().toString().substr(2));
       var range;
       var sel = this.getWindowSelection();
-      var prevRange = sel.getRangeAt(0);
       range = this.getDocument().createRange();
       range.setStart(sel.anchorNode, selectedNodePosition);
       range.setEnd(sel.anchorNode, selectedNodePosition);
-      range.collapse(false); // Create the marker element containing a single invisible character using DOM methods and insert it
-
-      markerEl = this.getDocument().createElement('span');
-      markerEl.id = markerId;
-      markerEl.appendChild(this.getDocument().createTextNode(markerTextChar));
-      range.insertNode(markerEl);
-      sel.removeAllRanges();
-      sel.addRange(prevRange);
-      var rect = markerEl.getBoundingClientRect();
+      range.collapse(false);
+      var rect = range.getBoundingClientRect();
       var doc = document.documentElement;
       var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
       var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
-      var left = 0;
-      var top = 0;
-
-      if (this.menuContainerIsBody) {
-        left = rect.left;
-        top = rect.top;
-      } else {
-        left = markerEl.offsetLeft;
-        top = markerEl.offsetTop;
-      }
-
+      var left = rect.left;
+      var top = rect.top;
       var coordinates = {
         left: left + windowLeft,
-        top: top + markerEl.offsetHeight + windowTop
+        top: top + rect.height + windowTop
       };
       var windowWidth = window.innerWidth;
       var windowHeight = window.innerHeight;
@@ -1592,7 +1578,11 @@ function () {
         delete coordinates.bottom;
       }
 
-      markerEl.parentNode.removeChild(markerEl);
+      if (!this.menuContainerIsBody) {
+        coordinates.left = coordinates.left ? coordinates.left - this.tribute.menuContainer.offsetLeft : coordinates.left;
+        coordinates.top = coordinates.top ? coordinates.top - this.tribute.menuContainer.offsetTop : coordinates.top;
+      }
+
       return coordinates;
     }
   }, {
