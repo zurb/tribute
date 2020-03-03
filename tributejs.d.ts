@@ -93,5 +93,7 @@ export default class Tribute<T extends {}> {
 
   attach(to: Element): void;
 
-  detach(to: Element): void;
+  detach(to: Element): void
+  
+  showMenuForCollection(input: Element, collectionIndex?: number): void
 }
