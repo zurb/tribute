@@ -9,10 +9,8 @@ A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Fir
 - [A Collection](#a-collection)
 - [Events](#events)
 - [Tips](#tips)
-- [Contributing](#contributing)
 - [Framework Support](#framework-support)
 - [WYSIWYG Editor Support](#wysiwyg-editor-support)
-- [Contribution Ideas](#contribution-ideas)
 - [Example](https://zurb.github.io/tribute/example/)
 
 ## Installing
