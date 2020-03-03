@@ -4,6 +4,7 @@ node_js:
   # we recommend testing addons with the same minimum supported node version as Ember CLI
   # so that your addon works for all apps
   - "10"
+  - "12"
 
 sudo: false
 dist: trusty
@@ -14,5 +15,5 @@ before_install:
   - yarn --version
 
 script:
-  - yarn run build
-  - yarn run test-single-run
+  - yarn build
+  - yarn test-single-run

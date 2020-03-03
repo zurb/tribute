@@ -2,58 +2,54 @@
 // http://karma-runner.github.io/0.12/config/configuration-file.html
 // Generated on 2016-02-05 using
 // generator-karma 1.0.1
-process.env.CHROME_BIN = require('puppeteer').executablePath()
+process.env.CHROME_BIN = require("puppeteer").executablePath();
 
 module.exports = function(config) {
-  'use strict';
+  "use strict";
 
   config.set({
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
 
     // base path, that will be used to resolve files and exclude
-    basePath: '',
+    basePath: "",
 
     // testing framework to use (jasmine/mocha/qunit/...)
     // as well as any additional frameworks (requirejs/chai/sinon/...)
-    frameworks: [
-      "jasmine",
-      "browserify"
-    ],
+    frameworks: ["jasmine", "browserify"],
 
     // list of files / patterns to load in the browser
     files: [
-      '../dist/tribute.js',
-      '../dist/tribute.css',
-      '../test/spec/*.js',
-      '../test/libs/*.js'
+      "../dist/tribute.js",
+      "../dist/tribute.css",
+      "../test/spec/*.js",
+      "../test/libs/*.js"
     ],
 
     // add preprocessor to the files that should be processed via browserify
     preprocessors: {
-      '../test/spec/*.js': ['browserify'],
-      '../dist/tribute.js': ['coverage']
+      "../test/spec/*.js": ["browserify"],
+      "../dist/tribute.js": ["coverage"]
     },
 
-    reporters: ['kjhtml', 'spec', 'coverage'],
+    reporters: ["kjhtml", "spec", "coverage"],
 
     specReporter: {
-      maxLogLines: 5,             // limit number of lines logged per test
+      maxLogLines: 5, // limit number of lines logged per test
       suppressErrorSummary: false, // do not print error summary
-      suppressFailed: false,      // do not print information about failed tests
-      suppressPassed: false,      // do not print information about passed tests
-      suppressSkipped: true,      // do not print information about skipped tests
-      showSpecTiming: false,      // print the time elapsed for each spec
+      suppressFailed: false, // do not print information about failed tests
+      suppressPassed: false, // do not print information about passed tests
+      suppressSkipped: true, // do not print information about skipped tests
+      showSpecTiming: false // print the time elapsed for each spec
     },
 
     browserify: {
       debug: true,
-      transform: [['babelify']]
+      transform: [["babelify"]]
     },
 
     // list of files / patterns to exclude
-    exclude: [
-    ],
+    exclude: [],
 
     // web server port
     port: 8080,
@@ -66,9 +62,7 @@ module.exports = function(config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    browsers: [
-      "Chrome"
-    ],
+    browsers: ["Chrome"],
 
     // Which plugins to enable
     plugins: [
@@ -81,8 +75,8 @@ module.exports = function(config) {
     ],
 
     coverageReporter: {
-      type: 'html',
-      dir: 'coverage/'
+      type: "html",
+      dir: "coverage/"
     },
 
     // Continuous Integration mode
@@ -93,7 +87,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_INFO
 
     // Uncomment the following lines if you are using grunt's server to run the tests
     // proxies: {
