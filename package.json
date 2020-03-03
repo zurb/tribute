@@ -27,7 +27,6 @@
     "rollup": "^1.32.0",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-eslint": "^7.0.0",
-    "rollup-plugin-filesize": "^6.2.1",
     "rollup-plugin-livereload": "^1.0.4",
     "rollup-plugin-sass": "^1.2.2",
     "rollup-plugin-serve": "^1.0.1",
@@ -42,7 +41,6 @@
     "build": "rollup -c",
     "start": "rollup -c -w",
     "test": "karma start test/karma.conf.js",
-    "pretest": "npm run build",
     "test-single-run": "karma start test/karma.conf.js --single-run --browsers ChromeHeadless"
   },
   "author": "Jordan Humphreys <jordan@zurb.com>",

@@ -2,7 +2,6 @@ import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import babel from "rollup-plugin-babel";
 import { terser } from "rollup-plugin-terser";
-import filesize from "rollup-plugin-filesize";
 import sass from "rollup-plugin-sass";
 import serve from "rollup-plugin-serve";
 import livereload from "rollup-plugin-livereload";
@@ -10,9 +9,6 @@ import pkg from "./package.json";
 import { writeFileSync } from "fs";
 
 const production = !process.env.ROLLUP_WATCH;
-const reload = livereload({
-  watch: ["dist", "example/*.html"]
-});
 
 export default [
   // browser-friendly UMD build
@@ -49,9 +45,11 @@ export default [
       babel({
         exclude: ["node_modules/**"]
       }),
-      filesize(),
       !production && serve({ openPage: "/", contentBase: ["example"] }),
-      !production && reload
+      !production &&
+        livereload({
+          watch: ["dist", "example/*.html"]
+        })
     ]
   },
 
