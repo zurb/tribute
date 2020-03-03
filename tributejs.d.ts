@@ -1,4 +1,4 @@
-// Type definitions for TributeJS v5.0.0
+// Type definitions for TributeJS v5.0.1
 // Project: https://github.com/zurb/tribute
 // Definitions by: Jordan Humphreys <https://github.com/mrsweaters/>
 
@@ -93,7 +93,7 @@ export default class Tribute<T extends {}> {
 
   attach(to: Element): void;
 
-  detach(to: Element): void
-  
-  showMenuForCollection(input: Element, collectionIndex?: number): void
+  detach(to: Element): void;
+
+  showMenuForCollection(input: Element, collectionIndex?: number): void;
 }
