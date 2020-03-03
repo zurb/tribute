@@ -19,21 +19,6 @@ A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Fir
 
 There are a few ways to install Tribute; [Bower](http://bower.io/), as an [NPM Module](https://npmjs.com/package/tributejs), or by [downloading](https://github.com/zurb/tribute/archive/master.zip) from the `dist` folder in this repo.
 
-### Bower
-
-Bower is a great way to manage your JS dependencies. You can install Tribute by running the following command:
-
-```shell
-bower install tribute
-```
-
-You can then link to Tribute in your code with the following markup:
-
-```html
-<link rel="stylesheet" href="bower_components/tribute/dist/tribute.css" />
-<script src="bower_components/tribute/dist/tribute.js"></script>
-```
-
 ### NPM Module
 
 You can install Tribute by running:
@@ -215,7 +200,10 @@ Collection object shown with defaults:
     pre: '<span>',
     post: '</span>',
     skip: false // true will skip local search, useful if doing server-side search
-  }
+  },
+
+  // specify the minimum number of characters that must be typed before menu appears
+  menuShowMinLength: 0
 }
 ```
 
@@ -418,7 +406,7 @@ You would then define a function, in this case `remoteSearch`, that returns your
 
 ```js
 function remoteSearch(text, cb) {
-  var URL = 'YOUR DATA ENDPOINT';
+  var URL = "YOUR DATA ENDPOINT";
   xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4) {
@@ -453,17 +441,17 @@ This example shows the usage of Tribute for autocompletion of variables:
 
 ```js
 var tribute = new Tribute({
-  trigger:  '{{',
+  trigger: "{{",
   values: [
-    { key: 'red', value: '#FF0000' },
-    { key: 'green', value: '#00FF00' }
+    { key: "red", value: "#FF0000" },
+    { key: "green", value: "#00FF00" }
   ],
-  selectTemplate: function (item) {
-	  return '{{' + item.original.key + '}}';
+  selectTemplate: function(item) {
+    return "{{" + item.original.key + "}}";
   },
-  menuItemTemplate: function (item) {
-    return item.original.key + ' = ' + item.original.value;
-  },
+  menuItemTemplate: function(item) {
+    return item.original.key + " = " + item.original.value;
+  }
 });
 ```
 
@@ -524,6 +512,7 @@ The major focus that we could use your help with is creating wrappers for differ
 - `noMatchTemplate` per collection.
 
 ## Brought to you by
+
 [ZURB](https://zurb.com), the creators of [Helio](https://helio.app)
 
 Design successful products by rapidly revealing key user behaviors. [Helio](https://helio.app) makes it easy to get reactions on your designs quickly so your team can focus on solving the right problems, right now.

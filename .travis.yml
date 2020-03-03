@@ -15,5 +15,5 @@ before_install:
   - yarn --version
 
 script:
-  - yarn run build
-  - yarn run test-single-run
+  - yarn build
+  - yarn test-single-run
