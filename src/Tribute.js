@@ -219,7 +219,7 @@ class Tribute {
 
   ensureEditable(element) {
     if (Tribute.inputTypes().indexOf(element.nodeName) === -1) {
-      if (element.contentEditable) {
+      if (typeof element.contentEditable === "string") {
         element.contentEditable = true;
       } else {
         throw new Error("[Tribute] Cannot bind to " + element.nodeName);
