@@ -1,3 +1,5 @@
+
+(function(l, r) { if (l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (window.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.head.appendChild(r) })(window.document);
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -1502,7 +1504,7 @@
       key: "ensureEditable",
       value: function ensureEditable(element) {
         if (Tribute.inputTypes().indexOf(element.nodeName) === -1) {
-          if (element.contentEditable) {
+          if (typeof element.contentEditable === "string") {
             element.contentEditable = true;
           } else {
             throw new Error("[Tribute] Cannot bind to " + element.nodeName);
