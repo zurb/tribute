@@ -288,6 +288,26 @@ document
   });
 ```
 
+### Active State Detection
+
+You can bind to the `tribute-active-true` or `tribute-active-false` events to detect when the menu is open or closed respectively.
+
+```js
+document
+  .getElementById("myElement")
+  .addEventListener("tribute-active-true", function(e) {
+    console.log("Menu opened!");
+  });
+```
+
+```js
+document
+  .getElementById("myElement")
+  .addEventListener("tribute-active-false", function(e) {
+    console.log("Menu closed!");
+  });
+```
+
 ## Tips
 
 Some useful approaches to common roadblocks when implementing @mentions.
