@@ -190,7 +190,8 @@
           }
 
           return "@" + item.original.value;
-        }
+        },
+        requireLeadingSpace: false
       });
 
       tribute.attach(document.getElementById("test"));
@@ -270,9 +271,11 @@
           console.log("Matched item:", e.detail.item);
         });
 
+      var noMatchRunOnce = false;
       document
         .getElementById("test")
         .addEventListener("tribute-no-match", function(e) {
+          if (noMatchRunOnce) return;
           var values = [
             {
               key: "Cheese Tacos",
@@ -281,6 +284,7 @@
             }
           ];
           tribute.appendCurrent(values);
+          noMatchRunOnce = true;
         });
 
       var activateLink = document.getElementById("activateInput");

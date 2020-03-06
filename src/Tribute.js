@@ -83,7 +83,7 @@ class Tribute {
             return (
               noMatchTemplate ||
               function() {
-                return "";
+                return "<li>No Match Found!</li>";
               }.bind(this)
             );
           })(noMatchTemplate),
@@ -166,7 +166,7 @@ class Tribute {
   }
 
   static defaultSelectTemplate(item) {
-    if (typeof item === "undefined") return null;
+    if (typeof item === "undefined") return "@" + this.current.mentionText;
     if (this.range.isContentEditable(this.current.element)) {
       return (
         '<span class="tribute-mention">' +

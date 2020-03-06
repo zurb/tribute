@@ -1405,7 +1405,7 @@
             }
 
             return noMatchTemplate || function () {
-              return "";
+              return "<li>No Match Found!</li>";
             }.bind(_this);
           }(noMatchTemplate),
           // column to search against in the object
@@ -1815,7 +1815,7 @@
     }], [{
       key: "defaultSelectTemplate",
       value: function defaultSelectTemplate(item) {
-        if (typeof item === "undefined") return null;
+        if (typeof item === "undefined") return "@" + this.current.mentionText;
 
         if (this.range.isContentEditable(this.current.element)) {
           return '<span class="tribute-mention">' + (this.current.collection.trigger + item.original[this.current.collection.fillAttr]) + "</span>";
