@@ -1815,7 +1815,7 @@
     }], [{
       key: "defaultSelectTemplate",
       value: function defaultSelectTemplate(item) {
-        if (typeof item === "undefined") return "@" + this.current.mentionText;
+        if (typeof item === "undefined") return "".concat(this.current.collection.trigger).concat(this.current.mentionText);
 
         if (this.range.isContentEditable(this.current.element)) {
           return '<span class="tribute-mention">' + (this.current.collection.trigger + item.original[this.current.collection.fillAttr]) + "</span>";
