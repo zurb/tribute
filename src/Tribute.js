@@ -166,7 +166,8 @@ class Tribute {
   }
 
   static defaultSelectTemplate(item) {
-    if (typeof item === "undefined") return "@" + this.current.mentionText;
+    if (typeof item === "undefined")
+      return `${this.current.collection.trigger}${this.current.mentionText}`;
     if (this.range.isContentEditable(this.current.element)) {
       return (
         '<span class="tribute-mention">' +
