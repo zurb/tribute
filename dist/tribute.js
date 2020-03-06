@@ -1,3 +1,5 @@
+
+(function(l, r) { if (l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (window.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.head.appendChild(r) })(window.document);
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -1400,6 +1402,11 @@
           menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
           // function called when menu is empty, disables hiding of menu.
           noMatchTemplate: function (t) {
+            if (typeof t === "string") {
+              if (t.trim() === "") return null;
+              return t;
+            }
+
             if (typeof t === "function") {
               return t.bind(_this);
             }
@@ -1432,11 +1439,18 @@
             menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(_this),
             // function called when menu is empty, disables hiding of menu.
             noMatchTemplate: function (t) {
+              if (typeof t === "string") {
+                if (t.trim() === "") return null;
+                return t;
+              }
+
               if (typeof t === "function") {
                 return t.bind(_this);
               }
 
-              return null;
+              return noMatchTemplate || function () {
+                return "<li>No Match Found!</li>";
+              }.bind(_this);
             }(noMatchTemplate),
             lookup: item.lookup || lookup,
             fillAttr: item.fillAttr || fillAttr,

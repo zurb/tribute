@@ -76,6 +76,10 @@ class Tribute {
 
           // function called when menu is empty, disables hiding of menu.
           noMatchTemplate: (t => {
+            if (typeof t === "string") {
+              if (t.trim() === "") return null;
+              return t;
+            }
             if (typeof t === "function") {
               return t.bind(this);
             }
@@ -126,11 +130,20 @@ class Tribute {
           ).bind(this),
           // function called when menu is empty, disables hiding of menu.
           noMatchTemplate: (t => {
+            if (typeof t === "string") {
+              if (t.trim() === "") return null;
+              return t;
+            }
             if (typeof t === "function") {
               return t.bind(this);
             }
 
-            return null;
+            return (
+              noMatchTemplate ||
+              function() {
+                return "<li>No Match Found!</li>";
+              }.bind(this)
+            );
           })(noMatchTemplate),
           lookup: item.lookup || lookup,
           fillAttr: item.fillAttr || fillAttr,
