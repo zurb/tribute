@@ -1797,6 +1797,21 @@
           }
         });
       }
+    }, {
+      key: "isActive",
+      get: function get() {
+        return this._isActive;
+      },
+      set: function set(val) {
+        if (this._isActive != val) {
+          this._isActive = val;
+
+          if (this.current.element) {
+            var noMatchEvent = new CustomEvent("tribute-active-".concat(val));
+            this.current.element.dispatchEvent(noMatchEvent);
+          }
+        }
+      }
     }], [{
       key: "defaultSelectTemplate",
       value: function defaultSelectTemplate(item) {
