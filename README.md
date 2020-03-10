@@ -441,6 +441,16 @@ function remoteSearch(text, cb) {
 }
 ```
 
+### Hide menu when no match is returned
+
+If you want the menu to not show when no match is found, you can set your `noMatchTemplate` config to the following:
+
+```js
+noMatchTemplate: function () {
+  return '<span style:"visibility: hidden;"></span>';
+}
+```
+
 ### Detaching Tribute instances
 
 When you want to remove Tribute from an element you can call `detach`.
