@@ -21,7 +21,7 @@ export default [
         format: "umd"
       },
       {
-        name: "tribute.min",
+        name: "Tribute",
         file: pkg.browser,
         format: "umd",
         sourcemap: true,
