@@ -412,7 +412,7 @@ class TributeRange {
         return {
             top: menuTop < Math.floor(windowTop),
             right: menuRight > Math.ceil(windowLeft + windowWidth),
-            bottom: menuBottom > Math.ceil(windowTop + windowHeight),
+            bottom: menuBottom > Math.ceil(windowTop + windowHeight) && !this.tribute.preventBlockInputByMenu,
             left: menuLeft < Math.floor(windowLeft)
         }
     }
