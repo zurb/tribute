@@ -886,7 +886,7 @@ class TributeRange {
         return {
             top: menuTop < Math.floor(windowTop),
             right: menuRight > Math.ceil(windowLeft + windowWidth),
-            bottom: menuBottom > Math.ceil(windowTop + windowHeight),
+            bottom: menuBottom > Math.ceil(windowTop + windowHeight) && !this.tribute.preventBlockInputByMenu,
             left: menuLeft < Math.floor(windowLeft)
         }
     }
@@ -1306,7 +1306,8 @@ class Tribute {
     spaceSelectsMatch = false,
     searchOpts = {},
     menuItemLimit = null,
-    menuShowMinLength = 0
+    menuShowMinLength = 0,
+    preventBlockInputByMenu = false
   }) {
     this.autocompleteMode = autocompleteMode;
     this.menuSelected = 0;
@@ -1319,6 +1320,7 @@ class Tribute {
     this.positionMenu = positionMenu;
     this.hasTrailingSpace = false;
     this.spaceSelectsMatch = spaceSelectsMatch;
+    this.preventBlockInputByMenu = preventBlockInputByMenu;
 
     if (this.autocompleteMode) {
       trigger = "";
