@@ -1466,7 +1466,7 @@ chardet@^0.7.0:
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
-chokidar@^2.0.0, chokidar@^2.0.4, chokidar@^2.1.1, chokidar@^2.1.5:
+chokidar@^2.0.0, chokidar@^2.0.4, chokidar@^2.1.1:
   version "2.1.8"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-2.1.8.tgz#804b3a7b6a99358c3c5c61e71d8728f041cff917"
   integrity sha512-ZmZUazfOzf0Nve7duiCKD23PFSCs4JPoYyccjUFF3aQkQadqBhfzhjkwBH2mNOG9cTBwhamM37EIsIkZw3nRgg==
@@ -1485,7 +1485,7 @@ chokidar@^2.0.0, chokidar@^2.0.4, chokidar@^2.1.1, chokidar@^2.1.5:
   optionalDependencies:
     fsevents "^1.2.7"
 
-chokidar@^3.0.0:
+chokidar@^3.0.0, chokidar@^3.3.0:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.3.1.tgz#c84e5b3d18d9a4d77558fef466b1bf16bbeb3450"
   integrity sha512-4QYCEWOcK3OJrxwvyyAOxFuhpvOVCYkr33LPfFNBjAD/w3sEzWsp2BUOkI4l9bHvWioAd0rc6NlHUOEaWkTeqg==
@@ -3299,12 +3299,18 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-"livereload@0.8.0 || ^0.8.2":
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/livereload/-/livereload-0.8.2.tgz#0ebb756cd5150bc956e33110b884bc2d7d87b723"
-  integrity sha512-8wCvhiCL4cGVoT3U5xoe+UjpiiVZLrlOvr6dbhb1VlyC5QarhrlyRRt4z7EMGO4KSgXj+tKF/dr284F28/wI+g==
+livereload-js@^3.1.0:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/livereload-js/-/livereload-js-3.2.2.tgz#fffb018fb8a8b06d366ca1b03af6048b8732d20f"
+  integrity sha512-xhScbNeC687ZINjEf/bD+BMiPx4s4q0mehcLb3zCc8+mykOtmaBR4vqzyIV9rIGdG9JjHaT0LiFdscvivCjX1Q==
+
+livereload@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/livereload/-/livereload-0.9.1.tgz#65125dabdf2db4fd3f1169e953fe56e3bcc6f477"
+  integrity sha512-9g7sua11kkyZNo2hLRCG3LuZZwqexoyEyecSlV8cAsfAVVCZqLzVir6XDqmH0r+Vzgnd5LrdHDMyjtFnJQLAYw==
   dependencies:
-    chokidar "^2.1.5"
+    chokidar "^3.3.0"
+    livereload-js "^3.1.0"
     opts ">= 1.2.0"
     ws "^6.2.1"
 
@@ -4349,11 +4355,11 @@ rollup-plugin-eslint@^7.0.0:
     rollup-pluginutils "^2.7.1"
 
 rollup-plugin-livereload@^1.0.4:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-livereload/-/rollup-plugin-livereload-1.1.0.tgz#75b31b8223717cc45b409fc938642f454dbbd5cb"
-  integrity sha512-A7/aMw97SUFVJRqD6tVSDkDYHTQY3wZFUVjpyuvq6GV1eR4tCcQtgUDyf6q3eQWff6K2rOfhhO3QxUPp9YN5PA==
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-livereload/-/rollup-plugin-livereload-1.2.0.tgz#cda0d6435cf01cabfa01a92654d3c8eacee96fe0"
+  integrity sha512-zKcS4D8ElSFj9Mv6OAM1kGB3o5LkCtEClewO8CDPEacj6p4DSvTOm6WlKSc8/WtsD0d3Q33Y96c5Jqzyaxo/8g==
   dependencies:
-    livereload "0.8.0 || ^0.8.2"
+    livereload "^0.9.1"
 
 rollup-plugin-sass@^1.2.2:
   version "1.2.2"
