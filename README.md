@@ -200,6 +200,9 @@ Collection object shown with defaults:
     skip: false // true will skip local search, useful if doing server-side search
   },
 
+  // Limits the number of items in the menu
+  menuItemLimit: 25,
+
   // specify the minimum number of characters that must be typed before menu appears
   menuShowMinLength: 0
 }
