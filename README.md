@@ -201,7 +201,11 @@ Collection object shown with defaults:
   },
 
   // specify the minimum number of characters that must be typed before menu appears
-  menuShowMinLength: 0
+  menuShowMinLength: 0,
+
+  // An option to hide the tribute when scrolled
+  // defaults to false, can accept true, or a container to bind the scroll event to.
+  closeOnScroll: true,
 }
 ```
 

@@ -73,6 +73,10 @@ export type TributeCollection<T extends {}> = {
 
   // require X number of characters to be entered before menu shows
   menuShowMinLength?: number;
+
+  // specify whether to close when scolled, and optionally an element to bind
+  // the scoll event to.
+  closeOnScroll?: boolean | HTMLElement;
 };
 
 export type TributeOptions<T> =

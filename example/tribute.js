@@ -490,16 +490,28 @@
           if (_this.tribute.isActive) {
             _this.tribute.range.positionMenuAtCaret(true);
           }
+        }, 300, false);
+        this.closeOnScrollEvent = this.debounce(function () {
+          if (_this.tribute.isActive) {
+            _this.tribute.hideMenu();
+          }
         }, 300, false); // fixes IE11 issues with mousedown
 
         this.tribute.range.getDocument().addEventListener("MSPointerDown", this.menuClickEvent, false);
         this.tribute.range.getDocument().addEventListener("mousedown", this.menuClickEvent, false);
         window.addEventListener("resize", this.windowResizeEvent);
 
-        if (this.menuContainer) {
-          this.menuContainer.addEventListener("scroll", this.menuContainerScrollEvent, false);
+        if (this.tribute.closeOnScroll === true) {
+          window.addEventListener('scroll', this.closeOnScrollEvent);
+        } else if (this.tribute.closeOnScroll instanceof Element || this.tribute.closeOnScroll instanceof HTMLDocument) {
+          // In this case it's expected that closeOnScroll is some element that we will attach the scroll event listener to
+          this.tribute.closeOnScroll.addEventListener('scroll', this.closeOnScrollEvent, false);
         } else {
-          window.addEventListener("scroll", this.menuContainerScrollEvent);
+          if (this.menuContainer) {
+            this.menuContainer.addEventListener("scroll", this.menuContainerScrollEvent, false);
+          } else {
+            window.addEventListener("scroll", this.menuContainerScrollEvent);
+          }
         }
       }
     }, {
@@ -509,10 +521,17 @@
         this.tribute.range.getDocument().removeEventListener("MSPointerDown", this.menuClickEvent, false);
         window.removeEventListener("resize", this.windowResizeEvent);
 
-        if (this.menuContainer) {
-          this.menuContainer.removeEventListener("scroll", this.menuContainerScrollEvent, false);
+        if (this.tribute.closeOnScroll === true) {
+          window.removeEventListener('scroll', this.closeOnScrollEvent);
+        } else if (this.tribute.closeOnScroll instanceof Element || this.tribute.closeOnScroll instanceof HTMLDocument) {
+          // In this case it's expected that closeOnScroll is some element that we will attach the scroll event listener to
+          this.tribute.closeOnScroll.removeEventListener('scroll', this.closeOnScrollEvent, false);
         } else {
-          window.removeEventListener("scroll", this.menuContainerScrollEvent);
+          if (this.menuContainer) {
+            this.menuContainer.removeEventListener("scroll", this.menuContainerScrollEvent, false);
+          } else {
+            window.removeEventListener("scroll", this.menuContainerScrollEvent);
+          }
         }
       }
     }, {
@@ -1375,7 +1394,9 @@
           _ref$menuItemLimit = _ref.menuItemLimit,
           menuItemLimit = _ref$menuItemLimit === void 0 ? null : _ref$menuItemLimit,
           _ref$menuShowMinLengt = _ref.menuShowMinLength,
-          menuShowMinLength = _ref$menuShowMinLengt === void 0 ? 0 : _ref$menuShowMinLengt;
+          menuShowMinLength = _ref$menuShowMinLengt === void 0 ? 0 : _ref$menuShowMinLengt,
+          _ref$closeOnScroll = _ref.closeOnScroll,
+          closeOnScroll = _ref$closeOnScroll === void 0 ? false : _ref$closeOnScroll;
 
       _classCallCheck(this, Tribute);
 
@@ -1390,6 +1411,7 @@
       this.positionMenu = positionMenu;
       this.hasTrailingSpace = false;
       this.spaceSelectsMatch = spaceSelectsMatch;
+      this.closeOnScroll = closeOnScroll;
 
       if (this.autocompleteMode) {
         trigger = "";

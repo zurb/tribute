@@ -6,7 +6,8 @@ import {
   clearDom,
   createDomElement,
   fillIn,
-  simulateMouseClick
+  simulateMouseClick,
+  simulateElementScroll
 } from "./utils/dom-helpers";
 
 import { attachTribute, detachTribute } from "./utils/tribute-helpers";
@@ -716,5 +717,89 @@ describe("Multi-char tests", function() {
 
       detachTribute(tribute, input.id);
     });
+  });
+});
+
+describe('closeOnScroll tests', function() {
+  afterEach(function () {
+    clearDom();
+  });
+
+  it('Tribute should close when the window is scrolled', () => {
+    let input = createDomElement();
+
+    let collectionObject = {
+        trigger: '@',
+        closeOnScroll: true,
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ],
+    };
+
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, '@');
+
+    expect(tribute.isActive).toBe(true);
+    simulateElementScroll(window);
+
+    // Need a slight delay otherwise we'll check for the result to fast
+    setTimeout(() => {
+      expect(tribute.isActive).toBe(false);
+    }, 50)
+
+    detachTribute(tribute, input.id);
+  });
+
+  it('Tribute should close when the container is scrolled', () => {
+    let input = createDomElement();
+    let container = document.createElement('div');
+
+    let collectionObject = {
+        trigger: '@',
+        closeOnScroll: container,
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ],
+    };
+
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, '@');
+
+    expect(tribute.isActive).toBe(true);
+    simulateElementScroll(container);
+
+    // Need a slight delay otherwise we'll check for the result to fast
+    setTimeout(() => {
+      expect(tribute.isActive).toBe(false);
+    }, 50)
+
+    detachTribute(tribute, input.id);
+  });
+
+  it('Tribute should not close when scrolled without the closeOnScroll set', () => {
+    let input = createDomElement();
+
+    let collectionObject = {
+        trigger: '@',
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ],
+    };
+
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, '@');
+
+    expect(tribute.isActive).toBe(true);
+    simulateElementScroll(window);
+
+    // Need a slight delay otherwise we'll check for the result to fast
+    setTimeout(() => {
+      expect(tribute.isActive).toBe(true);
+    }, 50)
+
+    detachTribute(tribute, input.id);
   });
 });

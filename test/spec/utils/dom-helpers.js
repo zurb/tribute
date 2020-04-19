@@ -40,3 +40,8 @@ export const simulateMouseClick = function(targetNode) {
     triggerMouseEvent(targetNode, eventType);
   });
 }
+
+
+export const simulateElementScroll = function(container) {
+  container.dispatchEvent(new Event('scroll'));
+}

@@ -25,6 +25,15 @@ class TributeMenuEvents {
       300,
       false
     );
+    this.closeOnScrollEvent = this.debounce(
+      () => {
+        if (this.tribute.isActive) {
+            this.tribute.hideMenu()
+        }
+      },
+      300,
+      false
+    );
 
     // fixes IE11 issues with mousedown
     this.tribute.range
@@ -35,14 +44,23 @@ class TributeMenuEvents {
       .addEventListener("mousedown", this.menuClickEvent, false);
     window.addEventListener("resize", this.windowResizeEvent);
 
-    if (this.menuContainer) {
-      this.menuContainer.addEventListener(
-        "scroll",
-        this.menuContainerScrollEvent,
-        false
-      );
+    console.log('this.tribute.closeOnScroll', this.tribute.closeOnScroll)
+
+    if (this.tribute.closeOnScroll === true) {
+      window.addEventListener('scroll', this.closeOnScrollEvent)
+    } else if (this.tribute.closeOnScroll instanceof Element || this.tribute.closeOnScroll instanceof HTMLDocument) {
+      // In this case it's expected that closeOnScroll is some element that we will attach the scroll event listener to
+      this.tribute.closeOnScroll.addEventListener('scroll', this.closeOnScrollEvent, false)
     } else {
-      window.addEventListener("scroll", this.menuContainerScrollEvent);
+      if (this.menuContainer) {
+        this.menuContainer.addEventListener(
+          "scroll",
+          this.menuContainerScrollEvent,
+          false
+        );
+      } else {
+        window.addEventListener("scroll", this.menuContainerScrollEvent);
+      }
     }
   }
 
@@ -55,14 +73,21 @@ class TributeMenuEvents {
       .removeEventListener("MSPointerDown", this.menuClickEvent, false);
     window.removeEventListener("resize", this.windowResizeEvent);
 
-    if (this.menuContainer) {
-      this.menuContainer.removeEventListener(
-        "scroll",
-        this.menuContainerScrollEvent,
-        false
-      );
+    if (this.tribute.closeOnScroll === true) {
+      window.removeEventListener('scroll', this.closeOnScrollEvent)
+    } else if (this.tribute.closeOnScroll instanceof Element || this.tribute.closeOnScroll instanceof HTMLDocument) {
+      // In this case it's expected that closeOnScroll is some element that we will attach the scroll event listener to
+      this.tribute.closeOnScroll.removeEventListener('scroll', this.closeOnScrollEvent, false)
     } else {
-      window.removeEventListener("scroll", this.menuContainerScrollEvent);
+      if (this.menuContainer) {
+        this.menuContainer.removeEventListener(
+          "scroll",
+          this.menuContainerScrollEvent,
+          false
+        );
+      } else {
+        window.removeEventListener("scroll", this.menuContainerScrollEvent);
+      }
     }
   }
 
