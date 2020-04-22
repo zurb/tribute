@@ -1295,6 +1295,7 @@ class TributeSearch {
 class Tribute {
   constructor({
     values = null,
+    loadingItemTemplate = null,
     iframe = null,
     selectClass = "highlight",
     containerClass = "tribute-container",
@@ -1390,6 +1391,9 @@ class Tribute {
 
           // array of objects or a function returning an array of objects
           values: values,
+
+          // useful for when values is an async function
+          loadingItemTemplate: loadingItemTemplate,
 
           requireLeadingSpace: requireLeadingSpace,
 
@@ -1659,6 +1663,11 @@ class Tribute {
     };
 
     if (typeof this.current.collection.values === "function") {
+      if (this.current.collection.loadingItemTemplate) {
+        this.menu.querySelector("ul").innerHTML = this.current.collection.loadingItemTemplate;
+        this.range.positionMenuAtCaret(scrollTo);
+      }
+
       this.current.collection.values(this.current.mentionText, processValues);
     } else {
       processValues(this.current.collection.values);

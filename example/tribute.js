@@ -1,3 +1,5 @@
+
+(function(l, r) { if (l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (window.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.head.appendChild(r) })(window.document);
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -1345,6 +1347,8 @@
 
       var _ref$values = _ref.values,
           values = _ref$values === void 0 ? null : _ref$values,
+          _ref$loadingItemTempl = _ref.loadingItemTemplate,
+          loadingItemTemplate = _ref$loadingItemTempl === void 0 ? null : _ref$loadingItemTempl,
           _ref$iframe = _ref.iframe,
           iframe = _ref$iframe === void 0 ? null : _ref$iframe,
           _ref$selectClass = _ref.selectClass,
@@ -1447,6 +1451,8 @@
           fillAttr: fillAttr,
           // array of objects or a function returning an array of objects
           values: values,
+          // useful for when values is an async function
+          loadingItemTemplate: loadingItemTemplate,
           requireLeadingSpace: requireLeadingSpace,
           searchOpts: searchOpts,
           menuItemLimit: menuItemLimit,
@@ -1666,6 +1672,11 @@
         };
 
         if (typeof this.current.collection.values === "function") {
+          if (this.current.collection.loadingItemTemplate) {
+            this.menu.querySelector("ul").innerHTML = this.current.collection.loadingItemTemplate;
+            this.range.positionMenuAtCaret(scrollTo);
+          }
+
           this.current.collection.values(this.current.mentionText, processValues);
         } else {
           processValues(this.current.collection.values);
