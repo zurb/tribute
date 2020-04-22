@@ -50,7 +50,10 @@ export type TributeCollection<T extends {}> = {
   fillAttr?: string;
 
   // array of objects to match
-  values?: Array<T> | ((text: string, cb: (result: Array<T>) => void) => void);
+  values: Array<T> | ((text: string, cb: (result: Array<T>) => void) => void);
+
+  // When your values function is async, an optional loading template to show
+  loadingItemTemplate?: string;
 
   // specify whether a space is required before the trigger character
   requireLeadingSpace?: boolean;
