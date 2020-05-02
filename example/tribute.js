@@ -27,7 +27,7 @@
   }
 
   function _slicedToArray(arr, i) {
-    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
   }
 
   function _arrayWithHoles(arr) {
@@ -35,10 +35,7 @@
   }
 
   function _iterableToArrayLimit(arr, i) {
-    if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-      return;
-    }
-
+    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
     var _arr = [];
     var _n = true;
     var _d = false;
@@ -64,8 +61,25 @@
     return _arr;
   }
 
+  function _unsupportedIterableToArray(o, minLen) {
+    if (!o) return;
+    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+    var n = Object.prototype.toString.call(o).slice(8, -1);
+    if (n === "Object" && o.constructor) n = o.constructor.name;
+    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+  }
+
+  function _arrayLikeToArray(arr, len) {
+    if (len == null || len > arr.length) len = arr.length;
+
+    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+    return arr2;
+  }
+
   function _nonIterableRest() {
-    throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
   if (!Array.prototype.find) {
@@ -814,7 +828,14 @@
       value: function getLastWordInText(text) {
         text = text.replace(/\u00A0/g, ' '); // https://stackoverflow.com/questions/29850407/how-do-i-replace-unicode-character-u00a0-with-a-space-in-javascript
 
-        var wordsArray = text.split(/\s+/);
+        var wordsArray;
+
+        if (this.tribute.autocompleteSeparator) {
+          wordsArray = text.split(this.tribute.autocompleteSeparator);
+        } else {
+          wordsArray = text.split(/\s+/);
+        }
+
         var worldsCount = wordsArray.length - 1;
         return wordsArray[worldsCount].trim();
       }
@@ -1210,7 +1231,11 @@
     }, {
       key: "traverse",
       value: function traverse(string, pattern, stringIndex, patternIndex, patternCache) {
-        // if the pattern search at end
+        if (this.tribute.autocompleteSeparator) {
+          // if the pattern search at end
+          pattern = pattern.split(this.tribute.autocompleteSeparator).splice(-1)[0];
+        }
+
         if (pattern.length === patternIndex) {
           // calculate score and copy the cache containing the indices where it's found
           return {
@@ -1332,6 +1357,8 @@
           trigger = _ref$trigger === void 0 ? "@" : _ref$trigger,
           _ref$autocompleteMode = _ref.autocompleteMode,
           autocompleteMode = _ref$autocompleteMode === void 0 ? false : _ref$autocompleteMode,
+          _ref$autocompleteSepa = _ref.autocompleteSeparator,
+          autocompleteSeparator = _ref$autocompleteSepa === void 0 ? null : _ref$autocompleteSepa,
           _ref$selectTemplate = _ref.selectTemplate,
           selectTemplate = _ref$selectTemplate === void 0 ? null : _ref$selectTemplate,
           _ref$menuItemTemplate = _ref.menuItemTemplate,
@@ -1366,6 +1393,7 @@
       _classCallCheck(this, Tribute);
 
       this.autocompleteMode = autocompleteMode;
+      this.autocompleteSeparator = autocompleteSeparator;
       this.menuSelected = 0;
       this.current = {};
       this.inputEvent = false;

@@ -3,3 +3,4 @@ node_modules
 npm-debug.log
 test/coverage
 yarn-error.log
+.idea

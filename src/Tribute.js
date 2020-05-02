@@ -13,6 +13,7 @@ class Tribute {
     itemClass = "",
     trigger = "@",
     autocompleteMode = false,
+    autocompleteSeparator = null,
     selectTemplate = null,
     menuItemTemplate = null,
     lookup = "key",
@@ -30,6 +31,7 @@ class Tribute {
     menuShowMinLength = 0
   }) {
     this.autocompleteMode = autocompleteMode;
+    this.autocompleteSeparator = autocompleteSeparator;
     this.menuSelected = 0;
     this.current = {};
     this.inputEvent = false;
