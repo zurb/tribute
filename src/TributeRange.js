@@ -158,7 +158,7 @@ class TributeRange {
                 }
                 this.pasteHtml(text, info.mentionPosition, endPos)
             }
-            
+
             context.element.dispatchEvent(new CustomEvent('input', { bubbles: true }))
             context.element.dispatchEvent(replaceEvent)
         }
@@ -282,7 +282,7 @@ class TributeRange {
         }
         var worldsCount = wordsArray.length - 1;
         return wordsArray[worldsCount].trim();
-      }
+    }
 
     getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces, isAutocomplete) {
         let ctx = this.tribute.current
@@ -557,11 +557,8 @@ class TributeRange {
     }
 
     getContentEditableCaretPosition(selectedNodePosition) {
-        let markerTextChar = '﻿'
-        let markerEl, markerId = `sel_${new Date().getTime()}_${Math.random().toString().substr(2)}`
         let range
         let sel = this.getWindowSelection()
-        let prevRange = sel.getRangeAt(0)
 
         range = this.getDocument().createRange()
         range.setStart(sel.anchorNode, selectedNodePosition)
@@ -569,33 +566,17 @@ class TributeRange {
 
         range.collapse(false)
 
-        // Create the marker element containing a single invisible character using DOM methods and insert it
-        markerEl = this.getDocument().createElement('span')
-        markerEl.id = markerId
-
-        markerEl.appendChild(this.getDocument().createTextNode(markerTextChar))
-        range.insertNode(markerEl)
-        sel.removeAllRanges()
-        sel.addRange(prevRange)
-
-        let rect = markerEl.getBoundingClientRect()
+        let rect = range.getBoundingClientRect()
         let doc = document.documentElement
         let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
         let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
 
-        let left = 0
-        let top = 0
-        if (this.menuContainerIsBody) {
-          left = rect.left
-          top = rect.top
-        } else {
-          left = markerEl.offsetLeft;
-          top = markerEl.offsetTop;
-        }
+        let left = rect.left
+        let top = rect.top
 
         let coordinates = {
             left: left + windowLeft,
-            top: top + markerEl.offsetHeight + windowTop
+            top: top + rect.height + windowTop
         }
         let windowWidth = window.innerWidth
         let windowHeight = window.innerHeight
@@ -636,7 +617,11 @@ class TributeRange {
             delete coordinates.bottom
         }
 
-        markerEl.parentNode.removeChild(markerEl)
+        if (!this.menuContainerIsBody) {
+            coordinates.left = coordinates.left ? coordinates.left - this.tribute.menuContainer.offsetLeft : coordinates.left
+            coordinates.top = coordinates.top ? coordinates.top - this.tribute.menuContainer.offsetTop : coordinates.top
+        }
+
         return coordinates
     }
 

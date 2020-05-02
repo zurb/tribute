@@ -9,30 +9,13 @@ A cross-browser `@mention` engine written in ES6, no dependencies. Tested in Fir
 - [A Collection](#a-collection)
 - [Events](#events)
 - [Tips](#tips)
-- [Contributing](#contributing)
 - [Framework Support](#framework-support)
 - [WYSIWYG Editor Support](#wysiwyg-editor-support)
-- [Contribution Ideas](#contribution-ideas)
 - [Example](https://zurb.github.io/tribute/example/)
 
 ## Installing
 
 There are a few ways to install Tribute; [Bower](http://bower.io/), as an [NPM Module](https://npmjs.com/package/tributejs), or by [downloading](https://github.com/zurb/tribute/archive/master.zip) from the `dist` folder in this repo.
-
-### Bower
-
-Bower is a great way to manage your JS dependencies. You can install Tribute by running the following command:
-
-```shell
-bower install tribute
-```
-
-You can then link to Tribute in your code with the following markup:
-
-```html
-<link rel="stylesheet" href="bower_components/tribute/dist/tribute.css" />
-<script src="bower_components/tribute/dist/tribute.js"></script>
-```
 
 ### NPM Module
 
@@ -215,7 +198,10 @@ Collection object shown with defaults:
     pre: '<span>',
     post: '</span>',
     skip: false // true will skip local search, useful if doing server-side search
-  }
+  },
+
+  // specify the minimum number of characters that must be typed before menu appears
+  menuShowMinLength: 0
 }
 ```
 
@@ -299,6 +285,26 @@ document
   .getElementById("myElement")
   .addEventListener("tribute-no-match", function(e) {
     console.log("No match found!");
+  });
+```
+
+### Active State Detection
+
+You can bind to the `tribute-active-true` or `tribute-active-false` events to detect when the menu is open or closed respectively.
+
+```js
+document
+  .getElementById("myElement")
+  .addEventListener("tribute-active-true", function(e) {
+    console.log("Menu opened!");
+  });
+```
+
+```js
+document
+  .getElementById("myElement")
+  .addEventListener("tribute-active-false", function(e) {
+    console.log("Menu closed!");
   });
 ```
 
@@ -418,7 +424,7 @@ You would then define a function, in this case `remoteSearch`, that returns your
 
 ```js
 function remoteSearch(text, cb) {
-  var URL = 'YOUR DATA ENDPOINT';
+  var URL = "YOUR DATA ENDPOINT";
   xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4) {
@@ -432,6 +438,16 @@ function remoteSearch(text, cb) {
   };
   xhr.open("GET", URL + "?q=" + text, true);
   xhr.send();
+}
+```
+
+### Hide menu when no match is returned
+
+If you want the menu to not show when no match is found, you can set your `noMatchTemplate` config to the following:
+
+```js
+noMatchTemplate: function () {
+  return '<span style:"visibility: hidden;"></span>';
 }
 ```
 
@@ -453,49 +469,18 @@ This example shows the usage of Tribute for autocompletion of variables:
 
 ```js
 var tribute = new Tribute({
-  trigger:  '{{',
+  trigger: "{{",
   values: [
-    { key: 'red', value: '#FF0000' },
-    { key: 'green', value: '#00FF00' }
+    { key: "red", value: "#FF0000" },
+    { key: "green", value: "#00FF00" }
   ],
-  selectTemplate: function (item) {
-	  return '{{' + item.original.key + '}}';
+  selectTemplate: function(item) {
+    return "{{" + item.original.key + "}}";
   },
-  menuItemTemplate: function (item) {
-    return item.original.key + ' = ' + item.original.value;
-  },
+  menuItemTemplate: function(item) {
+    return item.original.key + " = " + item.original.value;
+  }
 });
-```
-
-## Contributing
-
-We welcome contributions to Tribute. There are many areas where we would love to see community contributions that we have outlined below, but first, let's go over how to develop in Tribute. We use [Yarn](https://yarnpkg.com/en/docs/install) to manage our NPM packages.
-
-Install dependencies:
-
-```sh
-yarn install
-```
-
-Run gulp:
-
-```sh
-gulp
-```
-
-That's it! Now you can use the `example/index.html` to test out changes to the code base. All changes to `src` and `scss` will recompile on the fly.
-
-Once you have made your changes, feel free to submit a pull request.
-
-## Testing
-
-We use [Karma](https://karma-runner.github.io/latest/index.html) and [Jasmin](https://jasmine.github.io) as the testing framework.
-
-To run the tests type:
-
-```
-yarn run build
-yarn test
 ```
 
 ## Framework Support
@@ -514,16 +499,8 @@ Ember – [ember-tribute](https://github.com/MalayaliRobz/ember-tribute) by **Ma
 
 - Froala Editor - https://www.froala.com/wysiwyg-editor/examples/tribute-js
 
-## Contribution Ideas
-
-The major focus that we could use your help with is creating wrappers for different JavaScript frameworks. Some of the ones we are interested in are outlined below. We also see a couple of areas for improving compatibility with different rendering situations, such as in iframes inside of rich text editors.
-
-**Some ideas that are for grabs**
-
-- Prosemirror component
-- `noMatchTemplate` per collection.
-
 ## Brought to you by
+
 [ZURB](https://zurb.com), the creators of [Helio](https://helio.app)
 
 Design successful products by rapidly revealing key user behaviors. [Helio](https://helio.app) makes it easy to get reactions on your designs quickly so your team can focus on solving the right problems, right now.

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ZURB Tribute | Demo</title>
     <link rel="stylesheet" href="css/foundation.min.css" />
-    <link rel="stylesheet" href="../dist/tribute.css" />
+    <link rel="stylesheet" href="tribute.css" />
     <style>
       body {
         position: relative;
@@ -160,7 +160,7 @@
       </div>
     </div>
 
-    <script src="../dist/tribute.js"></script>
+    <script src="tribute.js"></script>
     <script>
       // example of alternative callback
       var tribute = new Tribute({
@@ -190,7 +190,8 @@
           }
 
           return "@" + item.original.value;
-        }
+        },
+        requireLeadingSpace: false
       });
 
       tribute.attach(document.getElementById("test"));
@@ -270,9 +271,11 @@
           console.log("Matched item:", e.detail.item);
         });
 
+      var noMatchRunOnce = false;
       document
         .getElementById("test")
         .addEventListener("tribute-no-match", function(e) {
+          if (noMatchRunOnce) return;
           var values = [
             {
               key: "Cheese Tacos",
@@ -281,6 +284,7 @@
             }
           ];
           tribute.appendCurrent(values);
+          noMatchRunOnce = true;
         });
 
       var activateLink = document.getElementById("activateInput");
@@ -298,6 +302,7 @@
 
       var tributeAttributes = {
         autocompleteMode: true,
+        noMatchTemplate: "",
         values: [
           { key: "Alabama", value: "Alabama" },
           { key: "Alaska", value: "Alaska" },

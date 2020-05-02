@@ -48,6 +48,7 @@ class TributeSearch {
             // if the pattern search at end
             pattern = pattern.split(this.tribute.autocompleteSeparator).splice(-1)[0];
         }
+
         if (pattern.length === patternIndex) {
 
             // calculate score and copy the cache containing the indices where it's found
