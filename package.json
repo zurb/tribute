@@ -23,7 +23,7 @@
     "karma-jasmine": "^3.1.1",
     "karma-jasmine-html-reporter": "^1.4.2",
     "karma-spec-reporter": "0.0.32",
-    "puppeteer": "^2.1.1",
+    "puppeteer": "^3.0.4",
     "rollup": "^1.32.0",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-eslint": "^7.0.0",
