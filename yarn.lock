@@ -773,9 +773,9 @@
     resolve "^1.11.0"
 
 "@rollup/plugin-multi-entry@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@rollup/plugin-multi-entry/-/plugin-multi-entry-3.0.0.tgz#3ad496146f4c792cc07d647cdcb407f74831c293"
-  integrity sha512-nFN+1hUHQn7Y6ivdJa/6sYo8LOTmtnQl7g4rQ3WgnJYkL0AByzpb3fXt70ANgJnoLmhcXHBQiQykg835EY7EMg==
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-multi-entry/-/plugin-multi-entry-3.0.1.tgz#e23357a408d01dff514b68552392879e74d17cd9"
+  integrity sha512-Gcp9E8y68Kx+Jo8zy/ZpiiAkb0W01cSqnxOz6h9bPR7MU3gaoTEdRf7xXYplwli1SBFEswXX588ESj+50Brfxw==
   dependencies:
     matched "^1.0.2"
 
