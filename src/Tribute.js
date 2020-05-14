@@ -261,6 +261,8 @@ class Tribute {
     let wrapper = this.range.getDocument().createElement("div"),
       ul = this.range.getDocument().createElement("ul");
     wrapper.className = containerClass;
+    wrapper.setAttribute('aria-expanded','true');
+    ul.setAttribute('id','results');
     wrapper.appendChild(ul);
 
     if (this.menuContainer) {
@@ -353,6 +355,7 @@ class Tribute {
 
       items.forEach((item, index) => {
         let li = this.range.getDocument().createElement("li");
+        li.setAttribute('role', 'option');
         li.setAttribute("data-index", index);
         li.className = this.current.collection.itemClass;
         li.addEventListener("mousemove", e => {
