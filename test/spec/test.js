@@ -798,3 +798,97 @@ describe("Tribute loadingItemTemplate", function() {
     });
   });
 });
+
+
+describe("Tribute disabled items cases", function() {
+  afterEach(function() {
+    clearDom();
+  });
+
+  it("should prevent selecting disabled items with the mouse", () => {
+    let input = createDomElement();
+
+    let collectionObject = {
+      selectTemplate: function(item) {
+        return item.original.value;
+      },
+      values: [
+        { key: "First item", value: "First item" },
+        { key: "Second item (disabled)", value: "Second item (disabled)", disabled:true },
+        { key: "Third item", value: "Third item" }
+      ]
+    };
+
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, "@");
+
+    let popupList = document.querySelectorAll(".tribute-container > ul > li");
+    simulateMouseClick(popupList[1]);
+    expect(input.value).toEqual("@");
+  });
+
+  it("should prevent selecting disabled items with the keyboard", (done) => {
+    let input = createDomElement();
+
+    let collectionObject = {
+      selectTemplate: function(item) {
+        return item.original.value;
+      },
+      values: [
+        { key: "First item", value: "First item" },
+        { key: "Second item (disabled)", value: "Second item (disabled)", disabled:true },
+        { key: "Third item", value: "Third item" }
+      ]
+    };
+
+    let tribute = attachTribute(collectionObject, input.id);
+    fillIn(input, "@");
+
+    //send down arrow
+    input.dispatchEvent(new KeyboardEvent("keydown",{
+      keyCode:40
+    }));
+    //send enter
+    input.dispatchEvent(new KeyboardEvent("keydown",{
+      keyCode:13
+    }));
+
+    window.setTimeout(() => {
+      //The down arrow key navigation should have skipped the second so we should see
+      //the third item in the text
+      expect(input.value).toEqual("Third item ");
+
+      //Now lets try again and test up arrow navigation
+      fillIn(input,"@");
+
+      //send down arrow so we're on the 3rd item, then we can test the up arrow to go
+      //back to the 1st
+      input.dispatchEvent(new KeyboardEvent("keydown",{
+        keyCode:40
+      }));
+
+      //send up arrow
+      input.dispatchEvent(new KeyboardEvent("keydown",{
+        keyCode:38
+      }));
+
+      //send enter
+      input.dispatchEvent(new KeyboardEvent("keydown",{
+        keyCode:13
+      }));
+
+      window.setTimeout(() => {
+        //The selection should have been on the first item when
+        //we triggered enter, so the first item should be appended
+        //to the existing text
+        expect(input.value).toEqual("Third item First item ");
+
+        detachTribute(tribute, input.id);
+        done();
+
+      },0);
+
+    }, 0);
+  });
+
+});
