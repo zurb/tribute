@@ -589,18 +589,16 @@ class TributeRange {
             coordinates.right = windowWidth - rect.left - windowLeft
         }
 
-        let parentHeight = this.tribute.menuContainer
-            ? this.tribute.menuContainer.offsetHeight
-            : this.getDocument().body.offsetHeight
-
+        let menuContainer = this.tribute.menuContainer
         if (menuIsOffScreen.bottom) {
-            let parentRect = this.tribute.menuContainer
-                ? this.tribute.menuContainer.getBoundingClientRect()
-                : this.getDocument().body.getBoundingClientRect()
-            let scrollStillAvailable = parentHeight - (windowHeight - parentRect.top)
-
             coordinates.top = 'auto'
-            coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top)
+            if (menuContainer) {
+                let menuTop = menuContainer.getBoundingClientRect().top
+                let scrollStillAvailable = menuContainer.offsetHeight - (windowHeight - menuTop)
+                coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top)
+            } else {
+                coordinates.bottom = (windowHeight - rect.top) - window.pageYOffset
+            }
         }
 
         menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions)
@@ -618,8 +616,8 @@ class TributeRange {
         }
 
         if (!this.menuContainerIsBody) {
-            coordinates.left = coordinates.left ? coordinates.left - this.tribute.menuContainer.offsetLeft : coordinates.left
-            coordinates.top = coordinates.top ? coordinates.top - this.tribute.menuContainer.offsetTop : coordinates.top
+            coordinates.left = coordinates.left ? coordinates.left - menuContainer.offsetLeft : coordinates.left
+            coordinates.top = coordinates.top ? coordinates.top - menuContainer.offsetTop : coordinates.top
         }
 
         return coordinates
