@@ -154,6 +154,7 @@ class Tribute {
           lookup: item.lookup || lookup,
           fillAttr: item.fillAttr || fillAttr,
           values: item.values,
+          loadingItemTemplate: item.loadingItemTemplate,
           requireLeadingSpace: item.requireLeadingSpace,
           searchOpts: item.searchOpts || searchOpts,
           menuItemLimit: item.menuItemLimit || menuItemLimit,

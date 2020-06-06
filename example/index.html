@@ -165,26 +165,23 @@
       // example of alternative callback
       var tribute = new Tribute({
         // menuContainer: document.getElementById('content'),
-        loadingItemTemplate: '<div style="padding: 16px">Loading</div>',
-        values: function(_, cb) {
-          setTimeout(() => cb([
-            {
-              key: "Jordan Humphreys",
-              value: "Jordan Humphreys",
-              email: "getstarted@zurb.com"
-            },
-            {
-              key: "Sir Walter Riley",
-              value: "Sir Walter Riley",
-              email: "getstarted+riley@zurb.com"
-            },
-            {
-              key: "Joachim",
-              value: "Joachim",
-              email: "getstarted+joachim@zurb.com"
-            }
-          ]), 1000)
-        },
+        values: [
+          {
+            key: "Jordan Humphreys",
+            value: "Jordan Humphreys",
+            email: "getstarted@zurb.com"
+          },
+          {
+            key: "Sir Walter Riley",
+            value: "Sir Walter Riley",
+            email: "getstarted+riley@zurb.com"
+          },
+          {
+            key: "Joachim",
+            value: "Joachim",
+            email: "getstarted+joachim@zurb.com"
+          }
+        ],
         selectTemplate: function(item) {
           if (typeof item === "undefined") return null;
           if (this.range.isContentEditable(this.current.element)) {
@@ -241,7 +238,7 @@
           {
             // The symbol that starts the lookup
             trigger: "#",
-
+            loadingItemTemplate: '<div style="padding: 16px">Loading</div>',
             // The function that gets call on select that retuns the content to insert
             selectTemplate: function(item) {
               if (this.range.isContentEditable(this.current.element)) {
@@ -256,13 +253,13 @@
 
               return "#" + item.original.name;
             },
-
             // function retrieving an array of objects
-            values: [
-              { name: "Bob Bill", email: "bobbill@example.com" },
-              { name: "Steve Stevenston", email: "steve@example.com" }
-            ],
-
+            values: function(_, cb) {
+              setTimeout(() => cb([
+                { name: "Bob Bill", email: "bobbill@example.com" },
+                { name: "Steve Stevenston", email: "steve@example.com" }
+              ]), 1000)
+            },
             lookup: "name",
 
             fillAttr: "name"
