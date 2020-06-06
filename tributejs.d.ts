@@ -71,6 +71,9 @@ export type TributeCollection<T extends {}> = {
   // Customize the elements used to wrap matched strings within the results list
   searchOpts?: TributeSearchOpts;
 
+  // Limits the number of items in the menu
+  menuItemLimit?: number;
+
   // require X number of characters to be entered before menu shows
   menuShowMinLength?: number;
 };
