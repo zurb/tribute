@@ -82,6 +82,8 @@ export type TributeOptions<T> =
       collection: Array<TributeCollection<{ [key: string]: any }>>;
     };
 
+type TributeElement = Element | NodeList | HTMLCollection | Array;
+
 export default class Tribute<T extends {}> {
   constructor(options: TributeOptions<T>);
 
@@ -91,9 +93,9 @@ export default class Tribute<T extends {}> {
 
   appendCurrent(values: Array<T>, replace?: boolean): void;
 
-  attach(to: Element): void;
+  attach(to: TributeElement): void;
 
-  detach(to: Element): void;
+  detach(to: TributeElement): void;
 
   showMenuForCollection(input: Element, collectionIndex?: number): void;
 }
