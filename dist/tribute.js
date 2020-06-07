@@ -1345,6 +1345,8 @@
 
       var _ref$values = _ref.values,
           values = _ref$values === void 0 ? null : _ref$values,
+          _ref$loadingItemTempl = _ref.loadingItemTemplate,
+          loadingItemTemplate = _ref$loadingItemTempl === void 0 ? null : _ref$loadingItemTempl,
           _ref$iframe = _ref.iframe,
           iframe = _ref$iframe === void 0 ? null : _ref$iframe,
           _ref$selectClass = _ref.selectClass,
@@ -1447,6 +1449,8 @@
           fillAttr: fillAttr,
           // array of objects or a function returning an array of objects
           values: values,
+          // useful for when values is an async function
+          loadingItemTemplate: loadingItemTemplate,
           requireLeadingSpace: requireLeadingSpace,
           searchOpts: searchOpts,
           menuItemLimit: menuItemLimit,
@@ -1481,6 +1485,7 @@
             lookup: item.lookup || lookup,
             fillAttr: item.fillAttr || fillAttr,
             values: item.values,
+            loadingItemTemplate: item.loadingItemTemplate,
             requireLeadingSpace: item.requireLeadingSpace,
             searchOpts: item.searchOpts || searchOpts,
             menuItemLimit: item.menuItemLimit || menuItemLimit,
@@ -1666,6 +1671,11 @@
         };
 
         if (typeof this.current.collection.values === "function") {
+          if (this.current.collection.loadingItemTemplate) {
+            this.menu.querySelector("ul").innerHTML = this.current.collection.loadingItemTemplate;
+            this.range.positionMenuAtCaret(scrollTo);
+          }
+
           this.current.collection.values(this.current.mentionText, processValues);
         } else {
           processValues(this.current.collection.values);
