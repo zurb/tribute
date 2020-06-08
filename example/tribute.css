@@ -3,8 +3,6 @@
   top: 0;
   left: 0;
   height: auto;
-  max-height: 300px;
-  max-width: 500px;
   overflow: auto;
   display: block;
   z-index: 999999;

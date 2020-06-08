@@ -568,8 +568,6 @@
     }, {
       key: "positionMenuAtCaret",
       value: function positionMenuAtCaret(scrollTo) {
-        var _this = this;
-
         var context = this.tribute.current,
             coordinates;
         var info = this.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces, this.tribute.autocompleteMode);
@@ -586,7 +584,7 @@
             coordinates = this.getContentEditableCaretPosition(info.mentionPosition);
           }
 
-          this.tribute.menu.style.cssText = "top: ".concat(coordinates.top, "px;\n                                     left: ").concat(coordinates.left, "px;\n                                     right: ").concat(coordinates.right, "px;\n                                     bottom: ").concat(coordinates.bottom, "px;\n                                     position: absolute;\n                                     display: block;");
+          this.tribute.menu.style.cssText = "top: ".concat(coordinates.top, "px;\n                                     left: ").concat(coordinates.left, "px;\n                                     right: ").concat(coordinates.right, "px;\n                                     bottom: ").concat(coordinates.bottom, "px;\n                                     max-height: ").concat(coordinates.maxHeight || 500, "px;\n                                     max-width: ").concat(coordinates.maxWidth || 300, "px;\n                                     position: absolute;\n                                     display: block;");
 
           if (coordinates.left === 'auto') {
             this.tribute.menu.style.left = 'auto';
@@ -597,23 +595,6 @@
           }
 
           if (scrollTo) this.scrollIntoView();
-          window.setTimeout(function () {
-            var menuDimensions = {
-              width: _this.tribute.menu.offsetWidth,
-              height: _this.tribute.menu.offsetHeight
-            };
-
-            var menuIsOffScreen = _this.isMenuOffScreen(coordinates, menuDimensions);
-
-            var menuIsOffScreenHorizontally = window.innerWidth > menuDimensions.width && (menuIsOffScreen.left || menuIsOffScreen.right);
-            var menuIsOffScreenVertically = window.innerHeight > menuDimensions.height && (menuIsOffScreen.top || menuIsOffScreen.bottom);
-
-            if (menuIsOffScreenHorizontally || menuIsOffScreenVertically) {
-              _this.tribute.menu.style.cssText = 'display: none';
-
-              _this.positionMenuAtCaret(scrollTo);
-            }
-          }, 0);
         } else {
           this.tribute.menu.style.cssText = 'display: none';
         }
@@ -842,7 +823,7 @@
     }, {
       key: "getTriggerInfo",
       value: function getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces, isAutocomplete) {
-        var _this2 = this;
+        var _this = this;
 
         var ctx = this.tribute.current;
         var selected, path, offset;
@@ -877,7 +858,7 @@
           var triggerChar;
           this.tribute.collection.forEach(function (config) {
             var c = config.trigger;
-            var idx = config.requireLeadingSpace ? _this2.lastIndexWithLeadingSpace(effectiveRange, c) : effectiveRange.lastIndexOf(c);
+            var idx = config.requireLeadingSpace ? _this.lastIndexWithLeadingSpace(effectiveRange, c) : effectiveRange.lastIndexOf(c);
 
             if (idx > mostRecentTriggerCharPos) {
               mostRecentTriggerCharPos = idx;
@@ -972,7 +953,7 @@
           width: null,
           height: null
         };
-        this.tribute.menu.style.cssText = "top: 0px;\n                                 left: 0px;\n                                 position: fixed;\n                                 display: block;\n                                 visibility; hidden;";
+        this.tribute.menu.style.cssText = "top: 0px;\n                                 left: 0px;\n                                 position: fixed;\n                                 display: block;\n                                 visibility; hidden;\n                                 max-height:500px;";
         dimensions.width = this.tribute.menu.offsetWidth;
         dimensions.height = this.tribute.menu.offsetHeight;
         this.tribute.menu.style.cssText = "display: none;";
@@ -1081,46 +1062,61 @@
         var doc = document.documentElement;
         var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
         var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
-        var left = rect.left;
-        var top = rect.top;
         var coordinates = {
-          left: left + windowLeft,
-          top: top + rect.height + windowTop
+          left: rect.left + windowLeft,
+          top: rect.top + rect.height + windowTop
         };
         var windowWidth = window.innerWidth;
-        var windowHeight = window.innerHeight;
-        var menuDimensions = this.getMenuDimensions();
-        var menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
+        var windowHeight = window.innerHeight; //Determine the potential anchor points if we need to instead
+        //anchor the menu due to overflow
 
-        if (menuIsOffScreen.right) {
-          coordinates.left = 'auto';
-          coordinates.right = windowWidth - rect.left - windowLeft;
-        }
-
+        var parentRect = this.tribute.menuContainer ? this.tribute.menuContainer.getBoundingClientRect() : this.getDocument().body.getBoundingClientRect();
         var parentHeight = this.tribute.menuContainer ? this.tribute.menuContainer.offsetHeight : this.getDocument().body.offsetHeight;
+        var potentialRight = windowWidth - (rect.left + windowLeft) - 15; //add 15 so its a bit in front of initial typed chars
 
-        if (menuIsOffScreen.bottom) {
-          var parentRect = this.tribute.menuContainer ? this.tribute.menuContainer.getBoundingClientRect() : this.getDocument().body.getBoundingClientRect();
-          var scrollStillAvailable = parentHeight - (windowHeight - parentRect.top);
-          coordinates.top = 'auto';
-          coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top);
+        var potentialBottom = parentHeight - rect.top;
+        var menuDimensions = this.getMenuDimensions();
+        var availableSpaceOnTop = rect.top;
+        var availableSpaceOnBottom = windowHeight - (rect.top + rect.height); //check to see where's the right place to put the menu vertically
+
+        if (availableSpaceOnBottom < menuDimensions.height) {
+          if (availableSpaceOnTop >= menuDimensions.height || availableSpaceOnTop > availableSpaceOnBottom) {
+            coordinates.top = 'auto';
+            coordinates.bottom = potentialBottom;
+
+            if (availableSpaceOnBottom < menuDimensions.height) {
+              coordinates.maxHeight = availableSpaceOnTop;
+            }
+          } else {
+            if (availableSpaceOnTop < menuDimensions.height) {
+              coordinates.maxHeight = availableSpaceOnBottom;
+            }
+          }
         }
 
-        menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
+        var availableSpaceOnLeft = rect.left - windowLeft;
+        var availableSpaceOnRight = windowWidth - rect.left; //check to see where's the right place to put the menu horizontally
 
-        if (menuIsOffScreen.left) {
-          coordinates.left = windowWidth > menuDimensions.width ? windowLeft + windowWidth - menuDimensions.width : windowLeft;
-          delete coordinates.right;
-        }
+        if (availableSpaceOnRight < menuDimensions.width) {
+          if (availableSpaceOnLeft >= menuDimensions.width || availableSpaceOnLeft > availableSpaceOnRight) {
+            coordinates.left = 'auto';
+            coordinates.right = potentialRight;
 
-        if (menuIsOffScreen.top) {
-          coordinates.top = windowHeight > menuDimensions.height ? windowTop + windowHeight - menuDimensions.height : windowTop;
-          delete coordinates.bottom;
+            if (availableSpaceOnRight < menuDimensions.width) {
+              coordinates.maxWidth = availableSpaceOnLeft;
+            }
+          } else {
+            if (availableSpaceOnLeft < menuDimensions.width) {
+              coordinates.maxWidth = availableSpaceOnRight;
+            }
+          }
         }
 
         if (!this.menuContainerIsBody) {
-          coordinates.left = coordinates.left ? coordinates.left - this.tribute.menuContainer.offsetLeft : coordinates.left;
-          coordinates.top = coordinates.top ? coordinates.top - this.tribute.menuContainer.offsetTop : coordinates.top;
+          if (coordinates.left !== 'auto' && coordinates.left) coordinates.left -= this.tribute.menuContainer.offsetLeft;
+          if (coordinates.top !== 'auto' && coordinates.top) coordinates.top -= this.tribute.menuContainer.offsetTop;
+          if (coordinates.right !== 'auto' && coordinates.right) coordinates.right -= windowWidth - (this.tribute.menuContainer.offsetLeft + parentRect.width);
+          if (coordinates.bottom !== 'auto' && coordinates.bottom) coordinates.bottom += parentRect.bottom - parentRect.height;
         }
 
         return coordinates;
@@ -1622,8 +1618,6 @@
 
           var ul = _this2.menu.querySelector("ul");
 
-          _this2.range.positionMenuAtCaret(scrollTo);
-
           if (!items.length) {
             var noMatchEvent = new CustomEvent("tribute-no-match", {
               detail: _this2.menu
@@ -1635,6 +1629,8 @@
               _this2.hideMenu();
             } else {
               typeof _this2.current.collection.noMatchTemplate === "function" ? ul.innerHTML = _this2.current.collection.noMatchTemplate() : ul.innerHTML = _this2.current.collection.noMatchTemplate;
+
+              _this2.range.positionMenuAtCaret(scrollTo);
             }
 
             return;
@@ -1668,6 +1664,8 @@
             fragment.appendChild(li);
           });
           ul.appendChild(fragment);
+
+          _this2.range.positionMenuAtCaret(scrollTo);
         };
 
         if (typeof this.current.collection.values === "function") {

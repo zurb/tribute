@@ -519,6 +519,8 @@ class TributeRange {
                                      left: ${coordinates.left}px;
                                      right: ${coordinates.right}px;
                                      bottom: ${coordinates.bottom}px;
+                                     max-height: ${coordinates.maxHeight || 500}px;
+                                     max-width: ${coordinates.maxWidth || 300}px;
                                      position: absolute;
                                      display: block;`;
 
@@ -531,21 +533,6 @@ class TributeRange {
             }
 
             if (scrollTo) this.scrollIntoView();
-
-            window.setTimeout(() => {
-                let menuDimensions = {
-                   width: this.tribute.menu.offsetWidth,
-                   height: this.tribute.menu.offsetHeight
-                };
-                let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-
-                let menuIsOffScreenHorizontally = window.innerWidth > menuDimensions.width && (menuIsOffScreen.left || menuIsOffScreen.right);
-                let menuIsOffScreenVertically = window.innerHeight > menuDimensions.height && (menuIsOffScreen.top || menuIsOffScreen.bottom);
-                if (menuIsOffScreenHorizontally || menuIsOffScreenVertically) {
-                    this.tribute.menu.style.cssText = 'display: none';
-                    this.positionMenuAtCaret(scrollTo);
-                }
-            }, 0);
 
         } else {
             this.tribute.menu.style.cssText = 'display: none';
@@ -909,7 +896,8 @@ class TributeRange {
                                  left: 0px;
                                  position: fixed;
                                  display: block;
-                                 visibility; hidden;`;
+                                 visibility; hidden;
+                                 max-height:500px;`;
        dimensions.width = this.tribute.menu.offsetWidth;
        dimensions.height = this.tribute.menu.offsetHeight;
 
@@ -1045,55 +1033,72 @@ class TributeRange {
         let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
         let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
 
-        let left = rect.left;
-        let top = rect.top;
-
         let coordinates = {
-            left: left + windowLeft,
-            top: top + rect.height + windowTop
+            left: rect.left + windowLeft,
+            top: rect.top + rect.height + windowTop
         };
         let windowWidth = window.innerWidth;
         let windowHeight = window.innerHeight;
 
-        let menuDimensions = this.getMenuDimensions();
-        let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-
-        if (menuIsOffScreen.right) {
-            coordinates.left = 'auto';
-            coordinates.right = windowWidth - rect.left - windowLeft;
-        }
-
+        //Determine the potential anchor points if we need to instead
+        //anchor the menu due to overflow
+        let parentRect = this.tribute.menuContainer
+        ? this.tribute.menuContainer.getBoundingClientRect()
+        : this.getDocument().body.getBoundingClientRect();
         let parentHeight = this.tribute.menuContainer
-            ? this.tribute.menuContainer.offsetHeight
-            : this.getDocument().body.offsetHeight;
+        ? this.tribute.menuContainer.offsetHeight
+        : this.getDocument().body.offsetHeight;
+        var potentialRight = windowWidth - (rect.left + windowLeft) - 15; //add 15 so its a bit in front of initial typed chars
+        var potentialBottom = parentHeight - rect.top;
 
-        if (menuIsOffScreen.bottom) {
-            let parentRect = this.tribute.menuContainer
-                ? this.tribute.menuContainer.getBoundingClientRect()
-                : this.getDocument().body.getBoundingClientRect();
-            let scrollStillAvailable = parentHeight - (windowHeight - parentRect.top);
 
+        let menuDimensions = this.getMenuDimensions();
+
+        var availableSpaceOnTop = rect.top;
+        var availableSpaceOnBottom = windowHeight - (rect.top + rect.height);
+
+        //check to see where's the right place to put the menu vertically
+        if (availableSpaceOnBottom < menuDimensions.height) {
+          if (availableSpaceOnTop >= menuDimensions.height || availableSpaceOnTop > availableSpaceOnBottom) {
             coordinates.top = 'auto';
-            coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top);
+            coordinates.bottom = potentialBottom;
+            if (availableSpaceOnBottom < menuDimensions.height) {
+              coordinates.maxHeight = availableSpaceOnTop;
+            }
+          } else {
+            if (availableSpaceOnTop < menuDimensions.height) {
+              coordinates.maxHeight = availableSpaceOnBottom;
+            }
+          }
         }
 
-        menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-        if (menuIsOffScreen.left) {
-            coordinates.left = windowWidth > menuDimensions.width
-                ? windowLeft + windowWidth - menuDimensions.width
-                : windowLeft;
-            delete coordinates.right;
-        }
-        if (menuIsOffScreen.top) {
-            coordinates.top = windowHeight > menuDimensions.height
-                ? windowTop + windowHeight - menuDimensions.height
-                : windowTop;
-            delete coordinates.bottom;
+        var availableSpaceOnLeft = rect.left - windowLeft;
+        var availableSpaceOnRight = windowWidth - rect.left;
+
+        //check to see where's the right place to put the menu horizontally
+        if (availableSpaceOnRight < menuDimensions.width) {
+          if (availableSpaceOnLeft >= menuDimensions.width || availableSpaceOnLeft > availableSpaceOnRight) {
+            coordinates.left = 'auto';
+            coordinates.right = potentialRight;
+            if (availableSpaceOnRight < menuDimensions.width) {
+              coordinates.maxWidth = availableSpaceOnLeft;
+            }
+          } else {
+            if (availableSpaceOnLeft < menuDimensions.width) {
+              coordinates.maxWidth = availableSpaceOnRight;
+            }
+          }
         }
 
         if (!this.menuContainerIsBody) {
-            coordinates.left = coordinates.left ? coordinates.left - this.tribute.menuContainer.offsetLeft : coordinates.left;
-            coordinates.top = coordinates.top ? coordinates.top - this.tribute.menuContainer.offsetTop : coordinates.top;
+            if (coordinates.left !== 'auto' && coordinates.left)
+              coordinates.left -= this.tribute.menuContainer.offsetLeft;
+            if (coordinates.top !== 'auto' && coordinates.top)
+              coordinates.top -= this.tribute.menuContainer.offsetTop;
+            if (coordinates.right !== 'auto' && coordinates.right)
+              coordinates.right -= windowWidth - (this.tribute.menuContainer.offsetLeft + parentRect.width);
+            if (coordinates.bottom !== 'auto' && coordinates.bottom)
+              coordinates.bottom += parentRect.bottom - parentRect.height;
         }
 
         return coordinates
@@ -1619,8 +1624,6 @@ class Tribute {
 
       let ul = this.menu.querySelector("ul");
 
-      this.range.positionMenuAtCaret(scrollTo);
-
       if (!items.length) {
         let noMatchEvent = new CustomEvent("tribute-no-match", {
           detail: this.menu
@@ -1636,6 +1639,7 @@ class Tribute {
           typeof this.current.collection.noMatchTemplate === "function"
             ? (ul.innerHTML = this.current.collection.noMatchTemplate())
             : (ul.innerHTML = this.current.collection.noMatchTemplate);
+            this.range.positionMenuAtCaret(scrollTo);
         }
 
         return;
@@ -1661,6 +1665,8 @@ class Tribute {
         fragment.appendChild(li);
       });
       ul.appendChild(fragment);
+
+      this.range.positionMenuAtCaret(scrollTo);
     };
 
     if (typeof this.current.collection.values === "function") {
