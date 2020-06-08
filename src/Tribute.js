@@ -476,6 +476,13 @@ class Tribute {
     if (typeof index !== "number" || isNaN(index)) return;
     let item = this.current.filteredItems[index];
     let content = this.current.collection.selectTemplate(item);
+
+    if (index === -1) {
+      let selectedNoMatchEvent = new CustomEvent('tribute-selected-no-match', { detail: content })
+      this.current.element.dispatchEvent(selectedNoMatchEvent);
+      return
+    }
+
     if (content !== null) this.replaceText(content, originalEvent, item);
   }
 
