@@ -133,6 +133,9 @@ class TributeEvents {
           throw new Error("cannot find the <li> container for the click");
         }
       }
+
+      if (tribute.current.filteredItems.length === 0) li.setAttribute("data-index", -1);
+
       tribute.selectItemAtIndex(li.getAttribute("data-index"), event);
       tribute.hideMenu();
 
@@ -267,6 +270,9 @@ class TributeEvents {
         if (this.tribute.isActive && this.tribute.current.filteredItems) {
           e.preventDefault();
           e.stopPropagation();
+
+          if (this.tribute.current.filteredItems.length === 0) this.tribute.menuSelected = -1;
+
           setTimeout(() => {
             this.tribute.selectItemAtIndex(this.tribute.menuSelected, e);
             this.tribute.hideMenu();
@@ -1764,6 +1770,13 @@ class Tribute {
     if (typeof index !== "number" || isNaN(index)) return;
     let item = this.current.filteredItems[index];
     let content = this.current.collection.selectTemplate(item);
+
+    if (index === -1) {
+      let selectedNoMatchEvent = new CustomEvent('tribute-selected-no-match', { detail: content });
+      this.current.element.dispatchEvent(selectedNoMatchEvent);
+      return
+    }
+
     if (content !== null) this.replaceText(content, originalEvent, item);
   }
 
