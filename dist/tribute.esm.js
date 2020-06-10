@@ -400,19 +400,19 @@ class TributeMenuEvents {
     this.menuContainerScrollEvent = this.debounce(
       () => {
         if (this.tribute.isActive) {
-          this.tribute.showMenuFor(this.tribute.current.element, false);
+          this.tribute.hideMenu();
         }
       },
-      300,
+      10,
       false
     );
     this.windowResizeEvent = this.debounce(
       () => {
         if (this.tribute.isActive) {
-          this.tribute.range.positionMenuAtCaret(true);
+          this.tribute.hideMenu();
         }
       },
-      300,
+      10,
       false
     );
 
@@ -521,7 +521,7 @@ class TributeRange {
                                      bottom: ${coordinates.bottom}px;
                                      max-height: ${coordinates.maxHeight || 500}px;
                                      max-width: ${coordinates.maxWidth || 300}px;
-                                     position: absolute;
+                                     position: ${coordinates.position || 'absolute'};
                                      display: block;`;
 
             if (coordinates.left === 'auto') {
@@ -909,15 +909,13 @@ class TributeRange {
     getTextAreaOrInputUnderlinePosition(element, position, flipped) {
         let properties = ['direction', 'boxSizing', 'width', 'height', 'overflowX',
             'overflowY', 'borderTopWidth', 'borderRightWidth',
-            'borderBottomWidth', 'borderLeftWidth', 'paddingTop',
+            'borderBottomWidth', 'borderLeftWidth', 'borderStyle', 'paddingTop',
             'paddingRight', 'paddingBottom', 'paddingLeft',
             'fontStyle', 'fontVariant', 'fontWeight', 'fontStretch',
             'fontSize', 'fontSizeAdjust', 'lineHeight', 'fontFamily',
             'textAlign', 'textTransform', 'textIndent',
             'textDecoration', 'letterSpacing', 'wordSpacing'
         ];
-
-        let isFirefox = (window.mozInnerScreenX !== null);
 
         let div = this.getDocument().createElement('div');
         div.id = 'input-textarea-caret-position-mirror-div';
@@ -931,7 +929,6 @@ class TributeRange {
             style.wordWrap = 'break-word';
         }
 
-        // position off-screen
         style.position = 'absolute';
         style.visibility = 'hidden';
 
@@ -940,82 +937,49 @@ class TributeRange {
             style[prop] = computed[prop];
         });
 
-        if (isFirefox) {
-            style.width = `${(parseInt(computed.width) - 2)}px`;
-            if (element.scrollHeight > parseInt(computed.height))
-                style.overflowY = 'scroll';
-        } else {
-            style.overflow = 'hidden';
-        }
+        //NOT SURE WHY THIS IS HERE AND IT DOESNT SEEM HELPFUL
+        // if (isFirefox) {
+        //     style.width = `${(parseInt(computed.width) - 2)}px`
+        //     if (element.scrollHeight > parseInt(computed.height))
+        //         style.overflowY = 'scroll'
+        // } else {
+        //     style.overflow = 'hidden'
+        // }
 
-        div.textContent = element.value.substring(0, position);
+        let span0 = document.createElement('span');
+        span0.textContent =  element.value.substring(0, position);
+        div.appendChild(span0);
 
         if (element.nodeName === 'INPUT') {
             div.textContent = div.textContent.replace(/\s/g, ' ');
         }
 
+        //Create a span in the div that represents where the cursor
+        //should be
         let span = this.getDocument().createElement('span');
-        span.textContent = element.value.substring(position) || '.';
+        //we give it no content as this represents the cursor
+        span.textContent = '&#x200B;';
         div.appendChild(span);
 
+        let span2 = this.getDocument().createElement('span');
+        span2.textContent = element.value.substring(position);
+        div.appendChild(span2);
+
         let rect = element.getBoundingClientRect();
-        let doc = document.documentElement;
-        let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-        let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
 
-        let top = 0;
-        let left = 0;
-        if (this.menuContainerIsBody) {
-          top = rect.top;
-          left = rect.left;
-        }
+        //position the div exactly over the element
+        //so we can get the bounding client rect for the span and
+        //it should represent exactly where the cursor is
+        div.style.position = 'fixed';
+        div.style.left = rect.left + 'px';
+        div.style.top = rect.top + 'px';
+        div.style.width = rect.width + 'px';
+        div.style.height = rect.height + 'px';
+        div.scrollTop = element.scrollTop;
 
-        let coordinates = {
-            top: top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
-            left: left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
-        };
-
-        let windowWidth = window.innerWidth;
-        let windowHeight = window.innerHeight;
-
-        let menuDimensions = this.getMenuDimensions();
-        let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-
-        if (menuIsOffScreen.right) {
-            coordinates.right = windowWidth - coordinates.left;
-            coordinates.left = 'auto';
-        }
-
-        let parentHeight = this.tribute.menuContainer
-            ? this.tribute.menuContainer.offsetHeight
-            : this.getDocument().body.offsetHeight;
-
-        if (menuIsOffScreen.bottom) {
-            let parentRect = this.tribute.menuContainer
-                ? this.tribute.menuContainer.getBoundingClientRect()
-                : this.getDocument().body.getBoundingClientRect();
-            let scrollStillAvailable = parentHeight - (windowHeight - parentRect.top);
-
-            coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top - span.offsetTop);
-            coordinates.top = 'auto';
-        }
-
-        menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-        if (menuIsOffScreen.left) {
-            coordinates.left = windowWidth > menuDimensions.width
-                ? windowLeft + windowWidth - menuDimensions.width
-                : windowLeft;
-            delete coordinates.right;
-        }
-        if (menuIsOffScreen.top) {
-            coordinates.top = windowHeight > menuDimensions.height
-                ? windowTop + windowHeight - menuDimensions.height
-                : windowTop;
-            delete coordinates.bottom;
-        }
-
+        var spanRect = span.getBoundingClientRect();
         this.getDocument().body.removeChild(div);
-        return coordinates
+        return this.getFixedCoordinatesRelativeToRect(spanRect);
     }
 
     getContentEditableCaretPosition(selectedNodePosition) {
@@ -1029,39 +993,27 @@ class TributeRange {
         range.collapse(false);
 
         let rect = range.getBoundingClientRect();
-        let doc = document.documentElement;
-        let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-        let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
 
+        return this.getFixedCoordinatesRelativeToRect(rect);
+    }
+
+    getFixedCoordinatesRelativeToRect(rect) {
         let coordinates = {
-            left: rect.left + windowLeft,
-            top: rect.top + rect.height + windowTop
+            position: 'fixed',
+            left: rect.left,
+            top: rect.top + rect.height
         };
-        let windowWidth = window.innerWidth;
-        let windowHeight = window.innerHeight;
-
-        //Determine the potential anchor points if we need to instead
-        //anchor the menu due to overflow
-        let parentRect = this.tribute.menuContainer
-        ? this.tribute.menuContainer.getBoundingClientRect()
-        : this.getDocument().body.getBoundingClientRect();
-        let parentHeight = this.tribute.menuContainer
-        ? this.tribute.menuContainer.offsetHeight
-        : this.getDocument().body.offsetHeight;
-        var potentialRight = windowWidth - (rect.left + windowLeft) - 15; //add 15 so its a bit in front of initial typed chars
-        var potentialBottom = parentHeight - rect.top;
-
 
         let menuDimensions = this.getMenuDimensions();
 
         var availableSpaceOnTop = rect.top;
-        var availableSpaceOnBottom = windowHeight - (rect.top + rect.height);
+        var availableSpaceOnBottom = window.innerHeight - (rect.top + rect.height);
 
         //check to see where's the right place to put the menu vertically
         if (availableSpaceOnBottom < menuDimensions.height) {
           if (availableSpaceOnTop >= menuDimensions.height || availableSpaceOnTop > availableSpaceOnBottom) {
             coordinates.top = 'auto';
-            coordinates.bottom = potentialBottom;
+            coordinates.bottom = window.innerHeight - rect.top;
             if (availableSpaceOnBottom < menuDimensions.height) {
               coordinates.maxHeight = availableSpaceOnTop;
             }
@@ -1072,14 +1024,14 @@ class TributeRange {
           }
         }
 
-        var availableSpaceOnLeft = rect.left - windowLeft;
-        var availableSpaceOnRight = windowWidth - rect.left;
+        var availableSpaceOnLeft = rect.left;
+        var availableSpaceOnRight = window.innerWidth - rect.left;
 
         //check to see where's the right place to put the menu horizontally
         if (availableSpaceOnRight < menuDimensions.width) {
           if (availableSpaceOnLeft >= menuDimensions.width || availableSpaceOnLeft > availableSpaceOnRight) {
             coordinates.left = 'auto';
-            coordinates.right = potentialRight;
+            coordinates.right = window.innerWidth - rect.left;
             if (availableSpaceOnRight < menuDimensions.width) {
               coordinates.maxWidth = availableSpaceOnLeft;
             }
@@ -1088,17 +1040,6 @@ class TributeRange {
               coordinates.maxWidth = availableSpaceOnRight;
             }
           }
-        }
-
-        if (!this.menuContainerIsBody) {
-            if (coordinates.left !== 'auto' && coordinates.left)
-              coordinates.left -= this.tribute.menuContainer.offsetLeft;
-            if (coordinates.top !== 'auto' && coordinates.top)
-              coordinates.top -= this.tribute.menuContainer.offsetTop;
-            if (coordinates.right !== 'auto' && coordinates.right)
-              coordinates.right -= windowWidth - (this.tribute.menuContainer.offsetLeft + parentRect.width);
-            if (coordinates.bottom !== 'auto' && coordinates.bottom)
-              coordinates.bottom += parentRect.bottom - parentRect.height;
         }
 
         return coordinates
