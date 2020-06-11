@@ -262,7 +262,7 @@ class Tribute {
       ul = this.range.getDocument().createElement("ul");
     wrapper.className = containerClass;
     wrapper.setAttribute('aria-expanded','true');
-    ul.setAttribute('id','results');
+    ul.setAttribute('id','tributeResults');
     wrapper.appendChild(ul);
 
     if (this.menuContainer) {
