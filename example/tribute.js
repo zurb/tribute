@@ -198,8 +198,8 @@
           }
 
           tribute.selectItemAtIndex(li.getAttribute("data-index"), event);
-          tribute.hideMenu(); // TODO: should fire with externalTrigger and target is outside of menu
-        } else if (tribute.current.element && !tribute.current.externalTrigger) {
+          tribute.hideMenu();
+        } else if (tribute.current.element) {
           tribute.current.externalTrigger = false;
           setTimeout(function () {
             return tribute.hideMenu();
