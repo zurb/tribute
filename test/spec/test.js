@@ -172,6 +172,43 @@ describe("Tribute autocomplete mode cases", function() {
     clearDom();
   });
 
+  ['text', 'contenteditable'].forEach(elementType => {
+    it(`when values key with autocompleteSeparator option. For : ${elementType}`, () => {
+      let input = createDomElement(elementType);
+
+      let collectionObject = {
+        selectTemplate: function (item) {
+          return item.original.value;
+        },
+        autocompleteMode: true,
+        autocompleteSeparator: new RegExp(/\-|\+/),
+        values: [
+          { key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com' },
+          { key: 'Sir Walter Riley', value: 'Sir Walter Riley', email: 'getstarted+riley@zurb.com' }
+        ],
+      }
+
+      let tribute = attachTribute(collectionObject, input.id);
+
+      fillIn(input, '+J');
+      let popupList = document.querySelectorAll('.tribute-container > ul > li');
+      expect(popupList.length).toBe(1);
+      simulateMouseClick(popupList[0]); // click on Jordan Humphreys
+
+      if (elementType === 'text') {
+        expect(input.value).toBe('+Jordan Humphreys ');
+      } else if (elementType === 'contenteditable') {
+        expect(input.innerText).toBe('+Jordan Humphreys ');
+      }
+
+      fillIn(input, ' Si');
+      popupList = document.querySelectorAll('.tribute-container > ul > li');
+      expect(popupList.length).toBe(1);
+
+      detachTribute(tribute, input.id);
+    });
+  });
+
   ["text", "contenteditable"].forEach(elementType => {
     it(`when values key is predefined array. For : ${elementType}`, () => {
       let input = createDomElement(elementType);
@@ -715,6 +752,49 @@ describe("Multi-char tests", function() {
       expect(eventSpy).toHaveBeenCalled();
 
       detachTribute(tribute, input.id);
+    });
+  });
+});
+
+describe("Tribute loadingItemTemplate", function() {
+  afterEach(function() {
+    clearDom();
+  });
+
+  ["text", "contenteditable"].forEach(elementType => {
+    it(`Shows loading item template. For : ${elementType}`, (done) => {
+      let input = createDomElement(elementType);
+
+      let collectionObject = {
+        loadingItemTemplate: '<div class="loading">Loading</div>',
+        values: function(_, cb) {
+          setTimeout(() => cb([
+            {
+              key: "Jordan Humphreys",
+              value: "Jordan Humphreys",
+              email: "getstarted@zurb.com"
+            },
+            {
+              key: "Sir Walter Riley",
+              value: "Sir Walter Riley",
+              email: "getstarted+riley@zurb.com"
+            }
+          ]), 500)
+        },
+      };
+
+      let tribute = attachTribute(collectionObject, input.id);
+
+      fillIn(input, "@J");
+      const loadingItemTemplate = document.querySelectorAll(".loading");
+      expect(loadingItemTemplate.length).toBe(1);
+
+      setTimeout(() => {
+        const popupList = document.querySelectorAll(".tribute-container > ul > li");
+        expect(popupList.length).toBe(1);
+        detachTribute(tribute, input.id);
+        done();
+      }, 1000);
     });
   });
 });

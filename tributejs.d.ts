@@ -50,7 +50,10 @@ export type TributeCollection<T extends {}> = {
   fillAttr?: string;
 
   // array of objects to match
-  values?: Array<T> | ((text: string, cb: (result: Array<T>) => void) => void);
+  values: Array<T> | ((text: string, cb: (result: Array<T>) => void) => void);
+
+  // When your values function is async, an optional loading template to show
+  loadingItemTemplate?: string;
 
   // specify whether a space is required before the trigger character
   requireLeadingSpace?: boolean;
@@ -71,6 +74,9 @@ export type TributeCollection<T extends {}> = {
   // Customize the elements used to wrap matched strings within the results list
   searchOpts?: TributeSearchOpts;
 
+  // Limits the number of items in the menu
+  menuItemLimit?: number;
+
   // require X number of characters to be entered before menu shows
   menuShowMinLength?: number;
 };
@@ -82,6 +88,8 @@ export type TributeOptions<T> =
       collection: Array<TributeCollection<{ [key: string]: any }>>;
     };
 
+type TributeElement = Element | NodeList | HTMLCollection | Array;
+
 export default class Tribute<T extends {}> {
   constructor(options: TributeOptions<T>);
 
@@ -91,9 +99,9 @@ export default class Tribute<T extends {}> {
 
   appendCurrent(values: Array<T>, replace?: boolean): void;
 
-  attach(to: Element): void;
+  attach(to: TributeElement): void;
 
-  detach(to: Element): void;
+  detach(to: TributeElement): void;
 
   showMenuForCollection(input: Element, collectionIndex?: number): void;
 }

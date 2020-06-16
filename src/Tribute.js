@@ -7,12 +7,14 @@ import TributeSearch from "./TributeSearch";
 class Tribute {
   constructor({
     values = null,
+    loadingItemTemplate = null,
     iframe = null,
     selectClass = "highlight",
     containerClass = "tribute-container",
     itemClass = "",
     trigger = "@",
     autocompleteMode = false,
+    autocompleteSeparator = null,
     selectTemplate = null,
     menuItemTemplate = null,
     lookup = "key",
@@ -30,6 +32,7 @@ class Tribute {
     menuShowMinLength = 0
   }) {
     this.autocompleteMode = autocompleteMode;
+    this.autocompleteSeparator = autocompleteSeparator;
     this.menuSelected = 0;
     this.current = {};
     this.inputEvent = false;
@@ -101,6 +104,9 @@ class Tribute {
           // array of objects or a function returning an array of objects
           values: values,
 
+          // useful for when values is an async function
+          loadingItemTemplate: loadingItemTemplate,
+
           requireLeadingSpace: requireLeadingSpace,
 
           searchOpts: searchOpts,
@@ -148,6 +154,7 @@ class Tribute {
           lookup: item.lookup || lookup,
           fillAttr: item.fillAttr || fillAttr,
           values: item.values,
+          loadingItemTemplate: item.loadingItemTemplate,
           requireLeadingSpace: item.requireLeadingSpace,
           searchOpts: item.searchOpts || searchOpts,
           menuItemLimit: item.menuItemLimit || menuItemLimit,
@@ -369,6 +376,11 @@ class Tribute {
     };
 
     if (typeof this.current.collection.values === "function") {
+      if (this.current.collection.loadingItemTemplate) {
+        this.menu.querySelector("ul").innerHTML = this.current.collection.loadingItemTemplate;
+        this.range.positionMenuAtCaret(scrollTo);
+      }
+
       this.current.collection.values(this.current.mentionText, processValues);
     } else {
       processValues(this.current.collection.values);

@@ -828,7 +828,14 @@
       value: function getLastWordInText(text) {
         text = text.replace(/\u00A0/g, ' '); // https://stackoverflow.com/questions/29850407/how-do-i-replace-unicode-character-u00a0-with-a-space-in-javascript
 
-        var wordsArray = text.split(/\s+/);
+        var wordsArray;
+
+        if (this.tribute.autocompleteSeparator) {
+          wordsArray = text.split(this.tribute.autocompleteSeparator);
+        } else {
+          wordsArray = text.split(/\s+/);
+        }
+
         var worldsCount = wordsArray.length - 1;
         return wordsArray[worldsCount].trim();
       }
@@ -1224,7 +1231,11 @@
     }, {
       key: "traverse",
       value: function traverse(string, pattern, stringIndex, patternIndex, patternCache) {
-        // if the pattern search at end
+        if (this.tribute.autocompleteSeparator) {
+          // if the pattern search at end
+          pattern = pattern.split(this.tribute.autocompleteSeparator).splice(-1)[0];
+        }
+
         if (pattern.length === patternIndex) {
           // calculate score and copy the cache containing the indices where it's found
           return {
@@ -1334,6 +1345,8 @@
 
       var _ref$values = _ref.values,
           values = _ref$values === void 0 ? null : _ref$values,
+          _ref$loadingItemTempl = _ref.loadingItemTemplate,
+          loadingItemTemplate = _ref$loadingItemTempl === void 0 ? null : _ref$loadingItemTempl,
           _ref$iframe = _ref.iframe,
           iframe = _ref$iframe === void 0 ? null : _ref$iframe,
           _ref$selectClass = _ref.selectClass,
@@ -1346,6 +1359,8 @@
           trigger = _ref$trigger === void 0 ? "@" : _ref$trigger,
           _ref$autocompleteMode = _ref.autocompleteMode,
           autocompleteMode = _ref$autocompleteMode === void 0 ? false : _ref$autocompleteMode,
+          _ref$autocompleteSepa = _ref.autocompleteSeparator,
+          autocompleteSeparator = _ref$autocompleteSepa === void 0 ? null : _ref$autocompleteSepa,
           _ref$selectTemplate = _ref.selectTemplate,
           selectTemplate = _ref$selectTemplate === void 0 ? null : _ref$selectTemplate,
           _ref$menuItemTemplate = _ref.menuItemTemplate,
@@ -1380,6 +1395,7 @@
       _classCallCheck(this, Tribute);
 
       this.autocompleteMode = autocompleteMode;
+      this.autocompleteSeparator = autocompleteSeparator;
       this.menuSelected = 0;
       this.current = {};
       this.inputEvent = false;
@@ -1433,6 +1449,8 @@
           fillAttr: fillAttr,
           // array of objects or a function returning an array of objects
           values: values,
+          // useful for when values is an async function
+          loadingItemTemplate: loadingItemTemplate,
           requireLeadingSpace: requireLeadingSpace,
           searchOpts: searchOpts,
           menuItemLimit: menuItemLimit,
@@ -1467,6 +1485,7 @@
             lookup: item.lookup || lookup,
             fillAttr: item.fillAttr || fillAttr,
             values: item.values,
+            loadingItemTemplate: item.loadingItemTemplate,
             requireLeadingSpace: item.requireLeadingSpace,
             searchOpts: item.searchOpts || searchOpts,
             menuItemLimit: item.menuItemLimit || menuItemLimit,
@@ -1652,6 +1671,11 @@
         };
 
         if (typeof this.current.collection.values === "function") {
+          if (this.current.collection.loadingItemTemplate) {
+            this.menu.querySelector("ul").innerHTML = this.current.collection.loadingItemTemplate;
+            this.range.positionMenuAtCaret(scrollTo);
+          }
+
           this.current.collection.values(this.current.mentionText, processValues);
         } else {
           processValues(this.current.collection.values);

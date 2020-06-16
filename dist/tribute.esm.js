@@ -748,9 +748,14 @@ class TributeRange {
 
     getLastWordInText(text) {
         text = text.replace(/\u00A0/g, ' '); // https://stackoverflow.com/questions/29850407/how-do-i-replace-unicode-character-u00a0-with-a-space-in-javascript
-        let wordsArray = text.split(/\s+/);
-        let worldsCount = wordsArray.length - 1;
-        return wordsArray[worldsCount].trim()
+        var wordsArray;
+        if (this.tribute.autocompleteSeparator) {
+            wordsArray = text.split(this.tribute.autocompleteSeparator);
+        } else {
+            wordsArray = text.split(/\s+/);
+        }
+        var worldsCount = wordsArray.length - 1;
+        return wordsArray[worldsCount].trim();
     }
 
     getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces, isAutocomplete) {
@@ -1177,7 +1182,11 @@ class TributeSearch {
     }
 
     traverse(string, pattern, stringIndex, patternIndex, patternCache) {
-        // if the pattern search at end
+        if (this.tribute.autocompleteSeparator) {
+            // if the pattern search at end
+            pattern = pattern.split(this.tribute.autocompleteSeparator).splice(-1)[0];
+        }
+
         if (pattern.length === patternIndex) {
 
             // calculate score and copy the cache containing the indices where it's found
@@ -1286,12 +1295,14 @@ class TributeSearch {
 class Tribute {
   constructor({
     values = null,
+    loadingItemTemplate = null,
     iframe = null,
     selectClass = "highlight",
     containerClass = "tribute-container",
     itemClass = "",
     trigger = "@",
     autocompleteMode = false,
+    autocompleteSeparator = null,
     selectTemplate = null,
     menuItemTemplate = null,
     lookup = "key",
@@ -1309,6 +1320,7 @@ class Tribute {
     menuShowMinLength = 0
   }) {
     this.autocompleteMode = autocompleteMode;
+    this.autocompleteSeparator = autocompleteSeparator;
     this.menuSelected = 0;
     this.current = {};
     this.inputEvent = false;
@@ -1380,6 +1392,9 @@ class Tribute {
           // array of objects or a function returning an array of objects
           values: values,
 
+          // useful for when values is an async function
+          loadingItemTemplate: loadingItemTemplate,
+
           requireLeadingSpace: requireLeadingSpace,
 
           searchOpts: searchOpts,
@@ -1427,6 +1442,7 @@ class Tribute {
           lookup: item.lookup || lookup,
           fillAttr: item.fillAttr || fillAttr,
           values: item.values,
+          loadingItemTemplate: item.loadingItemTemplate,
           requireLeadingSpace: item.requireLeadingSpace,
           searchOpts: item.searchOpts || searchOpts,
           menuItemLimit: item.menuItemLimit || menuItemLimit,
@@ -1648,6 +1664,11 @@ class Tribute {
     };
 
     if (typeof this.current.collection.values === "function") {
+      if (this.current.collection.loadingItemTemplate) {
+        this.menu.querySelector("ul").innerHTML = this.current.collection.loadingItemTemplate;
+        this.range.positionMenuAtCaret(scrollTo);
+      }
+
       this.current.collection.values(this.current.mentionText, processValues);
     } else {
       processValues(this.current.collection.values);
