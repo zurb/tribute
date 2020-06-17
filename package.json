@@ -37,6 +37,15 @@
     "type": "git",
     "url": "git://github.com/zurb/tribute.git"
   },
+  "files": [
+    "dist",
+    "tributejs.d.ts",
+    "README.md",
+    "LICENSE",
+    "package.json",
+    "package-lock.json",
+    "yarn.lock"
+  ],
   "scripts": {
     "build": "rollup -c",
     "start": "rollup -c -w",

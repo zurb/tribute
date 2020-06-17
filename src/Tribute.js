@@ -17,6 +17,7 @@ class Tribute {
     autocompleteSeparator = null,
     selectTemplate = null,
     menuItemTemplate = null,
+    menuItemRender = null,
     lookup = "key",
     fillAttr = "value",
     collection = null,
@@ -29,7 +30,10 @@ class Tribute {
     spaceSelectsMatch = false,
     searchOpts = {},
     menuItemLimit = null,
-    menuShowMinLength = 0
+    menuShowMinLength = 0,
+    beforeHideMenu = null,
+    beforeShowMenu = null,
+    extendedProps = {}
   }) {
     this.autocompleteMode = autocompleteMode;
     this.autocompleteSeparator = autocompleteSeparator;
@@ -76,6 +80,13 @@ class Tribute {
           menuItemTemplate: (
             menuItemTemplate || Tribute.defaultMenuItemTemplate
           ).bind(this),
+
+          // template render for displaying item in menu. If is defined, menuItemTemplate not will be called
+          menuItemRender: menuItemRender ? menuItemRender.bind(this) : undefined,
+
+          beforeShowMenu: beforeShowMenu ? beforeShowMenu.bind(this) : undefined,
+          beforeHideMenu: beforeHideMenu ? beforeHideMenu.bind(this) : undefined,
+          extendedProps: extendedProps || {},
 
           // function called when menu is empty, disables hiding of menu.
           noMatchTemplate: (t => {
@@ -128,6 +139,10 @@ class Tribute {
           selectClass: item.selectClass || selectClass,
           containerClass: item.containerClass || containerClass,
           itemClass: item.itemClass || itemClass,
+          menuItemRender: item.menuItemRender || menuItemRender,
+          beforeShowMenu: item.beforeShowMenu || beforeShowMenu,
+          beforeHideMenu: item.beforeHideMenu || beforeHideMenu,
+          extendedProps: item.extendedProps || extendedProps,
           selectTemplate: (
             item.selectTemplate || Tribute.defaultSelectTemplate
           ).bind(this),
@@ -353,6 +368,10 @@ class Tribute {
         return;
       }
 
+      if (this.current.collection.beforeShowMenu) {
+        this.current.collection.beforeShowMenu(ul, this.current.collection, this);
+      }
+
       ul.innerHTML = "";
       let fragment = this.range.getDocument().createDocumentFragment();
 
@@ -369,7 +388,11 @@ class Tribute {
         if (this.menuSelected === index) {
           li.classList.add(this.current.collection.selectClass);
         }
-        li.innerHTML = this.current.collection.menuItemTemplate(item);
+        if (this.current.collection.menuItemRender) {
+          this.current.collection.menuItemRender(li, item, this.current.collection, this);
+        } else {
+          li.innerHTML = this.current.collection.menuItemTemplate(item, this.current.collection, this);
+        }
         fragment.appendChild(li);
       });
       ul.appendChild(fragment);
@@ -464,6 +487,9 @@ class Tribute {
 
   hideMenu() {
     if (this.menu) {
+      if (this.current && this.current.collection && this.current.collection.beforeHideMenu) {
+        this.current.collection.beforeHideMenu(this.menu, this.current.collection, this);
+      }
       this.menu.style.cssText = "display: none;";
       this.isActive = false;
       this.menuSelected = 0;

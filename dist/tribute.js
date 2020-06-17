@@ -66,7 +66,7 @@
     if (typeof o === "string") return _arrayLikeToArray(o, minLen);
     var n = Object.prototype.toString.call(o).slice(8, -1);
     if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Map" || n === "Set") return Array.from(o);
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
   }
 
@@ -1365,6 +1365,8 @@
           selectTemplate = _ref$selectTemplate === void 0 ? null : _ref$selectTemplate,
           _ref$menuItemTemplate = _ref.menuItemTemplate,
           menuItemTemplate = _ref$menuItemTemplate === void 0 ? null : _ref$menuItemTemplate,
+          _ref$menuItemRender = _ref.menuItemRender,
+          menuItemRender = _ref$menuItemRender === void 0 ? null : _ref$menuItemRender,
           _ref$lookup = _ref.lookup,
           lookup = _ref$lookup === void 0 ? "key" : _ref$lookup,
           _ref$fillAttr = _ref.fillAttr,
@@ -1390,7 +1392,13 @@
           _ref$menuItemLimit = _ref.menuItemLimit,
           menuItemLimit = _ref$menuItemLimit === void 0 ? null : _ref$menuItemLimit,
           _ref$menuShowMinLengt = _ref.menuShowMinLength,
-          menuShowMinLength = _ref$menuShowMinLengt === void 0 ? 0 : _ref$menuShowMinLengt;
+          menuShowMinLength = _ref$menuShowMinLengt === void 0 ? 0 : _ref$menuShowMinLengt,
+          _ref$beforeHideMenu = _ref.beforeHideMenu,
+          beforeHideMenu = _ref$beforeHideMenu === void 0 ? null : _ref$beforeHideMenu,
+          _ref$beforeShowMenu = _ref.beforeShowMenu,
+          beforeShowMenu = _ref$beforeShowMenu === void 0 ? null : _ref$beforeShowMenu,
+          _ref$extendedProps = _ref.extendedProps,
+          extendedProps = _ref$extendedProps === void 0 ? {} : _ref$extendedProps;
 
       _classCallCheck(this, Tribute);
 
@@ -1428,6 +1436,11 @@
           selectTemplate: (selectTemplate || Tribute.defaultSelectTemplate).bind(this),
           // function called that returns content for an item
           menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
+          // template render for displaying item in menu. If is defined, menuItemTemplate not will be called
+          menuItemRender: menuItemRender ? menuItemRender.bind(this) : undefined,
+          beforeShowMenu: beforeShowMenu ? beforeShowMenu.bind(this) : undefined,
+          beforeHideMenu: beforeHideMenu ? beforeHideMenu.bind(this) : undefined,
+          extendedProps: extendedProps || {},
           // function called when menu is empty, disables hiding of menu.
           noMatchTemplate: function (t) {
             if (typeof t === "string") {
@@ -1465,6 +1478,10 @@
             selectClass: item.selectClass || selectClass,
             containerClass: item.containerClass || containerClass,
             itemClass: item.itemClass || itemClass,
+            menuItemRender: item.menuItemRender || menuItemRender,
+            beforeShowMenu: item.beforeShowMenu || beforeShowMenu,
+            beforeHideMenu: item.beforeHideMenu || beforeHideMenu,
+            extendedProps: item.extendedProps || extendedProps,
             selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(_this),
             menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(_this),
             // function called when menu is empty, disables hiding of menu.
@@ -1640,6 +1657,10 @@
             return;
           }
 
+          if (_this2.current.collection.beforeShowMenu) {
+            _this2.current.collection.beforeShowMenu(ul, _this2.current.collection, _this2);
+          }
+
           ul.innerHTML = "";
 
           var fragment = _this2.range.getDocument().createDocumentFragment();
@@ -1664,7 +1685,12 @@
               li.classList.add(_this2.current.collection.selectClass);
             }
 
-            li.innerHTML = _this2.current.collection.menuItemTemplate(item);
+            if (_this2.current.collection.menuItemRender) {
+              _this2.current.collection.menuItemRender(li, item, _this2.current.collection, _this2);
+            } else {
+              li.innerHTML = _this2.current.collection.menuItemTemplate(item, _this2.current.collection, _this2);
+            }
+
             fragment.appendChild(li);
           });
           ul.appendChild(fragment);
@@ -1755,6 +1781,10 @@
       key: "hideMenu",
       value: function hideMenu() {
         if (this.menu) {
+          if (this.current && this.current.collection && this.current.collection.beforeHideMenu) {
+            this.current.collection.beforeHideMenu(this.menu, this.current.collection, this);
+          }
+
           this.menu.style.cssText = "display: none;";
           this.isActive = false;
           this.menuSelected = 0;

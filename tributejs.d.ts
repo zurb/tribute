@@ -34,7 +34,13 @@ export type TributeCollection<T extends {}> = {
   selectTemplate?: (item: TributeItem<T>) => string;
 
   // template for displaying item in menu
-  menuItemTemplate?: (item: TributeItem<T>) => string;
+  menuItemTemplate?: (item: TributeItem<T>, collection: TributeCollection<T>, instance: Tribute<T>) => string;
+
+  // template render for displaying item in menu. If is defined, menuItemTemplate not will be called
+  menuItemRender?: (el: HTMLLIElement, item: TributeItem<T>, collection: TributeCollection<T>, instance: Tribute<T>) => void;
+
+  beforeShowMenu?: (el: HTMLUListElement, collection: TributeCollection<T>, instance: Tribute<T>) => void;
+  beforeHideMenu?: (el: HTMLUListElement, collection: TributeCollection<T>, instance: Tribute<T>) => void;
 
   // template for when no match is found (optional),
   // If no template is provided, menu is hidden.
@@ -50,7 +56,7 @@ export type TributeCollection<T extends {}> = {
   fillAttr?: string;
 
   // array of objects to match
-  values: Array<T> | ((text: string, cb: (result: Array<T>) => void) => void);
+  values?: Array<T> | ((text: string, cb: (result: Array<T>) => void) => void);
 
   // When your values function is async, an optional loading template to show
   loadingItemTemplate?: string;
@@ -79,6 +85,10 @@ export type TributeCollection<T extends {}> = {
 
   // require X number of characters to be entered before menu shows
   menuShowMinLength?: number;
+
+  extendedProps?: {
+    [k: string]: any
+  }
 };
 
 export type TributeOptions<T> =
@@ -88,7 +98,7 @@ export type TributeOptions<T> =
       collection: Array<TributeCollection<{ [key: string]: any }>>;
     };
 
-type TributeElement = Element | NodeList | HTMLCollection | Array;
+type TributeElement = Element | NodeList | HTMLCollection | Array<{ [key: string]: any }>;
 
 export default class Tribute<T extends {}> {
   constructor(options: TributeOptions<T>);
