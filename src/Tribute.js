@@ -301,6 +301,10 @@ class Tribute {
     }
     this.currentMentionTextSnapshot = this.current.mentionText;
 
+    const showMenuEvent = new CustomEvent('tribute-show-menu', { detail: this.current.collection, bubbles: true });
+    this.current.element.dispatchEvent(showMenuEvent)
+
+
     // create the menu if it doesn't exist.
     if (!this.menu) {
       this.menu = this.createMenu(this.current.collection.containerClass);
@@ -487,6 +491,9 @@ class Tribute {
 
   hideMenu() {
     if (this.menu) {
+      if (this.current && this.current.element) {
+        this.current.element.dispatchEvent(new CustomEvent('tribute-hide-menu', { detail: this.current.collection, bubbles: true }));
+      }
       if (this.current && this.current.collection && this.current.collection.beforeHideMenu) {
         this.current.collection.beforeHideMenu(this.menu, this.current.collection, this);
       }

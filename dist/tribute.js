@@ -1595,7 +1595,12 @@
           return;
         }
 
-        this.currentMentionTextSnapshot = this.current.mentionText; // create the menu if it doesn't exist.
+        this.currentMentionTextSnapshot = this.current.mentionText;
+        var showMenuEvent = new CustomEvent('tribute-show-menu', {
+          detail: this.current.collection,
+          bubbles: true
+        });
+        this.current.element.dispatchEvent(showMenuEvent); // create the menu if it doesn't exist.
 
         if (!this.menu) {
           this.menu = this.createMenu(this.current.collection.containerClass);
@@ -1781,6 +1786,13 @@
       key: "hideMenu",
       value: function hideMenu() {
         if (this.menu) {
+          if (this.current && this.current.element) {
+            this.current.element.dispatchEvent(new CustomEvent('tribute-hide-menu', {
+              detail: this.current.collection,
+              bubbles: true
+            }));
+          }
+
           if (this.current && this.current.collection && this.current.collection.beforeHideMenu) {
             this.current.collection.beforeHideMenu(this.menu, this.current.collection, this);
           }
