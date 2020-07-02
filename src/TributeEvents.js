@@ -88,7 +88,7 @@ class TributeEvents {
       while (li.nodeName.toLowerCase() !== "li") {
         li = li.parentNode;
         if (!li || li === tribute.menu) {
-          throw new Error("cannot find the <li> container for the click");
+          return;
         }
       }
 
@@ -98,8 +98,9 @@ class TributeEvents {
       tribute.hideMenu();
 
       // TODO: should fire with externalTrigger and target is outside of menu
-    } else if (tribute.current.element && !tribute.current.externalTrigger) {
+    } else if (tribute.current.externalTrigger) {
       tribute.current.externalTrigger = false;
+    } else if (tribute.current.element && !tribute.current.externalTrigger) {
       setTimeout(() => tribute.hideMenu());
     }
   }

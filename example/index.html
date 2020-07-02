@@ -59,8 +59,8 @@
           ></p>
 
           <h5>
-            Tribute with a local collection (on <code>@</code>) and a remote one
-            (on <code>#</code>):
+            Tribute with a local collection (on <a id="activateAt">@</a>) and a remote one
+            (on <a id="activateHash">#</a>):
           </h5>
           <p
             id="testMultiple"
@@ -280,13 +280,35 @@
               ]), 1000)
             },
             lookup: "name",
-
             fillAttr: "name"
           }
-        ]
+        ],
+        replaceTextSuffix:''
       });
 
       tributeMultipleTriggers.attach(document.getElementById("testMultiple"));
+
+      document.getElementById("activateAt").addEventListener("mousedown", function(e) {
+        e.preventDefault();
+        var input = document.getElementById("testMultiple");
+
+        if (tributeMultipleTriggers.isActive) {
+          tributeMultipleTriggers.replaceText('');
+        }
+
+        tributeMultipleTriggers.showMenuForCollection(input,0);
+      });
+
+      document.getElementById("activateHash").addEventListener("mousedown", function(e) {
+        e.preventDefault();
+        var input = document.getElementById("testMultiple");
+
+        if (tributeMultipleTriggers.isActive) {
+          tributeMultipleTriggers.replaceText('');
+        }
+
+        tributeMultipleTriggers.showMenuForCollection(input,1);
+      });
 
       document
         .getElementById("test")

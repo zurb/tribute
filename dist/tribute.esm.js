@@ -130,7 +130,7 @@ class TributeEvents {
       while (li.nodeName.toLowerCase() !== "li") {
         li = li.parentNode;
         if (!li || li === tribute.menu) {
-          throw new Error("cannot find the <li> container for the click");
+          return;
         }
       }
 
@@ -140,8 +140,9 @@ class TributeEvents {
       tribute.hideMenu();
 
       // TODO: should fire with externalTrigger and target is outside of menu
-    } else if (tribute.current.element && !tribute.current.externalTrigger) {
+    } else if (tribute.current.externalTrigger) {
       tribute.current.externalTrigger = false;
+    } else if (tribute.current.element && !tribute.current.externalTrigger) {
       setTimeout(() => tribute.hideMenu());
     }
   }
@@ -1528,14 +1529,6 @@ class Tribute {
   }
 
   showMenuFor(element, scrollTo) {
-    // Only proceed if menu isn't already shown for the current element & mentionText
-    if (
-      this.isActive &&
-      this.current.element === element &&
-      this.current.mentionText === this.currentMentionTextSnapshot
-    ) {
-      return;
-    }
     this.currentMentionTextSnapshot = this.current.mentionText;
 
     // create the menu if it doesn't exist.
@@ -1653,6 +1646,7 @@ class Tribute {
   }
 
   showMenuForCollection(element, collectionIndex) {
+
     if (element !== document.activeElement) {
       this.placeCaretAtEnd(element);
     }

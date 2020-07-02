@@ -1,5 +1,3 @@
-
-(function(l, r) { if (l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (window.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.head.appendChild(r) })(window.document);
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -195,15 +193,16 @@
             li = li.parentNode;
 
             if (!li || li === tribute.menu) {
-              throw new Error("cannot find the <li> container for the click");
+              return;
             }
           }
 
           if (li.getAttribute("data-disabled") === "true") return;
           tribute.selectItemAtIndex(li.getAttribute("data-index"), event);
           tribute.hideMenu(); // TODO: should fire with externalTrigger and target is outside of menu
-        } else if (tribute.current.element && !tribute.current.externalTrigger) {
+        } else if (tribute.current.externalTrigger) {
           tribute.current.externalTrigger = false;
+        } else if (tribute.current.element && !tribute.current.externalTrigger) {
           setTimeout(function () {
             return tribute.hideMenu();
           });
@@ -1543,11 +1542,6 @@
       key: "showMenuFor",
       value: function showMenuFor(element, scrollTo) {
         var _this2 = this;
-
-        // Only proceed if menu isn't already shown for the current element & mentionText
-        if (this.isActive && this.current.element === element && this.current.mentionText === this.currentMentionTextSnapshot) {
-          return;
-        }
 
         this.currentMentionTextSnapshot = this.current.mentionText; // create the menu if it doesn't exist.
 
