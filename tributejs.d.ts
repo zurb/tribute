@@ -88,7 +88,8 @@ export type TributeOptions<T> =
       collection: Array<TributeCollection<{ [key: string]: any }>>;
     };
 
-type TributeElement = Element | NodeList | HTMLCollection | Array;
+// TODO: replace 'any' with a more suitable type
+type TributeElement = Element | NodeList | HTMLCollection | Array<any>;
 
 export default class Tribute<T extends {}> {
   constructor(options: TributeOptions<T>);
