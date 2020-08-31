@@ -1394,9 +1394,9 @@
           _ref$menuShowMinLengt = _ref.menuShowMinLength,
           menuShowMinLength = _ref$menuShowMinLengt === void 0 ? 0 : _ref$menuShowMinLengt,
           _ref$beforeHideMenu = _ref.beforeHideMenu,
-          beforeHideMenu = _ref$beforeHideMenu === void 0 ? null : _ref$beforeHideMenu,
+          _beforeHideMenu = _ref$beforeHideMenu === void 0 ? null : _ref$beforeHideMenu,
           _ref$beforeShowMenu = _ref.beforeShowMenu,
-          beforeShowMenu = _ref$beforeShowMenu === void 0 ? null : _ref$beforeShowMenu,
+          _beforeShowMenu = _ref$beforeShowMenu === void 0 ? null : _ref$beforeShowMenu,
           _ref$extendedProps = _ref.extendedProps,
           extendedProps = _ref$extendedProps === void 0 ? {} : _ref$extendedProps;
 
@@ -1438,8 +1438,8 @@
           menuItemTemplate: (menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(this),
           // template render for displaying item in menu. If is defined, menuItemTemplate not will be called
           menuItemRender: menuItemRender ? menuItemRender.bind(this) : undefined,
-          beforeShowMenu: beforeShowMenu ? beforeShowMenu.bind(this) : undefined,
-          beforeHideMenu: beforeHideMenu ? beforeHideMenu.bind(this) : undefined,
+          beforeShowMenu: _beforeShowMenu ? _beforeShowMenu.bind(this) : undefined,
+          beforeHideMenu: _beforeHideMenu ? _beforeHideMenu.bind(this) : undefined,
           extendedProps: extendedProps || {},
           // function called when menu is empty, disables hiding of menu.
           noMatchTemplate: function (t) {
@@ -1479,8 +1479,14 @@
             containerClass: item.containerClass || containerClass,
             itemClass: item.itemClass || itemClass,
             menuItemRender: item.menuItemRender || menuItemRender,
-            beforeShowMenu: item.beforeShowMenu || beforeShowMenu,
-            beforeHideMenu: item.beforeHideMenu || beforeHideMenu,
+            beforeShowMenu: function beforeShowMenu() {
+              item.beforeShowMenu && item.beforeShowMenu.apply(item, arguments);
+              _beforeShowMenu && _beforeShowMenu.apply(void 0, arguments);
+            },
+            beforeHideMenu: function beforeHideMenu() {
+              item.beforeHideMenu && item.beforeHideMenu.apply(item, arguments);
+              _beforeHideMenu && _beforeHideMenu.apply(void 0, arguments);
+            },
             extendedProps: item.extendedProps || extendedProps,
             selectTemplate: (item.selectTemplate || Tribute.defaultSelectTemplate).bind(_this),
             menuItemTemplate: (item.menuItemTemplate || Tribute.defaultMenuItemTemplate).bind(_this),

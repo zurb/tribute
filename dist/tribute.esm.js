@@ -1428,8 +1428,14 @@ class Tribute {
           containerClass: item.containerClass || containerClass,
           itemClass: item.itemClass || itemClass,
           menuItemRender: item.menuItemRender || menuItemRender,
-          beforeShowMenu: item.beforeShowMenu || beforeShowMenu,
-          beforeHideMenu: item.beforeHideMenu || beforeHideMenu,
+          beforeShowMenu(...args) {
+            item.beforeShowMenu && item.beforeShowMenu(...args);
+            beforeShowMenu && beforeShowMenu(...args);
+          },
+          beforeHideMenu(...args) {
+            item.beforeHideMenu && item.beforeHideMenu(...args);
+            beforeHideMenu && beforeHideMenu(...args);
+          },
           extendedProps: item.extendedProps || extendedProps,
           selectTemplate: (
             item.selectTemplate || Tribute.defaultSelectTemplate
