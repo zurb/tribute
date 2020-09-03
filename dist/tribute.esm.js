@@ -1595,10 +1595,6 @@ class Tribute {
     }
     this.currentMentionTextSnapshot = this.current.mentionText;
 
-    const showMenuEvent = new CustomEvent('tribute-show-menu', { detail: this.current.collection, bubbles: true });
-    this.current.element.dispatchEvent(showMenuEvent);
-
-
     // create the menu if it doesn't exist.
     if (!this.menu) {
       this.menu = this.createMenu(this.current.collection.containerClass);
@@ -1694,6 +1690,9 @@ class Tribute {
         fragment.appendChild(li);
       });
       ul.appendChild(fragment);
+
+      const showMenuEvent = new CustomEvent('tribute-show-menu', { detail: this.current.collection, bubbles: true });
+      this.current.element.dispatchEvent(showMenuEvent);
     };
 
     if (typeof this.current.collection.values === "function") {

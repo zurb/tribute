@@ -1601,12 +1601,7 @@
           return;
         }
 
-        this.currentMentionTextSnapshot = this.current.mentionText;
-        var showMenuEvent = new CustomEvent('tribute-show-menu', {
-          detail: this.current.collection,
-          bubbles: true
-        });
-        this.current.element.dispatchEvent(showMenuEvent); // create the menu if it doesn't exist.
+        this.currentMentionTextSnapshot = this.current.mentionText; // create the menu if it doesn't exist.
 
         if (!this.menu) {
           this.menu = this.createMenu(this.current.collection.containerClass);
@@ -1705,6 +1700,12 @@
             fragment.appendChild(li);
           });
           ul.appendChild(fragment);
+          var showMenuEvent = new CustomEvent('tribute-show-menu', {
+            detail: _this2.current.collection,
+            bubbles: true
+          });
+
+          _this2.current.element.dispatchEvent(showMenuEvent);
         };
 
         if (typeof this.current.collection.values === "function") {
