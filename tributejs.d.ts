@@ -94,7 +94,7 @@ export type TributeOptions<T> =
       collection: Array<TributeCollection<{ [key: string]: any }>>;
     };
 
-type TributeElement = Element | NodeList | HTMLCollection | Array;
+type TributeElement = Element | NodeList | HTMLCollection | Array<Element>;
 
 export default class Tribute<T extends {}> {
   constructor(options: TributeOptions<T>);
