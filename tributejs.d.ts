@@ -71,6 +71,9 @@ export type TributeCollection<T extends {}> = {
   //specify whether to put Tribute in autocomplete mode
   autocompleteMode?: boolean;
 
+  // specify a regex to define after which characters the autocomplete option should open
+  autocompleteSeparator?: RegExp;
+
   // Customize the elements used to wrap matched strings within the results list
   searchOpts?: TributeSearchOpts;
 
