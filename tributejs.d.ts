@@ -71,6 +71,9 @@ export type TributeCollection<T extends {}> = {
   //specify whether to put Tribute in autocomplete mode
   autocompleteMode?: boolean;
 
+  // specify a regex to define after which characters the autocomplete option should open
+  autocompleteSeparator?: RegExp;
+
   // Customize the elements used to wrap matched strings within the results list
   searchOpts?: TributeSearchOpts;
 
@@ -79,6 +82,9 @@ export type TributeCollection<T extends {}> = {
 
   // require X number of characters to be entered before menu shows
   menuShowMinLength?: number;
+
+  // specify if the current match should be selected when the spacebar is hit
+  spaceSelectsMatch?: boolean;
 };
 
 export type TributeOptions<T> =
@@ -88,7 +94,7 @@ export type TributeOptions<T> =
       collection: Array<TributeCollection<{ [key: string]: any }>>;
     };
 
-type TributeElement = Element | NodeList | HTMLCollection | Array;
+type TributeElement = Element | NodeList | HTMLCollection | Array<Element>;
 
 export default class Tribute<T extends {}> {
   constructor(options: TributeOptions<T>);
