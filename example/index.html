@@ -276,6 +276,19 @@
           console.log("Matched item:", e.detail.item);
         });
 
+
+      document
+        .getElementById("test")
+        .addEventListener("tribute-show-menu", function(e) {
+          console.log("[show-menu] Original Event:", e.detail);
+        });
+      document
+        .getElementById("test")
+        .addEventListener("tribute-hide-menu", function(e) {
+          console.log("[hide-menu] Original Event:", e.detail);
+        });
+
+
       var noMatchRunOnce = false;
       document
         .getElementById("test")
