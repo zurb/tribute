@@ -333,7 +333,7 @@ class TributeRange {
                 (
                     mostRecentTriggerCharPos === 0 ||
                     !requireLeadingSpace ||
-                    /\s/g.test(
+                    /\s/.test(
                         effectiveRange.substring(
                             mostRecentTriggerCharPos - 1,
                             mostRecentTriggerCharPos)
