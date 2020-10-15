@@ -273,15 +273,14 @@ class TributeRange {
     }
 
     getLastWordInText(text) {
-        text = text.replace(/\u00A0/g, ' '); // https://stackoverflow.com/questions/29850407/how-do-i-replace-unicode-character-u00a0-with-a-space-in-javascript
         var wordsArray;
         if (this.tribute.autocompleteSeparator) {
             wordsArray = text.split(this.tribute.autocompleteSeparator);
         } else {
             wordsArray = text.split(/\s+/);
         }
-        var worldsCount = wordsArray.length - 1;
-        return wordsArray[worldsCount].trim();
+        var wordsCount = wordsArray.length - 1;
+        return wordsArray[wordsCount];
     }
 
     getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces, isAutocomplete) {
