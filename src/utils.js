@@ -21,7 +21,7 @@ if (!Array.prototype.find) {
     }
 }
 
-if (window && typeof window.CustomEvent !== "function") {
+if (typeof window !== 'undefined' && typeof window.CustomEvent !== "function") {
   function CustomEvent(event, params) {
     params = params || {
       bubbles: false,
