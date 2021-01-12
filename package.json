@@ -10,7 +10,7 @@
     "@babel/core": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@rollup/plugin-commonjs": "^11.0.2",
-    "@rollup/plugin-multi-entry": "^3.0.0",
+    "@rollup/plugin-multi-entry": "^4.0.0",
     "@rollup/plugin-node-resolve": "^7.1.1",
     "babel-plugin-add-module-exports": "^1.0.2",
     "babelify": "^10.0.0",
