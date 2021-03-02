@@ -400,19 +400,19 @@ class TributeMenuEvents {
     this.menuContainerScrollEvent = this.debounce(
       () => {
         if (this.tribute.isActive) {
-          this.tribute.showMenuFor(this.tribute.current.element, false);
+          this.tribute.hideMenu();
         }
       },
-      300,
+      10,
       false
     );
     this.windowResizeEvent = this.debounce(
       () => {
         if (this.tribute.isActive) {
-          this.tribute.range.positionMenuAtCaret(true);
+          this.tribute.hideMenu();
         }
       },
-      300,
+      10,
       false
     );
 
@@ -519,7 +519,9 @@ class TributeRange {
                                      left: ${coordinates.left}px;
                                      right: ${coordinates.right}px;
                                      bottom: ${coordinates.bottom}px;
-                                     position: absolute;
+                                     max-height: ${coordinates.maxHeight || 500}px;
+                                     max-width: ${coordinates.maxWidth || 300}px;
+                                     position: ${coordinates.position || 'absolute'};
                                      display: block;`;
 
             if (coordinates.left === 'auto') {
@@ -531,21 +533,6 @@ class TributeRange {
             }
 
             if (scrollTo) this.scrollIntoView();
-
-            window.setTimeout(() => {
-                let menuDimensions = {
-                   width: this.tribute.menu.offsetWidth,
-                   height: this.tribute.menu.offsetHeight
-                };
-                let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-
-                let menuIsOffScreenHorizontally = window.innerWidth > menuDimensions.width && (menuIsOffScreen.left || menuIsOffScreen.right);
-                let menuIsOffScreenVertically = window.innerHeight > menuDimensions.height && (menuIsOffScreen.top || menuIsOffScreen.bottom);
-                if (menuIsOffScreenHorizontally || menuIsOffScreenVertically) {
-                    this.tribute.menu.style.cssText = 'display: none';
-                    this.positionMenuAtCaret(scrollTo);
-                }
-            }, 0);
 
         } else {
             this.tribute.menu.style.cssText = 'display: none';
@@ -909,7 +896,8 @@ class TributeRange {
                                  left: 0px;
                                  position: fixed;
                                  display: block;
-                                 visibility; hidden;`;
+                                 visibility; hidden;
+                                 max-height:500px;`;
        dimensions.width = this.tribute.menu.offsetWidth;
        dimensions.height = this.tribute.menu.offsetHeight;
 
@@ -921,15 +909,13 @@ class TributeRange {
     getTextAreaOrInputUnderlinePosition(element, position, flipped) {
         let properties = ['direction', 'boxSizing', 'width', 'height', 'overflowX',
             'overflowY', 'borderTopWidth', 'borderRightWidth',
-            'borderBottomWidth', 'borderLeftWidth', 'paddingTop',
+            'borderBottomWidth', 'borderLeftWidth', 'borderStyle', 'paddingTop',
             'paddingRight', 'paddingBottom', 'paddingLeft',
             'fontStyle', 'fontVariant', 'fontWeight', 'fontStretch',
             'fontSize', 'fontSizeAdjust', 'lineHeight', 'fontFamily',
             'textAlign', 'textTransform', 'textIndent',
             'textDecoration', 'letterSpacing', 'wordSpacing'
         ];
-
-        let isFirefox = (window.mozInnerScreenX !== null);
 
         let div = this.getDocument().createElement('div');
         div.id = 'input-textarea-caret-position-mirror-div';
@@ -943,7 +929,6 @@ class TributeRange {
             style.wordWrap = 'break-word';
         }
 
-        // position off-screen
         style.position = 'absolute';
         style.visibility = 'hidden';
 
@@ -952,82 +937,49 @@ class TributeRange {
             style[prop] = computed[prop];
         });
 
-        if (isFirefox) {
-            style.width = `${(parseInt(computed.width) - 2)}px`;
-            if (element.scrollHeight > parseInt(computed.height))
-                style.overflowY = 'scroll';
-        } else {
-            style.overflow = 'hidden';
-        }
+        //NOT SURE WHY THIS IS HERE AND IT DOESNT SEEM HELPFUL
+        // if (isFirefox) {
+        //     style.width = `${(parseInt(computed.width) - 2)}px`
+        //     if (element.scrollHeight > parseInt(computed.height))
+        //         style.overflowY = 'scroll'
+        // } else {
+        //     style.overflow = 'hidden'
+        // }
 
-        div.textContent = element.value.substring(0, position);
+        let span0 = document.createElement('span');
+        span0.textContent =  element.value.substring(0, position);
+        div.appendChild(span0);
 
         if (element.nodeName === 'INPUT') {
             div.textContent = div.textContent.replace(/\s/g, ' ');
         }
 
+        //Create a span in the div that represents where the cursor
+        //should be
         let span = this.getDocument().createElement('span');
-        span.textContent = element.value.substring(position) || '.';
+        //we give it no content as this represents the cursor
+        span.textContent = '&#x200B;';
         div.appendChild(span);
 
+        let span2 = this.getDocument().createElement('span');
+        span2.textContent = element.value.substring(position);
+        div.appendChild(span2);
+
         let rect = element.getBoundingClientRect();
-        let doc = document.documentElement;
-        let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-        let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
 
-        let top = 0;
-        let left = 0;
-        if (this.menuContainerIsBody) {
-          top = rect.top;
-          left = rect.left;
-        }
+        //position the div exactly over the element
+        //so we can get the bounding client rect for the span and
+        //it should represent exactly where the cursor is
+        div.style.position = 'fixed';
+        div.style.left = rect.left + 'px';
+        div.style.top = rect.top + 'px';
+        div.style.width = rect.width + 'px';
+        div.style.height = rect.height + 'px';
+        div.scrollTop = element.scrollTop;
 
-        let coordinates = {
-            top: top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
-            left: left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
-        };
-
-        let windowWidth = window.innerWidth;
-        let windowHeight = window.innerHeight;
-
-        let menuDimensions = this.getMenuDimensions();
-        let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-
-        if (menuIsOffScreen.right) {
-            coordinates.right = windowWidth - coordinates.left;
-            coordinates.left = 'auto';
-        }
-
-        let parentHeight = this.tribute.menuContainer
-            ? this.tribute.menuContainer.offsetHeight
-            : this.getDocument().body.offsetHeight;
-
-        if (menuIsOffScreen.bottom) {
-            let parentRect = this.tribute.menuContainer
-                ? this.tribute.menuContainer.getBoundingClientRect()
-                : this.getDocument().body.getBoundingClientRect();
-            let scrollStillAvailable = parentHeight - (windowHeight - parentRect.top);
-
-            coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top - span.offsetTop);
-            coordinates.top = 'auto';
-        }
-
-        menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-        if (menuIsOffScreen.left) {
-            coordinates.left = windowWidth > menuDimensions.width
-                ? windowLeft + windowWidth - menuDimensions.width
-                : windowLeft;
-            delete coordinates.right;
-        }
-        if (menuIsOffScreen.top) {
-            coordinates.top = windowHeight > menuDimensions.height
-                ? windowTop + windowHeight - menuDimensions.height
-                : windowTop;
-            delete coordinates.bottom;
-        }
-
+        var spanRect = span.getBoundingClientRect();
         this.getDocument().body.removeChild(div);
-        return coordinates
+        return this.getFixedCoordinatesRelativeToRect(spanRect);
     }
 
     getContentEditableCaretPosition(selectedNodePosition) {
@@ -1041,59 +993,53 @@ class TributeRange {
         range.collapse(false);
 
         let rect = range.getBoundingClientRect();
-        let doc = document.documentElement;
-        let windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-        let windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
 
-        let left = rect.left;
-        let top = rect.top;
+        return this.getFixedCoordinatesRelativeToRect(rect);
+    }
 
+    getFixedCoordinatesRelativeToRect(rect) {
         let coordinates = {
-            left: left + windowLeft,
-            top: top + rect.height + windowTop
+            position: 'fixed',
+            left: rect.left,
+            top: rect.top + rect.height
         };
-        let windowWidth = window.innerWidth;
-        let windowHeight = window.innerHeight;
 
         let menuDimensions = this.getMenuDimensions();
-        let menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
 
-        if (menuIsOffScreen.right) {
-            coordinates.left = 'auto';
-            coordinates.right = windowWidth - rect.left - windowLeft;
-        }
+        var availableSpaceOnTop = rect.top;
+        var availableSpaceOnBottom = window.innerHeight - (rect.top + rect.height);
 
-        let parentHeight = this.tribute.menuContainer
-            ? this.tribute.menuContainer.offsetHeight
-            : this.getDocument().body.offsetHeight;
-
-        if (menuIsOffScreen.bottom) {
-            let parentRect = this.tribute.menuContainer
-                ? this.tribute.menuContainer.getBoundingClientRect()
-                : this.getDocument().body.getBoundingClientRect();
-            let scrollStillAvailable = parentHeight - (windowHeight - parentRect.top);
-
+        //check to see where's the right place to put the menu vertically
+        if (availableSpaceOnBottom < menuDimensions.height) {
+          if (availableSpaceOnTop >= menuDimensions.height || availableSpaceOnTop > availableSpaceOnBottom) {
             coordinates.top = 'auto';
-            coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top);
+            coordinates.bottom = window.innerHeight - rect.top;
+            if (availableSpaceOnBottom < menuDimensions.height) {
+              coordinates.maxHeight = availableSpaceOnTop;
+            }
+          } else {
+            if (availableSpaceOnTop < menuDimensions.height) {
+              coordinates.maxHeight = availableSpaceOnBottom;
+            }
+          }
         }
 
-        menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-        if (menuIsOffScreen.left) {
-            coordinates.left = windowWidth > menuDimensions.width
-                ? windowLeft + windowWidth - menuDimensions.width
-                : windowLeft;
-            delete coordinates.right;
-        }
-        if (menuIsOffScreen.top) {
-            coordinates.top = windowHeight > menuDimensions.height
-                ? windowTop + windowHeight - menuDimensions.height
-                : windowTop;
-            delete coordinates.bottom;
-        }
+        var availableSpaceOnLeft = rect.left;
+        var availableSpaceOnRight = window.innerWidth - rect.left;
 
-        if (!this.menuContainerIsBody) {
-            coordinates.left = coordinates.left ? coordinates.left - this.tribute.menuContainer.offsetLeft : coordinates.left;
-            coordinates.top = coordinates.top ? coordinates.top - this.tribute.menuContainer.offsetTop : coordinates.top;
+        //check to see where's the right place to put the menu horizontally
+        if (availableSpaceOnRight < menuDimensions.width) {
+          if (availableSpaceOnLeft >= menuDimensions.width || availableSpaceOnLeft > availableSpaceOnRight) {
+            coordinates.left = 'auto';
+            coordinates.right = window.innerWidth - rect.left;
+            if (availableSpaceOnRight < menuDimensions.width) {
+              coordinates.maxWidth = availableSpaceOnLeft;
+            }
+          } else {
+            if (availableSpaceOnLeft < menuDimensions.width) {
+              coordinates.maxWidth = availableSpaceOnRight;
+            }
+          }
         }
 
         return coordinates
@@ -1619,8 +1565,6 @@ class Tribute {
 
       let ul = this.menu.querySelector("ul");
 
-      this.range.positionMenuAtCaret(scrollTo);
-
       if (!items.length) {
         let noMatchEvent = new CustomEvent("tribute-no-match", {
           detail: this.menu
@@ -1636,6 +1580,7 @@ class Tribute {
           typeof this.current.collection.noMatchTemplate === "function"
             ? (ul.innerHTML = this.current.collection.noMatchTemplate())
             : (ul.innerHTML = this.current.collection.noMatchTemplate);
+            this.range.positionMenuAtCaret(scrollTo);
         }
 
         return;
@@ -1661,6 +1606,8 @@ class Tribute {
         fragment.appendChild(li);
       });
       ul.appendChild(fragment);
+
+      this.range.positionMenuAtCaret(scrollTo);
     };
 
     if (typeof this.current.collection.values === "function") {

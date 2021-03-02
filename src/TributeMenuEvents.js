@@ -10,19 +10,19 @@ class TributeMenuEvents {
     this.menuContainerScrollEvent = this.debounce(
       () => {
         if (this.tribute.isActive) {
-          this.tribute.showMenuFor(this.tribute.current.element, false);
+          this.tribute.hideMenu();
         }
       },
-      300,
+      10,
       false
     );
     this.windowResizeEvent = this.debounce(
       () => {
         if (this.tribute.isActive) {
-          this.tribute.range.positionMenuAtCaret(true);
+          this.tribute.hideMenu();
         }
       },
-      300,
+      10,
       false
     );
 
