@@ -356,7 +356,7 @@ class TributeEvents {
     for (let i = 0; i < length; i++) {
       let li = lis[i];
       if (i === this.tribute.menuSelected) {
-        li.classList.add(this.tribute.current.collection.selectClass);
+        li.classList.add(...this.tribute.current.collection.selectClass.split(' '));
 
         let liClientRect = li.getBoundingClientRect();
         let menuClientRect = this.tribute.menu.getBoundingClientRect();
@@ -369,7 +369,7 @@ class TributeEvents {
           this.tribute.menu.scrollTop -= scrollDistance;
         }
       } else {
-        li.classList.remove(this.tribute.current.collection.selectClass);
+        li.classList.remove(...this.tribute.current.collection.selectClass.split(' '));
       }
     }
   }
@@ -1655,7 +1655,7 @@ class Tribute {
           }
         });
         if (this.menuSelected === index) {
-          li.classList.add(this.current.collection.selectClass);
+          li.classList.add(...this.current.collection.selectClass.split(' '));
         }
         li.innerHTML = this.current.collection.menuItemTemplate(item);
         fragment.appendChild(li);
