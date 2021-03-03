@@ -192,11 +192,14 @@
           while (li.nodeName.toLowerCase() !== "li") {
             li = li.parentNode;
 
-            if (!li || li === tribute.menu) {
+            if (!li) {
+              break;
+            } else if (li === tribute.menu) {
               throw new Error("cannot find the <li> container for the click");
             }
           }
 
+          if (!li) return;
           tribute.selectItemAtIndex(li.getAttribute("data-index"), event);
           tribute.hideMenu(); // TODO: should fire with externalTrigger and target is outside of menu
         } else if (tribute.current.element && !tribute.current.externalTrigger) {
