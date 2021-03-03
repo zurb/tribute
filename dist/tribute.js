@@ -197,6 +197,7 @@
             }
           }
 
+          if (li.getAttribute("data-disabled") === "true") return;
           tribute.selectItemAtIndex(li.getAttribute("data-index"), event);
           tribute.hideMenu(); // TODO: should fire with externalTrigger and target is outside of menu
         } else if (tribute.current.element && !tribute.current.externalTrigger) {
@@ -349,20 +350,26 @@
             if (_this.tribute.isActive && _this.tribute.current.filteredItems) {
               e.preventDefault();
               e.stopPropagation();
-              var count = _this.tribute.current.filteredItems.length,
-                  selected = _this.tribute.menuSelected;
+              var count = _this.tribute.current.filteredItems.length;
 
-              if (count > selected && selected > 0) {
+              var lis = _this.tribute.menu.querySelectorAll("li"); //If menuSelected is -1 then there are no valid, non-disabled items
+              //to navigate through
+
+
+              if (_this.tribute.menuSelected === -1) {
+                return;
+              }
+
+              do {
                 _this.tribute.menuSelected--;
 
-                _this.setActiveLi();
-              } else if (selected === 0) {
-                _this.tribute.menuSelected = count - 1;
+                if (_this.tribute.menuSelected === -1) {
+                  _this.tribute.menuSelected = count - 1;
+                  _this.tribute.menu.scrollTop = _this.tribute.menu.scrollHeight;
+                }
+              } while (lis[_this.tribute.menuSelected].getAttribute("data-disabled") === "true");
 
-                _this.setActiveLi();
-
-                _this.tribute.menu.scrollTop = _this.tribute.menu.scrollHeight;
-              }
+              _this.setActiveLi();
             }
           },
           down: function down(e, el) {
@@ -370,20 +377,26 @@
             if (_this.tribute.isActive && _this.tribute.current.filteredItems) {
               e.preventDefault();
               e.stopPropagation();
-              var count = _this.tribute.current.filteredItems.length - 1,
-                  selected = _this.tribute.menuSelected;
+              var count = _this.tribute.current.filteredItems.length;
 
-              if (count > selected) {
+              var lis = _this.tribute.menu.querySelectorAll("li"); //If menuSelected is -1 then there are no valid, non-disabled items
+              //to navigate through
+
+
+              if (_this.tribute.menuSelected === -1) {
+                return;
+              }
+
+              do {
                 _this.tribute.menuSelected++;
 
-                _this.setActiveLi();
-              } else if (count === selected) {
-                _this.tribute.menuSelected = 0;
+                if (_this.tribute.menuSelected >= count) {
+                  _this.tribute.menuSelected = 0;
+                  _this.tribute.menu.scrollTop = 0;
+                }
+              } while (lis[_this.tribute.menuSelected].getAttribute("data-disabled") === "true");
 
-                _this.setActiveLi();
-
-                _this.tribute.menu.scrollTop = 0;
-              }
+              _this.setActiveLi();
             }
           },
           "delete": function _delete(e, el) {
@@ -406,7 +419,10 @@
           var li = lis[i];
 
           if (i === this.tribute.menuSelected) {
-            li.classList.add(this.tribute.current.collection.selectClass);
+            if (li.getAttribute("data-disabled") !== "true") {
+              li.classList.add(this.tribute.current.collection.selectClass);
+            }
+
             var liClientRect = li.getBoundingClientRect();
             var menuClientRect = this.tribute.menu.getBoundingClientRect();
 
@@ -1588,6 +1604,9 @@
 
         this.isActive = true;
         this.menuSelected = 0;
+        window.setTimeout(function () {
+          _this2.menu.scrollTop = 0;
+        }, 0);
 
         if (!this.current.mentionText) {
           this.current.mentionText = "";
@@ -1644,10 +1663,14 @@
 
           var fragment = _this2.range.getDocument().createDocumentFragment();
 
+          _this2.menuSelected = items.findIndex(function (item) {
+            return item.original.disabled !== true;
+          });
           items.forEach(function (item, index) {
             var li = _this2.range.getDocument().createElement("li");
 
             li.setAttribute("data-index", index);
+            if (item.original.disabled) li.setAttribute("data-disabled", "true");
             li.className = _this2.current.collection.itemClass;
             li.addEventListener("mousemove", function (e) {
               var _this2$_findLiTarget = _this2._findLiTarget(e.target),
