@@ -193,14 +193,16 @@
             li = li.parentNode;
 
             if (!li || li === tribute.menu) {
-              throw new Error("cannot find the <li> container for the click");
+              return;
             }
           }
 
+          if (li.getAttribute("data-disabled") === "true") return;
           tribute.selectItemAtIndex(li.getAttribute("data-index"), event);
           tribute.hideMenu(); // TODO: should fire with externalTrigger and target is outside of menu
-        } else if (tribute.current.element && !tribute.current.externalTrigger) {
+        } else if (tribute.current.externalTrigger) {
           tribute.current.externalTrigger = false;
+        } else if (tribute.current.element && !tribute.current.externalTrigger) {
           setTimeout(function () {
             return tribute.hideMenu();
           });
@@ -349,20 +351,26 @@
             if (_this.tribute.isActive && _this.tribute.current.filteredItems) {
               e.preventDefault();
               e.stopPropagation();
-              var count = _this.tribute.current.filteredItems.length,
-                  selected = _this.tribute.menuSelected;
+              var count = _this.tribute.current.filteredItems.length;
 
-              if (count > selected && selected > 0) {
+              var lis = _this.tribute.menu.querySelectorAll("li"); //If menuSelected is -1 then there are no valid, non-disabled items
+              //to navigate through
+
+
+              if (_this.tribute.menuSelected === -1) {
+                return;
+              }
+
+              do {
                 _this.tribute.menuSelected--;
 
-                _this.setActiveLi();
-              } else if (selected === 0) {
-                _this.tribute.menuSelected = count - 1;
+                if (_this.tribute.menuSelected === -1) {
+                  _this.tribute.menuSelected = count - 1;
+                  _this.tribute.menu.scrollTop = _this.tribute.menu.scrollHeight;
+                }
+              } while (lis[_this.tribute.menuSelected].getAttribute("data-disabled") === "true");
 
-                _this.setActiveLi();
-
-                _this.tribute.menu.scrollTop = _this.tribute.menu.scrollHeight;
-              }
+              _this.setActiveLi();
             }
           },
           down: function down(e, el) {
@@ -370,20 +378,26 @@
             if (_this.tribute.isActive && _this.tribute.current.filteredItems) {
               e.preventDefault();
               e.stopPropagation();
-              var count = _this.tribute.current.filteredItems.length - 1,
-                  selected = _this.tribute.menuSelected;
+              var count = _this.tribute.current.filteredItems.length;
 
-              if (count > selected) {
+              var lis = _this.tribute.menu.querySelectorAll("li"); //If menuSelected is -1 then there are no valid, non-disabled items
+              //to navigate through
+
+
+              if (_this.tribute.menuSelected === -1) {
+                return;
+              }
+
+              do {
                 _this.tribute.menuSelected++;
 
-                _this.setActiveLi();
-              } else if (count === selected) {
-                _this.tribute.menuSelected = 0;
+                if (_this.tribute.menuSelected >= count) {
+                  _this.tribute.menuSelected = 0;
+                  _this.tribute.menu.scrollTop = 0;
+                }
+              } while (lis[_this.tribute.menuSelected].getAttribute("data-disabled") === "true");
 
-                _this.setActiveLi();
-
-                _this.tribute.menu.scrollTop = 0;
-              }
+              _this.setActiveLi();
             }
           },
           "delete": function _delete(e, el) {
@@ -406,7 +420,10 @@
           var li = lis[i];
 
           if (i === this.tribute.menuSelected) {
-            li.classList.add(this.tribute.current.collection.selectClass);
+            if (li.getAttribute("data-disabled") !== "true") {
+              li.classList.add(this.tribute.current.collection.selectClass);
+            }
+
             var liClientRect = li.getBoundingClientRect();
             var menuClientRect = this.tribute.menu.getBoundingClientRect();
 
@@ -483,14 +500,14 @@
         this.menuClickEvent = this.tribute.events.click.bind(null, this);
         this.menuContainerScrollEvent = this.debounce(function () {
           if (_this.tribute.isActive) {
-            _this.tribute.showMenuFor(_this.tribute.current.element, false);
+            _this.tribute.hideMenu();
           }
-        }, 300, false);
+        }, 10, false);
         this.windowResizeEvent = this.debounce(function () {
           if (_this.tribute.isActive) {
-            _this.tribute.range.positionMenuAtCaret(true);
+            _this.tribute.hideMenu();
           }
-        }, 300, false); // fixes IE11 issues with mousedown
+        }, 10, false); // fixes IE11 issues with mousedown
 
         this.tribute.range.getDocument().addEventListener("MSPointerDown", this.menuClickEvent, false);
         this.tribute.range.getDocument().addEventListener("mousedown", this.menuClickEvent, false);
@@ -568,8 +585,6 @@
     }, {
       key: "positionMenuAtCaret",
       value: function positionMenuAtCaret(scrollTo) {
-        var _this = this;
-
         var context = this.tribute.current,
             coordinates;
         var info = this.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces, this.tribute.autocompleteMode);
@@ -586,7 +601,7 @@
             coordinates = this.getContentEditableCaretPosition(info.mentionPosition);
           }
 
-          this.tribute.menu.style.cssText = "top: ".concat(coordinates.top, "px;\n                                     left: ").concat(coordinates.left, "px;\n                                     right: ").concat(coordinates.right, "px;\n                                     bottom: ").concat(coordinates.bottom, "px;\n                                     position: absolute;\n                                     display: block;");
+          this.tribute.menu.style.cssText = "top: ".concat(coordinates.top, "px;\n                                     left: ").concat(coordinates.left, "px;\n                                     right: ").concat(coordinates.right, "px;\n                                     bottom: ").concat(coordinates.bottom, "px;\n                                     max-height: ").concat(coordinates.maxHeight || 500, "px;\n                                     max-width: ").concat(coordinates.maxWidth || 300, "px;\n                                     position: ").concat(coordinates.position || 'absolute', ";\n                                     display: block;");
 
           if (coordinates.left === 'auto') {
             this.tribute.menu.style.left = 'auto';
@@ -597,23 +612,6 @@
           }
 
           if (scrollTo) this.scrollIntoView();
-          window.setTimeout(function () {
-            var menuDimensions = {
-              width: _this.tribute.menu.offsetWidth,
-              height: _this.tribute.menu.offsetHeight
-            };
-
-            var menuIsOffScreen = _this.isMenuOffScreen(coordinates, menuDimensions);
-
-            var menuIsOffScreenHorizontally = window.innerWidth > menuDimensions.width && (menuIsOffScreen.left || menuIsOffScreen.right);
-            var menuIsOffScreenVertically = window.innerHeight > menuDimensions.height && (menuIsOffScreen.top || menuIsOffScreen.bottom);
-
-            if (menuIsOffScreenHorizontally || menuIsOffScreenVertically) {
-              _this.tribute.menu.style.cssText = 'display: none';
-
-              _this.positionMenuAtCaret(scrollTo);
-            }
-          }, 0);
         } else {
           this.tribute.menu.style.cssText = 'display: none';
         }
@@ -842,7 +840,7 @@
     }, {
       key: "getTriggerInfo",
       value: function getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces, isAutocomplete) {
-        var _this2 = this;
+        var _this = this;
 
         var ctx = this.tribute.current;
         var selected, path, offset;
@@ -877,7 +875,7 @@
           var triggerChar;
           this.tribute.collection.forEach(function (config) {
             var c = config.trigger;
-            var idx = config.requireLeadingSpace ? _this2.lastIndexWithLeadingSpace(effectiveRange, c) : effectiveRange.lastIndexOf(c);
+            var idx = config.requireLeadingSpace ? _this.lastIndexWithLeadingSpace(effectiveRange, c) : effectiveRange.lastIndexOf(c);
 
             if (idx > mostRecentTriggerCharPos) {
               mostRecentTriggerCharPos = idx;
@@ -972,7 +970,7 @@
           width: null,
           height: null
         };
-        this.tribute.menu.style.cssText = "top: 0px;\n                                 left: 0px;\n                                 position: fixed;\n                                 display: block;\n                                 visibility; hidden;";
+        this.tribute.menu.style.cssText = "top: 0px;\n                                 left: 0px;\n                                 position: fixed;\n                                 display: block;\n                                 visibility; hidden;\n                                 max-height:500px;";
         dimensions.width = this.tribute.menu.offsetWidth;
         dimensions.height = this.tribute.menu.offsetHeight;
         this.tribute.menu.style.cssText = "display: none;";
@@ -981,8 +979,7 @@
     }, {
       key: "getTextAreaOrInputUnderlinePosition",
       value: function getTextAreaOrInputUnderlinePosition(element, position, flipped) {
-        var properties = ['direction', 'boxSizing', 'width', 'height', 'overflowX', 'overflowY', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'fontStyle', 'fontVariant', 'fontWeight', 'fontStretch', 'fontSize', 'fontSizeAdjust', 'lineHeight', 'fontFamily', 'textAlign', 'textTransform', 'textIndent', 'textDecoration', 'letterSpacing', 'wordSpacing'];
-        var isFirefox = window.mozInnerScreenX !== null;
+        var properties = ['direction', 'boxSizing', 'width', 'height', 'overflowX', 'overflowY', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'borderStyle', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'fontStyle', 'fontVariant', 'fontWeight', 'fontStretch', 'fontSize', 'fontSizeAdjust', 'lineHeight', 'fontFamily', 'textAlign', 'textTransform', 'textIndent', 'textDecoration', 'letterSpacing', 'wordSpacing'];
         var div = this.getDocument().createElement('div');
         div.id = 'input-textarea-caret-position-mirror-div';
         this.getDocument().body.appendChild(div);
@@ -992,81 +989,52 @@
 
         if (element.nodeName !== 'INPUT') {
           style.wordWrap = 'break-word';
-        } // position off-screen
-
+        }
 
         style.position = 'absolute';
         style.visibility = 'hidden'; // transfer the element's properties to the div
 
         properties.forEach(function (prop) {
           style[prop] = computed[prop];
-        });
+        }); //NOT SURE WHY THIS IS HERE AND IT DOESNT SEEM HELPFUL
+        // if (isFirefox) {
+        //     style.width = `${(parseInt(computed.width) - 2)}px`
+        //     if (element.scrollHeight > parseInt(computed.height))
+        //         style.overflowY = 'scroll'
+        // } else {
+        //     style.overflow = 'hidden'
+        // }
 
-        if (isFirefox) {
-          style.width = "".concat(parseInt(computed.width) - 2, "px");
-          if (element.scrollHeight > parseInt(computed.height)) style.overflowY = 'scroll';
-        } else {
-          style.overflow = 'hidden';
-        }
-
-        div.textContent = element.value.substring(0, position);
+        var span0 = document.createElement('span');
+        span0.textContent = element.value.substring(0, position);
+        div.appendChild(span0);
 
         if (element.nodeName === 'INPUT') {
           div.textContent = div.textContent.replace(/\s/g, ' ');
-        }
+        } //Create a span in the div that represents where the cursor
+        //should be
 
-        var span = this.getDocument().createElement('span');
-        span.textContent = element.value.substring(position) || '.';
+
+        var span = this.getDocument().createElement('span'); //we give it no content as this represents the cursor
+
+        span.textContent = '&#x200B;';
         div.appendChild(span);
-        var rect = element.getBoundingClientRect();
-        var doc = document.documentElement;
-        var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-        var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
-        var top = 0;
-        var left = 0;
+        var span2 = this.getDocument().createElement('span');
+        span2.textContent = element.value.substring(position);
+        div.appendChild(span2);
+        var rect = element.getBoundingClientRect(); //position the div exactly over the element
+        //so we can get the bounding client rect for the span and
+        //it should represent exactly where the cursor is
 
-        if (this.menuContainerIsBody) {
-          top = rect.top;
-          left = rect.left;
-        }
-
-        var coordinates = {
-          top: top + windowTop + span.offsetTop + parseInt(computed.borderTopWidth) + parseInt(computed.fontSize) - element.scrollTop,
-          left: left + windowLeft + span.offsetLeft + parseInt(computed.borderLeftWidth)
-        };
-        var windowWidth = window.innerWidth;
-        var windowHeight = window.innerHeight;
-        var menuDimensions = this.getMenuDimensions();
-        var menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-
-        if (menuIsOffScreen.right) {
-          coordinates.right = windowWidth - coordinates.left;
-          coordinates.left = 'auto';
-        }
-
-        var parentHeight = this.tribute.menuContainer ? this.tribute.menuContainer.offsetHeight : this.getDocument().body.offsetHeight;
-
-        if (menuIsOffScreen.bottom) {
-          var parentRect = this.tribute.menuContainer ? this.tribute.menuContainer.getBoundingClientRect() : this.getDocument().body.getBoundingClientRect();
-          var scrollStillAvailable = parentHeight - (windowHeight - parentRect.top);
-          coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top - span.offsetTop);
-          coordinates.top = 'auto';
-        }
-
-        menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-
-        if (menuIsOffScreen.left) {
-          coordinates.left = windowWidth > menuDimensions.width ? windowLeft + windowWidth - menuDimensions.width : windowLeft;
-          delete coordinates.right;
-        }
-
-        if (menuIsOffScreen.top) {
-          coordinates.top = windowHeight > menuDimensions.height ? windowTop + windowHeight - menuDimensions.height : windowTop;
-          delete coordinates.bottom;
-        }
-
+        div.style.position = 'fixed';
+        div.style.left = rect.left + 'px';
+        div.style.top = rect.top + 'px';
+        div.style.width = rect.width + 'px';
+        div.style.height = rect.height + 'px';
+        div.scrollTop = element.scrollTop;
+        var spanRect = span.getBoundingClientRect();
         this.getDocument().body.removeChild(div);
-        return coordinates;
+        return this.getFixedCoordinatesRelativeToRect(spanRect);
       }
     }, {
       key: "getContentEditableCaretPosition",
@@ -1078,49 +1046,51 @@
         range.setEnd(sel.anchorNode, selectedNodePosition);
         range.collapse(false);
         var rect = range.getBoundingClientRect();
-        var doc = document.documentElement;
-        var windowLeft = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-        var windowTop = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
-        var left = rect.left;
-        var top = rect.top;
+        return this.getFixedCoordinatesRelativeToRect(rect);
+      }
+    }, {
+      key: "getFixedCoordinatesRelativeToRect",
+      value: function getFixedCoordinatesRelativeToRect(rect) {
         var coordinates = {
-          left: left + windowLeft,
-          top: top + rect.height + windowTop
+          position: 'fixed',
+          left: rect.left,
+          top: rect.top + rect.height
         };
-        var windowWidth = window.innerWidth;
-        var windowHeight = window.innerHeight;
         var menuDimensions = this.getMenuDimensions();
-        var menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
+        var availableSpaceOnTop = rect.top;
+        var availableSpaceOnBottom = window.innerHeight - (rect.top + rect.height); //check to see where's the right place to put the menu vertically
 
-        if (menuIsOffScreen.right) {
-          coordinates.left = 'auto';
-          coordinates.right = windowWidth - rect.left - windowLeft;
+        if (availableSpaceOnBottom < menuDimensions.height) {
+          if (availableSpaceOnTop >= menuDimensions.height || availableSpaceOnTop > availableSpaceOnBottom) {
+            coordinates.top = 'auto';
+            coordinates.bottom = window.innerHeight - rect.top;
+
+            if (availableSpaceOnBottom < menuDimensions.height) {
+              coordinates.maxHeight = availableSpaceOnTop;
+            }
+          } else {
+            if (availableSpaceOnTop < menuDimensions.height) {
+              coordinates.maxHeight = availableSpaceOnBottom;
+            }
+          }
         }
 
-        var parentHeight = this.tribute.menuContainer ? this.tribute.menuContainer.offsetHeight : this.getDocument().body.offsetHeight;
+        var availableSpaceOnLeft = rect.left;
+        var availableSpaceOnRight = window.innerWidth - rect.left; //check to see where's the right place to put the menu horizontally
 
-        if (menuIsOffScreen.bottom) {
-          var parentRect = this.tribute.menuContainer ? this.tribute.menuContainer.getBoundingClientRect() : this.getDocument().body.getBoundingClientRect();
-          var scrollStillAvailable = parentHeight - (windowHeight - parentRect.top);
-          coordinates.top = 'auto';
-          coordinates.bottom = scrollStillAvailable + (windowHeight - rect.top);
-        }
+        if (availableSpaceOnRight < menuDimensions.width) {
+          if (availableSpaceOnLeft >= menuDimensions.width || availableSpaceOnLeft > availableSpaceOnRight) {
+            coordinates.left = 'auto';
+            coordinates.right = window.innerWidth - rect.left;
 
-        menuIsOffScreen = this.isMenuOffScreen(coordinates, menuDimensions);
-
-        if (menuIsOffScreen.left) {
-          coordinates.left = windowWidth > menuDimensions.width ? windowLeft + windowWidth - menuDimensions.width : windowLeft;
-          delete coordinates.right;
-        }
-
-        if (menuIsOffScreen.top) {
-          coordinates.top = windowHeight > menuDimensions.height ? windowTop + windowHeight - menuDimensions.height : windowTop;
-          delete coordinates.bottom;
-        }
-
-        if (!this.menuContainerIsBody) {
-          coordinates.left = coordinates.left ? coordinates.left - this.tribute.menuContainer.offsetLeft : coordinates.left;
-          coordinates.top = coordinates.top ? coordinates.top - this.tribute.menuContainer.offsetTop : coordinates.top;
+            if (availableSpaceOnRight < menuDimensions.width) {
+              coordinates.maxWidth = availableSpaceOnLeft;
+            }
+          } else {
+            if (availableSpaceOnLeft < menuDimensions.width) {
+              coordinates.maxWidth = availableSpaceOnRight;
+            }
+          }
         }
 
         return coordinates;
@@ -1573,11 +1543,6 @@
       value: function showMenuFor(element, scrollTo) {
         var _this2 = this;
 
-        // Only proceed if menu isn't already shown for the current element & mentionText
-        if (this.isActive && this.current.element === element && this.current.mentionText === this.currentMentionTextSnapshot) {
-          return;
-        }
-
         this.currentMentionTextSnapshot = this.current.mentionText; // create the menu if it doesn't exist.
 
         if (!this.menu) {
@@ -1588,6 +1553,9 @@
 
         this.isActive = true;
         this.menuSelected = 0;
+        window.setTimeout(function () {
+          _this2.menu.scrollTop = 0;
+        }, 0);
 
         if (!this.current.mentionText) {
           this.current.mentionText = "";
@@ -1622,8 +1590,6 @@
 
           var ul = _this2.menu.querySelector("ul");
 
-          _this2.range.positionMenuAtCaret(scrollTo);
-
           if (!items.length) {
             var noMatchEvent = new CustomEvent("tribute-no-match", {
               detail: _this2.menu
@@ -1635,6 +1601,8 @@
               _this2.hideMenu();
             } else {
               typeof _this2.current.collection.noMatchTemplate === "function" ? ul.innerHTML = _this2.current.collection.noMatchTemplate() : ul.innerHTML = _this2.current.collection.noMatchTemplate;
+
+              _this2.range.positionMenuAtCaret(scrollTo);
             }
 
             return;
@@ -1644,10 +1612,14 @@
 
           var fragment = _this2.range.getDocument().createDocumentFragment();
 
+          _this2.menuSelected = items.findIndex(function (item) {
+            return item.original.disabled !== true;
+          });
           items.forEach(function (item, index) {
             var li = _this2.range.getDocument().createElement("li");
 
             li.setAttribute("data-index", index);
+            if (item.original.disabled) li.setAttribute("data-disabled", "true");
             li.className = _this2.current.collection.itemClass;
             li.addEventListener("mousemove", function (e) {
               var _this2$_findLiTarget = _this2._findLiTarget(e.target),
@@ -1668,6 +1640,8 @@
             fragment.appendChild(li);
           });
           ul.appendChild(fragment);
+
+          _this2.range.positionMenuAtCaret(scrollTo);
         };
 
         if (typeof this.current.collection.values === "function") {

@@ -489,6 +489,10 @@ var tribute = new Tribute({
 });
 ```
 
+### Grouping values and disabling options
+
+You may provide `disabled` values which can't be selected.  You can use `disabled` items as headers to mimic the functionality of &lt;optgroup> elements in a &lt;select>.  To provide `disabled` items simply return an object that includes a `disabled` property set to `true`.  The menu items for those values will not be selectable with the mouse or keyboard.  If you wish to differentiate them visually, check for the `disabled` attribute in the menuItemTemplate.
+
 ## Framework Support
 
 Vue.js — [vue-tribute](https://github.com/syropian/vue-tribute) by **@syropian**

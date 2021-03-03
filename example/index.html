@@ -59,8 +59,8 @@
           ></p>
 
           <h5>
-            Tribute with a local collection (on <code>@</code>) and a remote one
-            (on <code>#</code>):
+            Tribute with a local collection (on <a id="activateAt">@</a>) and a remote one
+            (on <a id="activateHash">#</a>):
           </h5>
           <p
             id="testMultiple"
@@ -70,6 +70,25 @@
         </div>
       </div>
     </div>
+
+    <div class="row">
+      <div class="large-8 small-centered columns">
+        <div class="callout large">
+          <h5>
+            Tribute with grouped values
+          </h5>
+          <!-- <a id="activateInput">@mention</a> -->
+          <div id="test-grouped-container">
+            <div
+              id="test-grouped"
+              class="tribute-demo-input"
+              placeholder="Cars"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <br /><br />
 
@@ -261,13 +280,35 @@
               ]), 1000)
             },
             lookup: "name",
-
             fillAttr: "name"
           }
-        ]
+        ],
+        replaceTextSuffix:''
       });
 
       tributeMultipleTriggers.attach(document.getElementById("testMultiple"));
+
+      document.getElementById("activateAt").addEventListener("mousedown", function(e) {
+        e.preventDefault();
+        var input = document.getElementById("testMultiple");
+
+        if (tributeMultipleTriggers.isActive) {
+          tributeMultipleTriggers.replaceText('');
+        }
+
+        tributeMultipleTriggers.showMenuForCollection(input,0);
+      });
+
+      document.getElementById("activateHash").addEventListener("mousedown", function(e) {
+        e.preventDefault();
+        var input = document.getElementById("testMultiple");
+
+        if (tributeMultipleTriggers.isActive) {
+          tributeMultipleTriggers.replaceText('');
+        }
+
+        tributeMultipleTriggers.showMenuForCollection(input,1);
+      });
 
       document
         .getElementById("test")
@@ -302,6 +343,7 @@
           tribute.showMenuForCollection(input);
         });
       }
+
 
       // example of Tribute in autocomplete mode
 
@@ -403,6 +445,54 @@
       tributeAutocompleteTestArea.attach(
         document.getElementById("test-autocomplete-textarea")
       );
+
+
+
+
+
+
+      // Grouping example
+
+      var tributeGroupEx = new Tribute({
+        values: [
+          { key: "SUVs", value: "SUVs", disabled:true },
+          { key: "Ford Explorer", value: "Ford Explorer" },
+          { key: "Toyota RAV4", value: "Toyota RAV4" },
+          { key: "Jeep Rangler", value: "Jeep Rangler" },
+          { key: "Sedans", value: "Sedans", disabled: true },
+          { key: "Honda Accord", value: "Honda Accord" },
+          { key: "Toyota Corolla", value: "Toyota Corolla" },
+          { key: "Mazda6", value: "Mazda6" },
+          { key: "Coupes", value: "Coupes", disabled:true },
+          { key: "Honda Civic", value: "Honda Civic" },
+          { key: "BMW 4 Series", value: "BMW 4 Series" },
+          { key: "Lexus LC", value: "Lexus LC" }
+        ],
+        selectTemplate: function(item) {
+          if (typeof item === "undefined") return null;
+          if (this.range.isContentEditable(this.current.element)) {
+            return (
+              '<a href="http://zurb.com" target="_blank" contenteditable="false">@' +
+              item.original.value +
+              "</span>"
+            );
+          }
+
+          return "@" + item.original.value;
+        },
+        menuItemTemplate: function(item) {
+          if (item.original.disabled) {
+            return '<div style="background-color:blue;color:white;margin:-5px;padding:5px;cursor:auto">' + item.string + '</div>';
+          }
+          return '<div style="cursor:pointer;padding-left:10px">' + item.string + '</div>';
+        }
+      });
+
+      tributeGroupEx.attach(
+        document.getElementById("test-grouped")
+      );
+
+
     </script>
   </body>
 </html>
