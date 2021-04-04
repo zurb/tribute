@@ -10,9 +10,10 @@ export type TributeItem<T extends {}> = {
 };
 
 export type TributeSearchOpts = {
-  pre: string;
-  post: string;
-  skip: boolean;
+  pre?: string;
+  post?: string;
+  skip?: boolean;
+  caseSensitive?: boolean;
 };
 
 export type TributeCollection<T extends {}> = {
@@ -72,7 +73,9 @@ export type TributeCollection<T extends {}> = {
   autocompleteMode?: boolean;
 
   // specify a regex to define after which characters the autocomplete option should open
-  autocompleteSeparator?: RegExp;
+  // If null is used then it will not split the string & search in the whole line
+  // default value is /\s+/ means it will split on whitespace when this is not specified
+  autocompleteSeparator?: RegExp | null;
 
   // Customize the elements used to wrap matched strings within the results list
   searchOpts?: TributeSearchOpts;
