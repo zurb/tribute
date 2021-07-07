@@ -9,6 +9,7 @@ class Tribute {
     values = null,
     loadingItemTemplate = null,
     iframe = null,
+    shadowRoot = null,
     selectClass = "highlight",
     containerClass = "tribute-container",
     itemClass = "",
@@ -57,6 +58,9 @@ class Tribute {
 
           // is it wrapped in an iframe
           iframe: iframe,
+
+          // is it wrapped in a web component
+          shadowRoot: shadowRoot,
 
           // class applied to selected item
           selectClass: selectClass,
@@ -125,6 +129,7 @@ class Tribute {
         return {
           trigger: item.trigger || trigger,
           iframe: item.iframe || iframe,
+          shadowRoot: item.shadowRoot || shadowRoot,
           selectClass: item.selectClass || selectClass,
           containerClass: item.containerClass || containerClass,
           itemClass: item.itemClass || itemClass,
@@ -255,7 +260,11 @@ class Tribute {
   ensureEditable(element) {
     if (Tribute.inputTypes().indexOf(element.nodeName) === -1) {
       if (!element.contentEditable) {
-        throw new Error("[Tribute] Cannot bind to " + element.nodeName + ", not contentEditable");
+        throw new Error(
+          "[Tribute] Cannot bind to " +
+            element.nodeName +
+            ", not contentEditable"
+        );
       }
     }
   }
@@ -375,7 +384,9 @@ class Tribute {
 
     if (typeof this.current.collection.values === "function") {
       if (this.current.collection.loadingItemTemplate) {
-        this.menu.querySelector("ul").innerHTML = this.current.collection.loadingItemTemplate;
+        this.menu.querySelector(
+          "ul"
+        ).innerHTML = this.current.collection.loadingItemTemplate;
         this.range.positionMenuAtCaret(scrollTo);
       }
 
