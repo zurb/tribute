@@ -31,7 +31,7 @@ export type TributeCollection<T extends {}> = {
   itemClass?: string;
 
   // function called on select that returns the content to insert
-  selectTemplate?: (item: TributeItem<T>) => string;
+  selectTemplate?: (item: TributeItem<T>|undefined) => string;
 
   // template for displaying item in menu
   menuItemTemplate?: (item: TributeItem<T>) => string;
