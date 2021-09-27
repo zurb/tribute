@@ -187,7 +187,7 @@ class TributeEvents {
       ((instance.tribute.current.trigger ||
         instance.tribute.autocompleteMode) &&
         instance.commandEvent === false) ||
-      (instance.tribute.isActive && event.keyCode === 8)
+        event.keyCode === 8
     ) {
       instance.tribute.showMenuFor(this, true);
     }
