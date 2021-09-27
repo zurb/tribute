@@ -365,7 +365,7 @@ class Tribute {
           }
         });
         if (this.menuSelected === index) {
-          li.classList.add(this.current.collection.selectClass);
+          li.classList.add(...this.current.collection.selectClass.split(' '));
         }
         li.innerHTML = this.current.collection.menuItemTemplate(item);
         fragment.appendChild(li);

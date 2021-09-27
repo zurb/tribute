@@ -30,8 +30,20 @@
     return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
   }
 
+  function _toConsumableArray(arr) {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+  }
+
+  function _arrayWithoutHoles(arr) {
+    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+  }
+
   function _arrayWithHoles(arr) {
     if (Array.isArray(arr)) return arr;
+  }
+
+  function _iterableToArray(iter) {
+    if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
   }
 
   function _iterableToArrayLimit(arr, i) {
@@ -76,6 +88,10 @@
     for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
 
     return arr2;
+  }
+
+  function _nonIterableSpread() {
+    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
   }
 
   function _nonIterableRest() {
@@ -406,7 +422,10 @@
           var li = lis[i];
 
           if (i === this.tribute.menuSelected) {
-            li.classList.add(this.tribute.current.collection.selectClass);
+            var _li$classList;
+
+            (_li$classList = li.classList).add.apply(_li$classList, _toConsumableArray(this.tribute.current.collection.selectClass.split(' ')));
+
             var liClientRect = li.getBoundingClientRect();
             var menuClientRect = this.tribute.menu.getBoundingClientRect();
 
@@ -419,7 +438,9 @@
               this.tribute.menu.scrollTop -= _scrollDistance;
             }
           } else {
-            li.classList.remove(this.tribute.current.collection.selectClass);
+            var _li$classList2;
+
+            (_li$classList2 = li.classList).remove.apply(_li$classList2, _toConsumableArray(this.tribute.current.collection.selectClass.split(' ')));
           }
         }
       }
@@ -1661,7 +1682,9 @@
             });
 
             if (_this2.menuSelected === index) {
-              li.classList.add(_this2.current.collection.selectClass);
+              var _li$classList;
+
+              (_li$classList = li.classList).add.apply(_li$classList, _toConsumableArray(_this2.current.collection.selectClass.split(' ')));
             }
 
             li.innerHTML = _this2.current.collection.menuItemTemplate(item);
