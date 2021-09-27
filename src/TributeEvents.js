@@ -91,6 +91,9 @@ class TributeEvents {
           throw new Error("cannot find the <li> container for the click");
         }
       }
+
+      if (tribute.current.filteredItems.length === 0) li.setAttribute("data-index", -1);
+
       tribute.selectItemAtIndex(li.getAttribute("data-index"), event);
       tribute.hideMenu();
 
@@ -226,6 +229,9 @@ class TributeEvents {
         if (this.tribute.isActive && this.tribute.current.filteredItems) {
           e.preventDefault();
           e.stopPropagation();
+
+          if (this.tribute.current.filteredItems.length === 0) this.tribute.menuSelected = -1;
+
           setTimeout(() => {
             this.tribute.selectItemAtIndex(this.tribute.menuSelected, e);
             this.tribute.hideMenu();

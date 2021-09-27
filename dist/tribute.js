@@ -1,3 +1,5 @@
+
+(function(l, r) { if (l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (window.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(window.document);
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -66,7 +68,7 @@
     if (typeof o === "string") return _arrayLikeToArray(o, minLen);
     var n = Object.prototype.toString.call(o).slice(8, -1);
     if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(n);
+    if (n === "Map" || n === "Set") return Array.from(o);
     if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
   }
 
@@ -197,6 +199,7 @@
             }
           }
 
+          if (tribute.current.filteredItems.length === 0) li.setAttribute("data-index", -1);
           tribute.selectItemAtIndex(li.getAttribute("data-index"), event);
           tribute.hideMenu(); // TODO: should fire with externalTrigger and target is outside of menu
         } else if (tribute.current.element && !tribute.current.externalTrigger) {
@@ -310,6 +313,7 @@
             if (_this.tribute.isActive && _this.tribute.current.filteredItems) {
               e.preventDefault();
               e.stopPropagation();
+              if (_this.tribute.current.filteredItems.length === 0) _this.tribute.menuSelected = -1;
               setTimeout(function () {
                 _this.tribute.selectItemAtIndex(_this.tribute.menuSelected, e);
 
@@ -1768,6 +1772,15 @@
         if (typeof index !== "number" || isNaN(index)) return;
         var item = this.current.filteredItems[index];
         var content = this.current.collection.selectTemplate(item);
+
+        if (index === -1) {
+          var selectedNoMatchEvent = new CustomEvent('tribute-selected-no-match', {
+            detail: content
+          });
+          this.current.element.dispatchEvent(selectedNoMatchEvent);
+          return;
+        }
+
         if (content !== null) this.replaceText(content, originalEvent, item);
       }
     }, {
