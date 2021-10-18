@@ -329,8 +329,6 @@ class Tribute {
 
       let ul = this.menu.querySelector("ul");
 
-      this.range.positionMenuAtCaret(scrollTo);
-
       if (!items.length) {
         let noMatchEvent = new CustomEvent("tribute-no-match", {
           detail: this.menu
@@ -346,6 +344,7 @@ class Tribute {
           typeof this.current.collection.noMatchTemplate === "function"
             ? (ul.innerHTML = this.current.collection.noMatchTemplate())
             : (ul.innerHTML = this.current.collection.noMatchTemplate);
+            this.range.positionMenuAtCaret(scrollTo);
         }
 
         return;
@@ -371,6 +370,8 @@ class Tribute {
         fragment.appendChild(li);
       });
       ul.appendChild(fragment);
+
+      this.range.positionMenuAtCaret(scrollTo);
     };
 
     if (typeof this.current.collection.values === "function") {
