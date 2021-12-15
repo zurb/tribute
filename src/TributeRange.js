@@ -125,7 +125,7 @@ class TributeRange {
                     : ' '
                 text += textSuffix
                 let startPos = info.mentionPosition
-                let endPos = info.mentionPosition + info.mentionText.length + textSuffix.length
+                let endPos = info.mentionPosition + info.mentionText.length + (textSuffix === '' ? 1 : textSuffix.length)
                 if (!this.tribute.autocompleteMode) {
                     endPos += info.mentionTriggerChar.length - 1
                 }
