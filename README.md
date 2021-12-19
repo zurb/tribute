@@ -200,14 +200,20 @@ Collection object shown with defaults:
   searchOpts: {
     pre: '<span>',
     post: '</span>',
-    skip: false // true will skip local search, useful if doing server-side search
+    skip: false, // true will skip local search, useful if doing server-side search
+    caseSensitive: false
   },
 
   // Limits the number of items in the menu
   menuItemLimit: 25,
 
   // specify the minimum number of characters that must be typed before menu appears
-  menuShowMinLength: 0
+  menuShowMinLength: 0,
+
+  // specify a regex to define after which characters the autocomplete option should open
+  // If null is used then it will not split the string & search in the whole line
+  // default value is /\s+/ means it will split on whitespace when this is not specified
+  autocompleteSeparator: /\s+/,
 }
 ```
 
