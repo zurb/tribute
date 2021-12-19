@@ -453,7 +453,7 @@ If you want the menu to not show when no match is found, you can set your `noMat
 
 ```js
 noMatchTemplate: function () {
-  return '<span style:"visibility: hidden;"></span>';
+  return '<span style="visibility: hidden;"></span>';
 }
 ```
 
