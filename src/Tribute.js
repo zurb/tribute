@@ -392,18 +392,24 @@ class Tribute {
     return !index ? this._findLiTarget(el.parentNode) : [el, index];
   }
 
-  showMenuForCollection(element, collectionIndex) {
+  showMenuForCollection(element, options = {}) {
     if (element !== document.activeElement) {
       this.placeCaretAtEnd(element);
     }
 
-    this.current.collection = this.collection[collectionIndex || 0];
+    this.current.collection = this.collection[options.collectionIndex || 0];
     this.current.externalTrigger = true;
     this.current.element = element;
 
-    if (element.isContentEditable)
-      this.insertTextAtCursor(this.current.collection.trigger);
-    else this.insertAtCaret(element, this.current.collection.trigger);
+    var insertTrigger = typeof options.insertTrigger === "boolean"
+      ? options.insertTrigger
+      : true;
+
+    if (insertTrigger) {
+      if (element.isContentEditable)
+        this.insertTextAtCursor(this.current.collection.trigger);
+      else this.insertAtCaret(element, this.current.collection.trigger);
+    }
 
     this.showMenuFor(element);
   }
