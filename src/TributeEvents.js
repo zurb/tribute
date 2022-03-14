@@ -223,7 +223,8 @@ class TributeEvents {
       },
       enter: (e, el) => {
         // choose selection
-        if (this.tribute.isActive && this.tribute.current.filteredItems) {
+        const filteredItems = this.tribute.current.filteredItems;
+        if (this.tribute.isActive && filteredItems && filteredItems.length) {
           e.preventDefault();
           e.stopPropagation();
           setTimeout(() => {
