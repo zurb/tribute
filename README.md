@@ -342,6 +342,22 @@ tribute.append(2, [
 
 This will append the new values to the third collection.
 
+You can replace data as well by passing true in second parameter of `appendCurrent` and in third parameter of `append`.
+
+```js
+tribute.appendCurrent([
+  { name: "Howard Johnson", occupation: "Panda Wrangler", age: 27 },
+  { name: "Fluffy Croutons", occupation: "Crouton Fluffer", age: 32 }
+], true);
+```
+
+```js
+tribute.append(2, [
+  { name: "Howard Johnson", occupation: "Panda Wrangler", age: 27 },
+  { name: "Fluffy Croutons", occupation: "Crouton Fluffer", age: 32 }
+], true);
+```
+
 ### Programmatically detecting an active Tribute dropdown
 
 If you need to know when Tribute is active you can access the `isActive` property of an instance.
