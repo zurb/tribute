@@ -3098,10 +3098,15 @@ istanbul@^0.4.0:
     which "^1.1.1"
     wordwrap "^1.0.0"
 
-jasmine-core@^3.4.0, jasmine-core@^3.5.0:
+jasmine-core@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/jasmine-core/-/jasmine-core-3.5.0.tgz#132c23e645af96d85c8bca13c8758b18429fc1e4"
   integrity sha512-nCeAiw37MIMA9w9IXso7bRaLl+c/ef3wnxsoSAlYrzS+Ot0zTG6nU8G/cIfGkqpkjX2wNaIW9RFG0TwIFnG6bA==
+
+jasmine-core@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/jasmine-core/-/jasmine-core-4.1.1.tgz#1045091e16f4f19e1d72416eef5db01e64d5fbeb"
+  integrity sha512-lmUfT5XcK9KKvt3lLYzn93hc4MGzlUBowExFVgzbSW0ZCrdeyS574dfsyfRhxbg81Wj4gk+RxUiTnj7KBfDA1g==
 
 jest-worker@^24.9.0:
   version "24.9.0"

@@ -15,7 +15,7 @@
     "babel-plugin-add-module-exports": "^1.0.2",
     "babelify": "^10.0.0",
     "browserify": "^16.5.0",
-    "jasmine-core": "^3.4.0",
+    "jasmine-core": "^4.1.1",
     "karma": "^4.2.0",
     "karma-browserify": "^7.0.0",
     "karma-chrome-launcher": "^3.1.0",
