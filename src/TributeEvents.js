@@ -87,10 +87,16 @@ class TributeEvents {
       event.stopPropagation();
       while (li.nodeName.toLowerCase() !== "li") {
         li = li.parentNode;
-        if (!li || li === tribute.menu) {
+        if (!li) {
+          break;
+        }
+        else if (li === tribute.menu) {
           throw new Error("cannot find the <li> container for the click");
         }
       }
+
+      if (!li) return;
+
       tribute.selectItemAtIndex(li.getAttribute("data-index"), event);
       tribute.hideMenu();
 
