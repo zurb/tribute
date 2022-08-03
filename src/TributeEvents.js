@@ -88,9 +88,16 @@ class TributeEvents {
       while (li.nodeName.toLowerCase() !== "li") {
         li = li.parentNode;
         if (!li || li === tribute.menu) {
-          throw new Error("cannot find the <li> container for the click");
+          // When li === tribute.menu, it's either a click on the entire component or on the scrollbar (if visible)
+          li = undefined;
+          break;
         }
       }
+
+      if (!li) {
+        return;
+      }
+
       tribute.selectItemAtIndex(li.getAttribute("data-index"), event);
       tribute.hideMenu();
 
