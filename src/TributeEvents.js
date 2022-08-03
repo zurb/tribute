@@ -80,33 +80,21 @@ class TributeEvents {
   }
 
   click(instance, event) {
-    console.log("click");
     let tribute = instance.tribute;
-    console.log(tribute.menu);
     if (tribute.menu && tribute.menu.contains(event.target)) {
-      console.log("here1");
       let li = event.target;
-      console.log(li.nodeName);
-      console.log(li);
       event.preventDefault();
       event.stopPropagation();
       while (li.nodeName.toLowerCase() !== "li") {
-        console.log("using parent");
         li = li.parentNode;
-        console.log(li.nodeName);
-        console.log(li);
-        if (!li) {
-          console.log("break");
+        if (!li || li === tribute.menu) {
+          // When li === tribute.menu, it's either a click on the entire component or on the scrollbar (if visible)
+          li = undefined;
           break;
-        }
-        else if (li === tribute.menu) {
-          console.log("error");
-          throw new Error("cannot find the <li> container for the click");
         }
       }
 
       if (!li) {
-        console.log("returning");
         return;
       }
 
@@ -115,7 +103,6 @@ class TributeEvents {
 
       // TODO: should fire with externalTrigger and target is outside of menu
     } else if (tribute.current.element && !tribute.current.externalTrigger) {
-      console.log("here2");
       tribute.current.externalTrigger = false;
       setTimeout(() => tribute.hideMenu());
     }
