@@ -29,7 +29,7 @@ class Tribute {
     spaceSelectsMatch = false,
     searchOpts = {},
     menuItemLimit = null,
-    menuShowMinLength = 0
+    menuShowMinLength = 0,
   }) {
     this.autocompleteMode = autocompleteMode;
     this.autocompleteSeparator = autocompleteSeparator;
@@ -78,7 +78,7 @@ class Tribute {
           ).bind(this),
 
           // function called when menu is empty, disables hiding of menu.
-          noMatchTemplate: (t => {
+          noMatchTemplate: ((t) => {
             if (typeof t === "string") {
               if (t.trim() === "") return null;
               return t;
@@ -89,7 +89,7 @@ class Tribute {
 
             return (
               noMatchTemplate ||
-              function() {
+              function () {
                 return "<li>No Match Found!</li>";
               }.bind(this)
             );
@@ -113,15 +113,15 @@ class Tribute {
 
           menuItemLimit: menuItemLimit,
 
-          menuShowMinLength: menuShowMinLength
-        }
+          menuShowMinLength: menuShowMinLength,
+        },
       ];
     } else if (collection) {
       if (this.autocompleteMode)
         console.warn(
           "Tribute in autocomplete mode does not work for collections"
         );
-      this.collection = collection.map(item => {
+      this.collection = collection.map((item) => {
         return {
           trigger: item.trigger || trigger,
           iframe: item.iframe || iframe,
@@ -135,7 +135,7 @@ class Tribute {
             item.menuItemTemplate || Tribute.defaultMenuItemTemplate
           ).bind(this),
           // function called when menu is empty, disables hiding of menu.
-          noMatchTemplate: (t => {
+          noMatchTemplate: ((t) => {
             if (typeof t === "string") {
               if (t.trim() === "") return null;
               return t;
@@ -146,7 +146,7 @@ class Tribute {
 
             return (
               noMatchTemplate ||
-              function() {
+              function () {
                 return "<li>No Match Found!</li>";
               }.bind(this)
             );
@@ -158,14 +158,14 @@ class Tribute {
           requireLeadingSpace: item.requireLeadingSpace,
           searchOpts: item.searchOpts || searchOpts,
           menuItemLimit: item.menuItemLimit || menuItemLimit,
-          menuShowMinLength: item.menuShowMinLength || menuShowMinLength
+          menuShowMinLength: item.menuShowMinLength || menuShowMinLength,
         };
       });
     } else {
       throw new Error("[Tribute] No collection specified.");
     }
 
-    new TributeRange(this);
+    this.tributeRange = new TributeRange(this);
     new TributeEvents(this);
     new TributeMenuEvents(this);
     new TributeSearch(this);
@@ -212,7 +212,7 @@ class Tribute {
   }
 
   triggers() {
-    return this.collection.map(config => {
+    return this.collection.map((config) => {
       return config.trigger;
     });
   }
@@ -255,7 +255,11 @@ class Tribute {
   ensureEditable(element) {
     if (Tribute.inputTypes().indexOf(element.nodeName) === -1) {
       if (!element.contentEditable) {
-        throw new Error("[Tribute] Cannot bind to " + element.nodeName + ", not contentEditable");
+        throw new Error(
+          "[Tribute] Cannot bind to " +
+            element.nodeName +
+            ", not contentEditable"
+        );
       }
     }
   }
@@ -298,7 +302,7 @@ class Tribute {
       this.current.mentionText = "";
     }
 
-    const processValues = values => {
+    const processValues = (values) => {
       // Tribute may not be active any more by the time the value callback returns
       if (!this.isActive) {
         return;
@@ -308,7 +312,7 @@ class Tribute {
         pre: this.current.collection.searchOpts.pre || "<span>",
         post: this.current.collection.searchOpts.post || "</span>",
         skip: this.current.collection.searchOpts.skip,
-        extract: el => {
+        extract: (el) => {
           if (typeof this.current.collection.lookup === "string") {
             return el[this.current.collection.lookup];
           } else if (typeof this.current.collection.lookup === "function") {
@@ -318,7 +322,7 @@ class Tribute {
               "Invalid lookup attribute, lookup must be string or function."
             );
           }
-        }
+        },
       });
 
       if (this.current.collection.menuItemLimit) {
@@ -331,7 +335,7 @@ class Tribute {
 
       if (!items.length) {
         let noMatchEvent = new CustomEvent("tribute-no-match", {
-          detail: this.menu
+          detail: this.menu,
         });
         this.current.element.dispatchEvent(noMatchEvent);
         if (
@@ -344,7 +348,7 @@ class Tribute {
           typeof this.current.collection.noMatchTemplate === "function"
             ? (ul.innerHTML = this.current.collection.noMatchTemplate())
             : (ul.innerHTML = this.current.collection.noMatchTemplate);
-            this.range.positionMenuAtCaret(scrollTo);
+          this.range.positionMenuAtCaret(scrollTo);
         }
 
         return;
@@ -357,7 +361,7 @@ class Tribute {
         let li = this.range.getDocument().createElement("li");
         li.setAttribute("data-index", index);
         li.className = this.current.collection.itemClass;
-        li.addEventListener("mousemove", e => {
+        li.addEventListener("mousemove", (e) => {
           let [li, index] = this._findLiTarget(e.target);
           if (e.movementY !== 0) {
             this.events.setActiveLi(index);
@@ -376,7 +380,8 @@ class Tribute {
 
     if (typeof this.current.collection.values === "function") {
       if (this.current.collection.loadingItemTemplate) {
-        this.menu.querySelector("ul").innerHTML = this.current.collection.loadingItemTemplate;
+        this.menu.querySelector("ul").innerHTML =
+          this.current.collection.loadingItemTemplate;
         this.range.positionMenuAtCaret(scrollTo);
       }
 
