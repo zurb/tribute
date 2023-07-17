@@ -704,6 +704,10 @@ class TributeRange {
         }
     }
 
+    convertNonWidthSpacesToRealOnes(text) {
+        return text.replace(/[\u200B-\u200D\uFEFF]/g, ' ')
+    }
+
     getTextPrecedingCurrentSelection() {
         let context = this.tribute.current,
             text = '';
@@ -721,7 +725,7 @@ class TributeRange {
             let selectedElem = this.getWindowSelection().anchorNode;
 
             if (selectedElem != null) {
-                let workingNodeContent = selectedElem.textContent;
+                let workingNodeContent = this.convertNonWidthSpacesToRealOnes(selectedElem.textContent);
                 let selectStartOffset = this.getWindowSelection().getRangeAt(0).startOffset;
 
                 if (workingNodeContent && selectStartOffset >= 0) {
