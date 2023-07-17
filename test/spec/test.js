@@ -755,3 +755,46 @@ describe("Multi-char tests", function() {
     });
   });
 });
+
+describe("Tribute loadingItemTemplate", function() {
+  afterEach(function() {
+    clearDom();
+  });
+
+  ["text", "contenteditable"].forEach(elementType => {
+    it(`Shows loading item template. For : ${elementType}`, (done) => {
+      let input = createDomElement(elementType);
+
+      let collectionObject = {
+        loadingItemTemplate: '<div class="loading">Loading</div>',
+        values: function(_, cb) {
+          setTimeout(() => cb([
+            {
+              key: "Jordan Humphreys",
+              value: "Jordan Humphreys",
+              email: "getstarted@zurb.com"
+            },
+            {
+              key: "Sir Walter Riley",
+              value: "Sir Walter Riley",
+              email: "getstarted+riley@zurb.com"
+            }
+          ]), 500)
+        },
+      };
+
+      let tribute = attachTribute(collectionObject, input.id);
+
+      fillIn(input, "@J");
+      const loadingItemTemplate = document.querySelectorAll(".loading");
+      expect(loadingItemTemplate.length).toBe(1);
+
+      setTimeout(() => {
+        const popupList = document.querySelectorAll(".tribute-container > ul > li");
+        expect(popupList.length).toBe(1);
+        detachTribute(tribute, input.id);
+        done();
+      }, 1000);
+    });
+  });
+});

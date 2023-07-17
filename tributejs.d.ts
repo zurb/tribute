@@ -31,7 +31,7 @@ export type TributeCollection<T extends {}> = {
   itemClass?: string;
 
   // function called on select that returns the content to insert
-  selectTemplate?: (item: TributeItem<T>) => string;
+  selectTemplate?: (item: TributeItem<T>|undefined) => string;
 
   // template for displaying item in menu
   menuItemTemplate?: (item: TributeItem<T>) => string;
@@ -50,7 +50,10 @@ export type TributeCollection<T extends {}> = {
   fillAttr?: string;
 
   // array of objects to match
-  values?: Array<T> | ((text: string, cb: (result: Array<T>) => void) => void);
+  values: Array<T> | ((text: string, cb: (result: Array<T>) => void) => void);
+
+  // When your values function is async, an optional loading template to show
+  loadingItemTemplate?: string;
 
   // specify whether a space is required before the trigger character
   requireLeadingSpace?: boolean;
@@ -68,11 +71,20 @@ export type TributeCollection<T extends {}> = {
   //specify whether to put Tribute in autocomplete mode
   autocompleteMode?: boolean;
 
+  // specify a regex to define after which characters the autocomplete option should open
+  autocompleteSeparator?: RegExp;
+
   // Customize the elements used to wrap matched strings within the results list
   searchOpts?: TributeSearchOpts;
 
+  // Limits the number of items in the menu
+  menuItemLimit?: number;
+
   // require X number of characters to be entered before menu shows
   menuShowMinLength?: number;
+
+  // specify if the current match should be selected when the spacebar is hit
+  spaceSelectsMatch?: boolean;
 };
 
 export type TributeOptions<T> =
@@ -81,6 +93,8 @@ export type TributeOptions<T> =
       // pass an array of config objects
       collection: Array<TributeCollection<{ [key: string]: any }>>;
     };
+
+type TributeElement = Element | NodeList | HTMLCollection | Array<Element>;
 
 export default class Tribute<T extends {}> {
   constructor(options: TributeOptions<T>);
@@ -91,9 +105,9 @@ export default class Tribute<T extends {}> {
 
   appendCurrent(values: Array<T>, replace?: boolean): void;
 
-  attach(to: Element): void;
+  attach(to: TributeElement): void;
 
-  detach(to: Element): void;
+  detach(to: TributeElement): void;
 
   showMenuForCollection(input: Element, collectionIndex?: number): void;
 }

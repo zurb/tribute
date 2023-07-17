@@ -169,8 +169,11 @@ Collection object shown with defaults:
   // column that contains the content to insert by default
   fillAttr: 'value',
 
-  // REQUIRED: array of objects to match
+  // REQUIRED: array of objects to match or a function that returns data (see 'Loading remote data' for an example)
   values: [],
+
+  // When your values function is async, an optional loading template to show
+  loadingItemTemplate: null,
 
   // specify whether a space is required before the trigger string
   requireLeadingSpace: true,
@@ -199,6 +202,9 @@ Collection object shown with defaults:
     post: '</span>',
     skip: false // true will skip local search, useful if doing server-side search
   },
+
+  // Limits the number of items in the menu
+  menuItemLimit: 25,
 
   // specify the minimum number of characters that must be typed before menu appears
   menuShowMinLength: 0

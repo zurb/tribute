@@ -7,6 +7,7 @@ import TributeSearch from "./TributeSearch";
 class Tribute {
   constructor({
     values = null,
+    loadingItemTemplate = null,
     iframe = null,
     selectClass = "highlight",
     containerClass = "tribute-container",
@@ -103,6 +104,9 @@ class Tribute {
           // array of objects or a function returning an array of objects
           values: values,
 
+          // useful for when values is an async function
+          loadingItemTemplate: loadingItemTemplate,
+
           requireLeadingSpace: requireLeadingSpace,
 
           searchOpts: searchOpts,
@@ -150,6 +154,7 @@ class Tribute {
           lookup: item.lookup || lookup,
           fillAttr: item.fillAttr || fillAttr,
           values: item.values,
+          loadingItemTemplate: item.loadingItemTemplate,
           requireLeadingSpace: item.requireLeadingSpace,
           searchOpts: item.searchOpts || searchOpts,
           menuItemLimit: item.menuItemLimit || menuItemLimit,
@@ -249,10 +254,8 @@ class Tribute {
 
   ensureEditable(element) {
     if (Tribute.inputTypes().indexOf(element.nodeName) === -1) {
-      if (element.contentEditable) {
-        element.contentEditable = true;
-      } else {
-        throw new Error("[Tribute] Cannot bind to " + element.nodeName);
+      if (!element.contentEditable) {
+        throw new Error("[Tribute] Cannot bind to " + element.nodeName + ", not contentEditable");
       }
     }
   }
@@ -326,8 +329,6 @@ class Tribute {
 
       let ul = this.menu.querySelector("ul");
 
-      this.range.positionMenuAtCaret(scrollTo);
-
       if (!items.length) {
         let noMatchEvent = new CustomEvent("tribute-no-match", {
           detail: this.menu
@@ -343,6 +344,7 @@ class Tribute {
           typeof this.current.collection.noMatchTemplate === "function"
             ? (ul.innerHTML = this.current.collection.noMatchTemplate())
             : (ul.innerHTML = this.current.collection.noMatchTemplate);
+            this.range.positionMenuAtCaret(scrollTo);
         }
 
         return;
@@ -368,9 +370,16 @@ class Tribute {
         fragment.appendChild(li);
       });
       ul.appendChild(fragment);
+
+      this.range.positionMenuAtCaret(scrollTo);
     };
 
     if (typeof this.current.collection.values === "function") {
+      if (this.current.collection.loadingItemTemplate) {
+        this.menu.querySelector("ul").innerHTML = this.current.collection.loadingItemTemplate;
+        this.range.positionMenuAtCaret(scrollTo);
+      }
+
       this.current.collection.values(this.current.mentionText, processValues);
     } else {
       processValues(this.current.collection.values);
