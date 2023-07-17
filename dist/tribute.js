@@ -1,3 +1,5 @@
+
+(function(l, r) { if (l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (window.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.head.appendChild(r) })(window.document);
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -793,6 +795,11 @@
         }
       }
     }, {
+      key: "convertNonWidthSpacesToRealOnes",
+      value: function convertNonWidthSpacesToRealOnes(text) {
+        return text.replace(/[\u200B-\u200D\uFEFF]/g, ' ');
+      }
+    }, {
       key: "getTextPrecedingCurrentSelection",
       value: function getTextPrecedingCurrentSelection() {
         var context = this.tribute.current,
@@ -812,7 +819,7 @@
           var selectedElem = this.getWindowSelection().anchorNode;
 
           if (selectedElem != null) {
-            var workingNodeContent = selectedElem.textContent;
+            var workingNodeContent = this.convertNonWidthSpacesToRealOnes(selectedElem.textContent);
             var selectStartOffset = this.getWindowSelection().getRangeAt(0).startOffset;
 
             if (workingNodeContent && selectStartOffset >= 0) {
