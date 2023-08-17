@@ -513,19 +513,19 @@ class TributeRange {
         let range
         let sel = this.getWindowSelection()
 
-        let textNode = sel.anchorNode;
-        const isTextNodeHTMLElement =
-            textNode &&
-            typeof textNode === "object" &&
-            textNode !== null &&
-            textNode.nodeType === 1 &&
-            typeof textNode.nodeName === "string";
-        if (isTextNodeHTMLElement && sel.anchorNode.firstChild) {
-            textNode = sel.anchorNode.firstChild;
+        let anchorNode = sel.anchorNode;
+        const isAnchorNodeHTMLElement =
+            anchorNode &&
+            typeof anchorNode === "object" &&
+            anchorNode !== null &&
+            anchorNode.nodeType === 1 &&
+            typeof anchorNode.nodeName === "string";
+        if (isAnchorNodeHTMLElement && sel.anchorNode.firstChild) {
+            anchorNode = sel.anchorNode.firstChild;
         }
         range = this.getDocument().createRange();
-        range.setStart(textNode, selectedNodePosition);
-        range.setEnd(textNode, selectedNodePosition);        
+        range.setStart(anchorNode, selectedNodePosition);
+        range.setEnd(anchorNode, selectedNodePosition);        
 
         range.collapse(false)
 
