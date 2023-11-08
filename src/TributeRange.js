@@ -307,7 +307,7 @@ class TributeRange {
                 let c = config.trigger
                 let idx = config.requireLeadingSpace ?
                     this.lastIndexWithLeadingSpace(effectiveRange, c) :
-                    effectiveRange.lastIndexOf(c)
+                    this.lastIndexWithoutLeadingSpace(effectiveRange, c)
 
                 if (idx > mostRecentTriggerCharPos) {
                     mostRecentTriggerCharPos = idx
@@ -382,6 +382,18 @@ class TributeRange {
         }
 
         return index
+    }
+
+    lastIndexWithoutLeadingSpace (str, trigger) {
+        let index = str.lastIndexOf(trigger);
+
+        if (index > -1) {
+          while (str.substring(index - trigger.length, index) === trigger) {
+            index -= trigger.length;
+          }
+        }
+
+        return index;
     }
 
     isContentEditable(element) {
