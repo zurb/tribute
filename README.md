@@ -42,13 +42,13 @@ To use Tribute within a Rails project, you can add the following to the app's Ge
 Then, add the following to `app/assets/javascripts/application.js`:
 
 ```js
-*= require tribute
+//= require tribute
 ```
 
 And in `app/assets/stylesheets/application.css`:
 
 ```css
-//= require tribute
+*= require tribute
 ```
 
 ### Webpack
