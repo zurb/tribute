@@ -183,6 +183,10 @@ class TributeRange {
             return this.tribute.collection.iframe.contentWindow.getSelection()
         }
 
+        if (this.tribute.collection[0].shadowRoot) {
+            return this.tribute.collection[0].shadowRoot.getSelection()
+        }
+
         return window.getSelection()
     }
 

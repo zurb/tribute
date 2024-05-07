@@ -9,6 +9,7 @@ class Tribute {
     values = null,
     loadingItemTemplate = null,
     iframe = null,
+    shadowRoot = null,
     selectClass = "highlight",
     containerClass = "tribute-container",
     itemClass = "",
@@ -57,6 +58,9 @@ class Tribute {
 
           // is it wrapped in an iframe
           iframe: iframe,
+
+          // is it wrapped in a web component
+          shadowRoot: shadowRoot,
 
           // class applied to selected item
           selectClass: selectClass,
