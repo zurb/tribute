@@ -108,10 +108,10 @@ var tribute = new Tribute({
 Once initialized, Tribute can be attached to an `input`, `textarea`, or an element that supports `contenteditable`.
 
 ```html
-<div id="caaanDo">I'm Mr. Meeseeks, look at me!</div>
+<div id="caaanDo" contenteditable="true">I'm Mr. Meeseeks, look at me!</div>
 
-<div class="mentionable">Some text here.</div>
-<div class="mentionable">Some more text over here.</div>
+<div class="mentionable" contenteditable="true">Some text here.</div>
+<div class="mentionable" contenteditable="true">Some more text over here.</div>
 
 <script>
   tribute.attach(document.getElementById("caaanDo"));

@@ -25,6 +25,61 @@ describe("Tribute instantiation", function() {
   });
 });
 
+describe("Tribute attachment eligibility", function() {
+  let container, element, tribute;
+
+  beforeEach(function() {
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    element = document.createElement("div");
+    container.appendChild(element);
+    tribute = new Tribute({ values: [] });
+  });
+
+  afterEach(function() {
+    if (element.hasAttribute("data-tribute")) tribute.detach(element);
+    container.remove();
+  });
+
+  it("rejects a plain non-editable div", function() {
+    expect(() => tribute.attach(element)).toThrowError(
+      "[Tribute] Cannot bind to DIV, not contentEditable"
+    );
+    expect(element.hasAttribute("data-tribute")).toBe(false);
+  });
+
+  it("rejects explicit non-editability inside an editable parent", function() {
+    container.contentEditable = "true";
+    element.contentEditable = "false";
+    expect(() => tribute.attach(element)).toThrowError(
+      "[Tribute] Cannot bind to DIV, not contentEditable"
+    );
+    expect(element.hasAttribute("data-tribute")).toBe(false);
+  });
+
+  it("accepts an explicitly editable div", function() {
+    element.contentEditable = "true";
+    tribute.attach(element);
+    expect(element.hasAttribute("data-tribute")).toBe(true);
+  });
+
+  it("accepts editability inherited from a parent", function() {
+    container.contentEditable = "true";
+    tribute.attach(element);
+    expect(element.hasAttribute("data-tribute")).toBe(true);
+  });
+
+  ["input", "textarea"].forEach(tag => {
+    it(`accepts ${tag} without contenteditable`, function() {
+      element.remove();
+      element = document.createElement(tag);
+      container.appendChild(element);
+      tribute.attach(element);
+      expect(element.hasAttribute("data-tribute")).toBe(true);
+    });
+  });
+});
+
 describe("Tribute @mentions cases", function() {
   afterEach(function() {
     clearDom();
