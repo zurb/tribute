@@ -6,6 +6,9 @@ export const createDomElement = function(element = 'text') {
   let wrapperDiv = document.createElement('div');
   wrapperDiv.id = 'tribute-wrapper-div';
   let input = document.createElement(elementToCreate);
+  if (element === 'contenteditable') {
+    input.contentEditable = 'true';
+  }
   input.id = `tribute-${element}`;
   wrapperDiv.appendChild(input);
   document.body.appendChild(wrapperDiv);
